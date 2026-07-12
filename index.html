@@ -429,13 +429,23 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
 #syncbox .synrow{display:flex;gap:6px;margin:6px 0}
 #syncbox input{flex:1;min-width:0;padding:9px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);font:600 12px var(--mono)}
 #syncmsg{min-height:16px;margin-top:6px;font-weight:600;font-size:13px}
-#famjournal .fj{padding:10px 0;border-bottom:1px solid var(--line)}
-#famjournal .fj:last-child{border-bottom:0}
-#famjournal .fjd{font-family:var(--mono);font-size:10px;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
-#famjournal .fjrow{display:flex;gap:8px;align-items:flex-start;margin:3px 0}
-#famjournal .fjn{flex:0 0 72px;font-weight:800;font-size:13px;color:var(--soca)}
+/* ---------- logboek (per dag) ---------- */
+#famjournal .lday{background:var(--paper);border-radius:14px;margin:12px 0;box-shadow:0 1px 3px rgba(8,34,44,.08);overflow:hidden}
+#famjournal .lhead{background:linear-gradient(135deg,#0b3440,#0fa98e);color:#fff;padding:8px 14px;font-weight:800;font-size:13px;display:flex;align-items:baseline;gap:8px}
+#famjournal .lhead .ln{font-family:var(--mono);font-size:10px;letter-spacing:1px;opacity:.8;text-transform:uppercase}
+#famjournal .lbody{padding:10px 14px 12px}
+#famjournal .fjrow{display:flex;gap:8px;align-items:flex-start;margin:5px 0}
+#famjournal .fjn{flex:0 0 74px;font-weight:800;font-size:13px;color:var(--soca)}
 #famjournal .fjt{flex:1;font-size:13.5px;white-space:pre-wrap}
-#famjournal img{width:100%;max-width:230px;max-height:190px;object-fit:cover;border-radius:9px;margin:4px 0 2px;display:block}
+#famjournal .lphotos{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+#famjournal .lp{position:relative}
+#famjournal .lp img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}
+#famjournal .lp.winner img{outline:3px solid var(--sun);outline-offset:-1px}
+#famjournal .lp .who{position:absolute;top:5px;left:5px;background:rgba(8,34,44,.6);color:#fff;font:700 10px var(--dsp);padding:2px 6px;border-radius:6px}
+#famjournal .votebtn{position:absolute;bottom:5px;right:5px;border:0;border-radius:8px;background:rgba(255,255,255,.92);color:#0b2530;font:800 11px var(--dsp);padding:5px 8px;cursor:pointer;display:flex;align-items:center;gap:3px}
+#famjournal .votebtn.mine{background:var(--sun);color:#5a3d00}
+#votewinner .vw{background:linear-gradient(135deg,#ffc233,#ff6b2c);color:#5a3d00;border-radius:14px;padding:10px 14px;margin:10px 0;font-weight:800;text-align:center}
+#votewinner .vw img{width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin-top:8px;display:block}
 </style>
 </head>
 <body>
@@ -460,6 +470,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
       <div class="hsub" id="phase">Kids editie</div>
     </div>
     <div class="who" id="whopills">
+      <button class="nightbtn" id="hsync" aria-label="Sync" title="Familie-sync">☁️</button>
       <button class="nightbtn" id="night" aria-label="Kampvuur-modus" title="Kampvuur-modus">🔥</button>
       <button data-name="Loes">Loes</button>
       <button data-name="Willem">Willem</button>
@@ -477,6 +488,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
     <button role="tab" aria-selected="false" data-tab="missies"><span class="i">🏅</span>Missies</button>
     <button role="tab" aria-selected="false" data-tab="spellen"><span class="i">🎲</span>Spellen</button>
     <button role="tab" aria-selected="false" data-tab="dagboek"><span class="i">📔</span>Dagboek</button>
+    <button role="tab" aria-selected="false" data-tab="logboek"><span class="i">📸</span>Logboek</button>
     <button role="tab" aria-selected="false" data-tab="billie"><span class="i">🐾</span>Billie</button>
   </div>
 </nav>
@@ -1160,8 +1172,17 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   <div class="foto-reis" id="fotoreis"></div>
   <div id="dagboek"></div>
 
-  <h2 class="sec" style="margin-top:22px">📖 Wat de familie schreef &amp; zag</h2>
-  <div class="card" id="famjournal"></div>
+</section>
+
+<!-- ================= LOGBOEK ================= -->
+<section class="tabpane" id="t-logboek">
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,#0b3440,#0fa98e);color:#fff">
+    <div style="font-size:40px">📸</div>
+    <h3 style="font-size:19px;color:#fff">Familie-logboek</h3>
+    <div class="note" style="color:#cdeee6">Ieders mooiste momenten en foto's, dag per dag. Stem op de mooiste foto van de reis!</div>
+  </div>
+  <div id="votewinner"></div>
+  <div id="famjournal"></div>
 </section>
 
 <!-- ================= BILLIE ================= -->
@@ -1467,7 +1488,8 @@ var BADGES = [
   {k:"cultuur",    em:"🏰", name:"Cultuurkenner",ms:["m19","m23","m28"]},
   {k:"hoogte",     em:"😱", name:"Hoogtevrees weg", ms:["m03","m18","m21"]},
   {k:"kampeerder", em:"🏕", name:"Kampeerder",   ms:["m31","m32","m33","m34"]},
-  {k:"inpakker",   em:"🎒", name:"Ingepakt!",    ms:["p01","p02","p03","p04","p05","p06","p07","p08","p09","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"]}
+  {k:"inpakker",   em:"🎒", name:"Ingepakt!",    ms:["p01","p02","p03","p04","p05","p06","p07","p08","p09","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"]},
+  {k:"verbonden",  em:"☁️", name:"Verbonden!",   ms:["synced"]}
 ];
 var badgeDone = {};
 function renderBadges(animate){
@@ -2419,7 +2441,7 @@ refreshExtras();
 setInterval(renderKlus, 60000);   // rond middernacht rolt de klus door
 
 /* ================= FAMILIE-SYNC (Supabase, online) ================= */
-var famJournal = [], famPhotos = [];
+var famJournal = [], famPhotos = [], famVotes = [];
 function sbCfg(){ try{ var c = JSON.parse(get("sl26:fam:sb") || "null"); if(c && c.url && c.key && c.fam) return c; }catch(e){} return null; }
 function sbHead(c){ return { "apikey": c.key, "Authorization": "Bearer " + c.key, "content-type": "application/json" }; }
 function syncMsg(t, warn){ var el = document.getElementById("syncmsg"); if(el){ el.textContent = t || ""; el.style.color = warn ? "var(--flare)" : "var(--soca)"; } }
@@ -2477,7 +2499,7 @@ function syncNow(){
   if(lastName && lastName !== who){
     if(!confirm("Dit toestel synchroniseerde vorige keer als " + lastName + ".\nNu ben je " + who + ". Toch syncen als " + who + "?\n\n(Dit overschrijft de cloud-gegevens van " + who + ".)")){ syncMsg("Sync afgebroken — kies bovenaan de juiste naam.", true); return; }
   }
-  syncMsg("Bezig met synchroniseren… ☁️");
+  syncMsg("Bezig met synchroniseren… ☁️"); hsyncState("busy");
   var base = c.url, H = sbHead(c), Hm = Object.assign({ Prefer:"resolution=merge-duplicates" }, H);
   var m = countM(who), pushes = [];
   pushes.push(_fetchJSON(base + "/rest/v1/scores", { method:"POST", headers:Hm, body:JSON.stringify({ family:c.fam, name:who, missions:m, badges:countBadges(who), rank:rankIdxFor(m), streak:streakOf(who) }) }));
@@ -2485,6 +2507,8 @@ function syncNow(){
     var note = (get(key("note:" + d)) || "").trim();
     if(note) pushes.push(_fetchJSON(base + "/rest/v1/journal", { method:"POST", headers:Hm, body:JSON.stringify({ family:c.fam, name:who, day:d, note:note.slice(0,500) }) }));
   });
+  var mv = get("sl26:fam:myvote");
+  if(mv){ var pv = mv.split("|"); if(pv.length === 2) pushes.push(_fetchJSON(base + "/rest/v1/votes", { method:"POST", headers:Hm, body:JSON.stringify({ family:c.fam, voter:who, owner:pv[0], day:pv[1] }) }).catch(function(){})); }
   var photoPushes = tripDates().map(function(d){
     return new Promise(function(res){
       photoGet(who + ":" + d, function(blob){
@@ -2501,7 +2525,8 @@ function syncNow(){
     return Promise.all([
       _fetchJSON(base + "/rest/v1/scores?family=eq." + f + "&select=name,missions,badges,rank,streak,updated", { headers:H }),
       _fetchJSON(base + "/rest/v1/journal?family=eq." + f + "&select=name,day,note", { headers:H }),
-      _fetchJSON(base + "/rest/v1/photos?family=eq." + f + "&select=name,day,data", { headers:H })
+      _fetchJSON(base + "/rest/v1/photos?family=eq." + f + "&select=name,day,data", { headers:H }),
+      _fetchJSON(base + "/rest/v1/votes?family=eq." + f + "&select=voter,owner,day", { headers:H }).catch(function(){ return []; })
     ]);
   }).then(function(r){
     var scores = r[0] || [];
@@ -2512,34 +2537,83 @@ function syncNow(){
     });
     put("sl26:fam:lastsyncname", who); put("sl26:fam:syncedat", String(Date.now()));
     var stEl = document.getElementById("synctime"); if(stEl) stEl.textContent = "laatst gesynct net";
-    famJournal = r[1] || []; famPhotos = r[2] || [];
-    updateScoreboard(); renderFamJournal();
-    syncMsg("Klaar! Iedereen is bijgewerkt. 🎉");
-  }).catch(function(e){ syncMsg("Sync mislukte — check internet & instellingen.", true); });
+    famJournal = r[1] || []; famPhotos = r[2] || []; famVotes = r[3] || [];
+    var firstSync = !done(who, "synced");
+    if(firstSync) put(key("synced"), ymd(new Date()));    // trofee: eerste keer verbonden
+    updateRank(firstSync); updateScoreboard(); renderFamJournal();
+    syncMsg("Klaar! Iedereen is bijgewerkt. 🎉"); hsyncState("ok");
+  }).catch(function(e){ syncMsg("Sync mislukte — check internet & instellingen.", true); hsyncState("err"); });
+}
+function hsyncState(s){
+  var b = document.getElementById("hsync"); if(!b) return;
+  if(s === "busy") b.textContent = "⏳";
+  else if(s === "ok"){ b.textContent = "✅"; setTimeout(function(){ b.textContent = "☁️"; }, 1600); }
+  else if(s === "err"){ b.textContent = "⚠️"; setTimeout(function(){ b.textContent = "☁️"; }, 2200); }
+  else b.textContent = "☁️";
 }
 
+function voteTally(){ var t = {}; famVotes.forEach(function(v){ var k = v.owner + "|" + v.day; t[k] = (t[k] || 0) + 1; }); return t; }
+function castVote(owner, day){
+  if(!(who && NAMES.indexOf(who) >= 0)){ syncMsg("Kies eerst je naam bovenaan. 🙂", true); return; }
+  put("sl26:fam:myvote", owner + "|" + day);
+  famVotes = famVotes.filter(function(v){ return v.voter !== who; });   // optimistisch: mijn stem vervangen
+  famVotes.push({ voter:who, owner:owner, day:day });
+  renderFamJournal();
+  if(sbCfg()) syncNow();
+}
+function renderVoteWinner(){
+  var box = document.getElementById("votewinner"); if(!box) return;
+  var t = voteTally(), best = null, bn = 0;
+  Object.keys(t).forEach(function(k){ if(t[k] > bn){ bn = t[k]; best = k; } });
+  if(!best){ box.innerHTML = ""; return; }
+  var p = best.split("|"), ph = famPhotos.filter(function(x){ return x.name === p[0] && x.day === p[1]; })[0];
+  box.innerHTML = '<div class="vw">🏆 Foto van de reis — ' + esc(p[0]) + ' · ' + bn + ' stem' + (bn > 1 ? "men" : "") + '</div>';
+  if(ph){ var im = document.createElement("img"); im.src = ph.data; im.alt = "winnende foto"; box.querySelector(".vw").appendChild(im); }
+}
 function renderFamJournal(){
   var box = document.getElementById("famjournal"); if(!box) return;
-  if(!sbCfg()){ box.innerHTML = '<p class="note">Verbind met de familie-cloud (tabblad 🏅 Missies) en tik op ☁️ Sync om te zien wat de anderen schreven en welke foto\'s ze maakten.</p>'; return; }
-  if(!famJournal.length && !famPhotos.length){ box.innerHTML = '<p class="note">Nog niks opgehaald. Tik op ☁️ Sync nu (bij Missies) — dan verschijnt hier het dagboek van de hele familie.</p>'; return; }
+  renderVoteWinner();
+  if(!sbCfg()){ box.innerHTML = '<p class="note">Verbind met de familie-cloud (tabblad 🏅 Missies) en tik op ☁️ om ieders dagboek en foto\'s op te halen.</p>'; return; }
+  if(!famJournal.length && !famPhotos.length){ box.innerHTML = '<p class="note">Nog niks opgehaald. Tik op ☁️ (bovenaan) of "Sync nu" bij Missies — dan verschijnt hier het logboek van de hele familie.</p>'; return; }
   var byDay = {};
   famJournal.forEach(function(j){ (byDay[j.day] = byDay[j.day] || { notes:[], photos:[] }).notes.push(j); });
   famPhotos.forEach(function(p){ (byDay[p.day] = byDay[p.day] || { notes:[], photos:[] }).photos.push(p); });
+  var t = voteTally(), mv = get("sl26:fam:myvote") || "", maxV = 0;
+  Object.keys(t).forEach(function(k){ if(t[k] > maxV) maxV = t[k]; });
   var days = Object.keys(byDay).sort();
   box.innerHTML = "";
   days.forEach(function(day){
-    var el = byDay[day], wrap = document.createElement("div"); wrap.className = "fj";
-    var html = '<div class="fjd">' + esc(dagLabel(day)) + '</div>';
-    el.notes.forEach(function(j){ html += '<div class="fjrow"><div class="fjn">' + esc(j.name) + '</div><div class="fjt">' + esc(j.note) + '</div></div>'; });
-    wrap.innerHTML = html;
-    el.photos.forEach(function(p){
-      var cap = document.createElement("div"); cap.className = "fjn"; cap.textContent = "📷 " + p.name;
-      var im = document.createElement("img"); im.src = p.data; im.alt = "foto van " + p.name;
-      wrap.appendChild(cap); wrap.appendChild(im);
-    });
-    box.appendChild(wrap);
+    var el = byDay[day];
+    var card = document.createElement("div"); card.className = "lday";
+    var head = document.createElement("div"); head.className = "lhead"; head.innerHTML = '<span class="ln">' + esc(dagLabel(day)) + '</span>';
+    var body = document.createElement("div"); body.className = "lbody";
+    el.notes.forEach(function(j){ var row = document.createElement("div"); row.className = "fjrow"; row.innerHTML = '<div class="fjn">' + esc(j.name) + '</div><div class="fjt">' + esc(j.note) + '</div>'; body.appendChild(row); });
+    if(el.photos.length){
+      var grid = document.createElement("div"); grid.className = "lphotos";
+      el.photos.forEach(function(p){
+        var vk = p.name + "|" + p.day, cnt = t[vk] || 0, mine = mv === vk;
+        var lp = document.createElement("div"); lp.className = "lp" + (cnt > 0 && cnt === maxV ? " winner" : "");
+        var im = document.createElement("img"); im.src = p.data; im.alt = "foto van " + p.name;
+        var wl = document.createElement("div"); wl.className = "who"; wl.textContent = p.name;
+        var vb = document.createElement("button"); vb.className = "votebtn" + (mine ? " mine" : ""); vb.type = "button"; vb.innerHTML = (mine ? "★" : "☆") + " " + cnt;
+        vb.addEventListener("click", function(){ castVote(p.name, p.day); });
+        lp.appendChild(im); lp.appendChild(wl); lp.appendChild(vb); grid.appendChild(lp);
+      });
+      body.appendChild(grid);
+    }
+    card.appendChild(head); card.appendChild(body); box.appendChild(card);
   });
 }
+(function(){
+  var b = document.getElementById("hsync"); if(!b) return;
+  b.addEventListener("click", function(){
+    if(sbCfg()){ syncNow(); }
+    else {
+      var mt = document.querySelector('nav.tabs button[data-tab="missies"]'); if(mt) mt.click();
+      var sb = document.getElementById("syncbox"); if(sb) sb.scrollIntoView({ behavior:"smooth", block:"center" });
+    }
+  });
+})();
 renderSync(); renderFamJournal();
 
 /* ---------- start (pas hier bestaat alles) ---------- */

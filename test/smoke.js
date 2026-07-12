@@ -1,7 +1,7 @@
 /* Rookproef v8 — draai voor elke deploy: npm install jsdom && node smoke.js */
 const { JSDOM } = require("jsdom");
 const fs = require("fs");
-const TABS = ["dagen","avontuur","missies","spellen","dagboek","billie"];
+const TABS = ["dagen","avontuur","missies","spellen","dagboek","logboek","billie"];
 let failed = 0;
 const ok = (c,l) => { console.log(`  ${c?"OK  ":"FOUT"}  ${l}`); if(!c) failed++; };
 
@@ -41,7 +41,7 @@ function scenario(label, seed, when, storageWorks = true){
   const tabs = doc.querySelectorAll("nav.tabs button");
   let switched = 0;
   tabs.forEach((b,i) => { click(dom,b); const a = doc.querySelector(".tabpane.active"); if(a && a.id === "t-"+TABS[i]) switched++; });
-  ok(switched === 6, `alle 6 tabbladen wisselen (${switched}/6)`);
+  ok(switched === 7, `alle 7 tabbladen wisselen (${switched}/7)`);
 
   ok(doc.querySelectorAll("details.day").length === 18, "18 dagkaarten");
   ok(doc.querySelectorAll("input[data-m]").length === 46, `46 missies (36 + 10 foto) (${doc.querySelectorAll("input[data-m]").length})`);
@@ -54,7 +54,8 @@ function scenario(label, seed, when, storageWorks = true){
   ok(doc.querySelectorAll(".lnk a").length >= 40, `links aanwezig (${doc.querySelectorAll(".lnk a").length})`);
   ok([...doc.querySelectorAll(".lnk a")].every(a => /^https:\/\//.test(a.href)), "alle links zijn https");
   ok(doc.querySelectorAll("#kast button").length === 46, `prijzenkast heeft 46 medailles (${doc.querySelectorAll("#kast button").length})`);
-  ok(doc.querySelectorAll("#badges .badge").length === 11, `11 badges (${doc.querySelectorAll("#badges .badge").length})`);
+  ok(doc.querySelectorAll("#badges .badge").length === 12, `12 badges (${doc.querySelectorAll("#badges .badge").length})`);
+  ok(!!doc.getElementById("t-logboek") && !!doc.getElementById("hsync"), "logboek-tab + header sync-knop aanwezig");
   ok(!/€|budget/i.test(doc.body.textContent), "nog steeds geen prijzen");
   return { dom, doc };
 }
