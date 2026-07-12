@@ -248,6 +248,47 @@ footer{text-align:center;color:var(--mist);font-size:11px;padding:24px 0 10px;li
 #journal .jd{flex:0 0 78px;font-family:var(--mono);font-size:10px;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;padding-top:3px}
 #journal .jt{flex:1;font-size:14px;white-space:pre-wrap}
 #journal .jt b{display:block;font-size:12px;color:var(--mist);font-weight:700;margin-bottom:2px}
+
+/* ---------- kampvuur-modus (donker & warm) ---------- */
+.nightbtn{font-size:14px!important;line-height:1!important;padding:6px 8px!important}
+body.night{
+  --ice:#17120e; --paper:#241b12; --ink:#f3e7d6; --mist:#b6a087;
+  --line:#3a2c1e; --stone:#7a6650;
+}
+body.night .tip{background:#2b2211;border-left-color:var(--sun)}
+body.night .warn{background:#2f1d13}
+body.night .cool{background:#10271f}
+body.night .billie{background:#221d33;color:#c9bff2}
+body.night .chip{background:#2c2116;color:#dcc9b0}
+body.night .chip.hot{background:#3b2318;color:#ffb48f}
+body.night .notewrap{background:#211810;border-color:var(--soca)}
+body.night .card{box-shadow:0 1px 3px rgba(0,0,0,.35)}
+body.night .tip small,body.night .note{color:var(--mist)}
+
+/* ---------- routekaart ---------- */
+#routemap{width:100%;height:auto;display:block}
+#routemap .rline{fill:none;stroke-linecap:round;stroke-linejoin:round}
+#routemap .rline.main{stroke:var(--soca);stroke-width:3}
+#routemap .rline.back{stroke:var(--stone);stroke-width:2;stroke-dasharray:2 5;opacity:.7}
+#routemap .dot{fill:var(--stone)}
+#routemap .dot.c-soca{fill:var(--soca)}
+#routemap .dot.c-sea{fill:var(--sea)}
+#routemap .dot.c-piran{fill:var(--flare)}
+#routemap .em{font-size:9px;text-anchor:middle;dominant-baseline:middle}
+#routemap .lbl{font-size:8px;text-anchor:middle;fill:var(--mist);font-weight:700}
+#routemap .ring{fill:none;stroke:var(--flare);stroke-width:2;opacity:0}
+#routemap .mapnode.here .dot{fill:var(--flare)}
+#routemap .mapnode.here .ring{opacity:1;animation:mpulse 1.6s ease-in-out infinite}
+@keyframes mpulse{0%,100%{r:11px;opacity:.7}50%{r:15px;opacity:0}}
+
+/* ---------- badges ---------- */
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.badge{background:var(--paper);border-radius:12px;padding:10px 6px;text-align:center;box-shadow:0 1px 3px rgba(8,34,44,.07);opacity:.5;filter:grayscale(1)}
+.badge.on{opacity:1;filter:none;outline:2px solid var(--sun)}
+.badge .bem{font-size:26px;line-height:1}
+.badge .bnm{font-size:11px;font-weight:800;margin-top:4px;letter-spacing:-.2px}
+.badge .bpr{font-family:var(--mono);font-size:10px;color:var(--mist);margin-top:2px}
+.badge.on .bpr{color:var(--soca);font-weight:700}
 </style>
 </head>
 <body>
@@ -268,6 +309,7 @@ footer{text-align:center;color:var(--mist);font-size:11px;padding:24px 0 10px;li
       <div class="hsub" id="phase">Kids editie</div>
     </div>
     <div class="who" id="whopills">
+      <button class="nightbtn" id="night" aria-label="Kampvuur-modus" title="Kampvuur-modus">🔥</button>
       <button data-name="Loes">Loes</button>
       <button data-name="Willem">Willem</button>
       <button data-name="Charlotte">Charlotte</button>
@@ -309,6 +351,38 @@ footer{text-align:center;color:var(--mist);font-size:11px;padding:24px 0 10px;li
       <div><div class="v">3.100</div><div class="k">km</div></div>
       <div><div class="v">1</div><div class="k">setter</div></div>
     </div>
+  </div>
+
+  <h2 class="sec">Onze route</h2>
+  <div class="card">
+    <svg id="routemap" viewBox="0 0 300 208" role="img" aria-label="Onze route door Slovenië">
+      <polyline class="rline back" points="90,168 250,150 150,26"/>
+      <polyline class="rline main" points="150,26 235,58 60,84 200,114 90,168"/>
+      <g class="mapnode" data-node="home">
+        <circle class="ring" cx="150" cy="26" r="11"/><circle class="dot" cx="150" cy="26" r="8"/>
+        <text class="em" x="150" y="27">🏠</text><text class="lbl" x="150" y="12">Thuis</text>
+      </g>
+      <g class="mapnode" data-node="besigheim">
+        <circle class="ring" cx="235" cy="58" r="11"/><circle class="dot" cx="235" cy="58" r="8"/>
+        <text class="em" x="235" y="59">🛖</text><text class="lbl" x="235" y="76">Besigheim</text>
+      </g>
+      <g class="mapnode" data-node="soca">
+        <circle class="ring" cx="60" cy="84" r="11"/><circle class="dot c-soca" cx="60" cy="84" r="8"/>
+        <text class="em" x="60" y="85">💚</text><text class="lbl" x="60" y="102">Bovec · Soča</text>
+      </g>
+      <g class="mapnode" data-node="bled">
+        <circle class="ring" cx="200" cy="114" r="11"/><circle class="dot c-sea" cx="200" cy="114" r="8"/>
+        <text class="em" x="200" y="115">🏰</text><text class="lbl" x="200" y="132">Bled</text>
+      </g>
+      <g class="mapnode" data-node="piran">
+        <circle class="ring" cx="90" cy="168" r="11"/><circle class="dot c-piran" cx="90" cy="168" r="8"/>
+        <text class="em" x="90" y="169">🌊</text><text class="lbl" x="90" y="186">Piran · zee</text>
+      </g>
+      <g class="mapnode" data-node="munchen">
+        <circle class="ring" cx="250" cy="150" r="11"/><circle class="dot" cx="250" cy="150" r="8"/>
+        <text class="em" x="250" y="151">🏨</text><text class="lbl" x="250" y="168">München</text>
+      </g>
+    </svg>
   </div>
 
   <h2 class="sec">Dag voor dag</h2>
@@ -692,6 +766,10 @@ footer{text-align:center;color:var(--mist);font-size:11px;padding:24px 0 10px;li
   <div class="score" id="scoreboard"></div>
   <p class="note" style="text-align:center;margin-top:6px;font-size:11px">Scorebord van dit toestel</p>
 
+  <h2 class="sec">Badges</h2>
+  <p class="note" style="margin-bottom:2px">Verzamel ze door bij elkaar horende missies af te ronden.</p>
+  <div class="badges" id="badges"></div>
+
   <h2 class="sec">Missies · Soča-vallei</h2>
   <div class="card" data-mission-group>
     <label class="check"><input type="checkbox" data-m="m01"><span class="box"></span><span class="ctxt">Spring in de Soča<small>En hou het 10 seconden vol. 14°C.</small></span></label>
@@ -963,7 +1041,7 @@ function setWho(n){
   who = n;
   put("sl26:who", n);
   intro.style.display = "none";
-  document.querySelectorAll("#whopills button").forEach(function(b){
+  document.querySelectorAll("#whopills button[data-name]").forEach(function(b){
     b.setAttribute("aria-pressed", b.dataset.name === n ? "true" : "false");
   });
   loadTicks();
@@ -1022,6 +1100,7 @@ function tick(){
     else if(dd === 1){ big.textContent = "1"; lbl.textContent = "nachtje slapen — morgen gaan we!"; }
     else { big.textContent = hh+":"+String(mm).padStart(2,"0"); lbl.textContent = "uur tot vertrek"; }
     document.getElementById("phase").textContent = "Kids editie";
+    updateMap("home");
   } else if(now <= END){
     box.classList.add("live");
     var n = idx>=0 ? idx+1 : 18;
@@ -1030,13 +1109,19 @@ function tick(){
     var where = ["onderweg","Soča","Soča","Soča","Soča","Soča","Bled","Bled","Bled","Bled","Bled","Bled","Piran","Piran","Piran","Piran","onderweg","bijna thuis"][n-1];
     document.getElementById("phase").textContent = "Dag "+n+" · "+where;
     document.getElementById("road").classList.add("done");
+    updateMap(n<=1 ? "besigheim" : n<=6 ? "soca" : n<=12 ? "bled" : n<=16 ? "piran" : n<=17 ? "munchen" : "home");
     if(idx>=0 && !days[idx].dataset.opened){ days[idx].open = true; days[idx].dataset.opened = "1"; }
   } else {
     box.classList.remove("live");
     big.textContent = "🏔";
     lbl.textContent = "Terug thuis — Živeli!";
     document.getElementById("phase").textContent = "Kids editie";
+    updateMap("home");
   }
+}
+function updateMap(node){
+  var m = document.getElementById("routemap"); if(!m) return;
+  m.querySelectorAll(".mapnode").forEach(function(g){ g.classList.toggle("here", g.dataset.node === node); });
 }
 tick();
 setInterval(tick, 30000);
@@ -1091,6 +1176,32 @@ function updateRank(animate){
   document.getElementById("rankname").textContent = RANKS[idx][1];
   if(animate && lastRankIdx >= 0 && idx > lastRankIdx){ celebrateRank(idx); }
   lastRankIdx = idx;
+  renderBadges(animate);
+}
+
+/* ---------- badges (bonus-verzameling bovenop de 30 missies) ---------- */
+var BADGES = [
+  {k:"waterrat",   em:"💧", name:"Waterrat",     ms:["m01","m09","m14","m27"]},
+  {k:"durfal",     em:"⚡", name:"Durfal",       ms:["m02","m03","m10","m13"]},
+  {k:"grotkoning", em:"🕳", name:"Grotkoning",   ms:["m08","m21","m22"]},
+  {k:"bergkoning", em:"🏔", name:"Bergkoning",   ms:["m05","m16","m18"]},
+  {k:"smuller",    em:"🧀", name:"Durfsmuller",  ms:["m12","m20","m26"]},
+  {k:"legende",    em:"🐉", name:"Legendejager", ms:["m06","m22","m23"]}
+];
+var badgeDone = {};
+function renderBadges(animate){
+  var box = document.getElementById("badges"); if(!box) return;
+  box.innerHTML = "";
+  BADGES.forEach(function(bd){
+    var have = bd.ms.filter(function(m){ return get(key(m)) === "1"; }).length;
+    var done = have === bd.ms.length;
+    var el = document.createElement("div");
+    el.className = "badge" + (done ? " on" : "");
+    el.innerHTML = '<div class="bem">'+bd.em+'</div><div class="bnm">'+bd.name+'</div><div class="bpr">'+have+'/'+bd.ms.length+'</div>';
+    box.appendChild(el);
+    if(done && animate && !badgeDone[bd.k]){ confetti(); beep([784,1047,1319], 0.24); }
+    badgeDone[bd.k] = done;
+  });
 }
 function updateScoreboard(){
   var el = document.getElementById("scoreboard");
@@ -1256,6 +1367,19 @@ document.getElementById("resetme").addEventListener("click", function(){
 var persists = false;
 try{ localStorage.setItem("sl26:probe","1"); persists = localStorage.getItem("sl26:probe")==="1"; localStorage.removeItem("sl26:probe"); }catch(e){ persists = false; }
 if(!persists){ document.getElementById("nostore").style.display = "block"; }
+
+/* ---------- kampvuur-modus (donker & warm, onthouden per toestel) ---------- */
+function applyTheme(t){
+  document.body.classList.toggle("night", t === "night");
+  var nb = document.getElementById("night");
+  if(nb){ nb.setAttribute("aria-pressed", t === "night" ? "true" : "false"); nb.textContent = t === "night" ? "☀️" : "🔥"; }
+}
+applyTheme(get("sl26:fam:theme") || "day");
+document.getElementById("night").addEventListener("click", function(){
+  var t = document.body.classList.contains("night") ? "day" : "night";
+  put("sl26:fam:theme", t);
+  applyTheme(t);
+});
 
 /* ---------- tip: zet op beginscherm ---------- */
 var standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;

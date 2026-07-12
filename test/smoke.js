@@ -67,6 +67,9 @@ function scenario(label, seed, storageWorks = true) {
   ok(doc.querySelectorAll("textarea.daynote").length === 18, "18 dagboek-velden (1 per dag)");
   ok(!!doc.getElementById("journal"), "reisdagboek-vak aanwezig");
   ok(doc.querySelectorAll("#bingo button").length === 16, "16 bingotegels");
+  ok(doc.querySelectorAll("#badges .badge").length === 6, "6 badges getoond");
+  ok(doc.querySelectorAll("#routemap .mapnode").length === 6, "routekaart met 6 stops");
+  ok(!!doc.getElementById("night"), "kampvuur-knop aanwezig");
   ok(!/€|budget|prijs per/i.test(doc.body.textContent), "geen prijzen of budget in de kids-versie");
 
   const warned = doc.getElementById("nostore").style.display === "block";
@@ -107,6 +110,24 @@ ok(jrnl.errors.length === 0, "geen JS-fouten met een opgeslagen notitie");
 ok(!!ta && ta.value === "Rafting was gek!", "dagboek-notitie teruggeladen in het juiste dagveld");
 ok(/Rafting was gek!/.test(jrnl.doc.getElementById("journal").textContent), "notitie verschijnt in het reisdagboek-overzicht");
 jrnl.dom.window.close();
+
+console.log("\n5. Kampvuur-modus + één badge afronden");
+const night = load({ "sl26:who": "Loes" });
+ok(!night.doc.body.classList.contains("night"), "start in dagmodus");
+click(night.dom, night.doc.getElementById("night"));
+ok(night.doc.body.classList.contains("night"), "kampvuur-modus aan na klik");
+click(night.dom, night.doc.getElementById("night"));
+ok(!night.doc.body.classList.contains("night"), "en weer uit na tweede klik");
+// Waterrat = m01,m09,m14,m27 -> alle vier aanvinken maakt de badge "on"
+["m01", "m09", "m14", "m27"].forEach((m) => {
+  const inp = night.doc.querySelector(`input[data-m="${m}"]`);
+  inp.checked = true;
+  inp.dispatchEvent(new night.dom.window.Event("change", { bubbles: true }));
+});
+const waterrat = [...night.doc.querySelectorAll("#badges .badge")].find((b) => /Waterrat/.test(b.textContent));
+ok(!!waterrat && waterrat.classList.contains("on"), "Waterrat-badge ontgrendeld na 4 missies");
+ok(night.errors.length === 0, "geen JS-fouten tijdens badges + modus-wissel");
+night.dom.window.close();
 
 console.log(failed ? `\n${failed} test(s) GEFAALD\n` : "\nAlles in orde.\n");
 process.exit(failed ? 1 : 0);
