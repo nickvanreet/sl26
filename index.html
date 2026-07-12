@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07222b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Slovenië 2026 — Kids Editie</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="Slovenië 2026">
+<meta name="robots" content="noindex, nofollow">
+<style>
+:root{
+  --ice:#e7f0f1;      /* gletsjerwater */
+  --paper:#fff;
+  --ink:#08222c;      /* alpen-inkt */
+  --mist:#6b8794;
+  --soca:#0fa98e;     /* Soča-smaragd */
+  --flare:#ff6b2c;    /* reddingsoranje: vandaag / actie */
+  --dragon:#6d5bd0;   /* grotten & draken */
+  --sun:#ffc233;      /* badges */
+  --sea:#2b8fd4;      /* Bled & zee */
+  --stone:#9fb3bb;
+  --line:#d6e3e6;
+  --nav:72px;
+  --dsp:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono","Roboto Mono",Menlo,Consolas,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--dsp);background:var(--ice);color:var(--ink);
+  font-size:16px;line-height:1.5;
+  padding-bottom:calc(28px + env(safe-area-inset-bottom));
+  overscroll-behavior-y:contain;
+}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+b,strong{font-weight:700}
+a{color:var(--soca);font-weight:600}
+
+/* ---------- kop ---------- */
+header{
+  background:linear-gradient(180deg,#07222b,#0b3440);
+  color:#fff;padding:10px 0 8px;
+  padding-top:calc(10px + env(safe-area-inset-top));
+  box-shadow:0 2px 14px rgba(3,26,34,.25);
+}
+.hrow{display:flex;align-items:center;gap:8px}
+.logo{font-weight:900;letter-spacing:-.5px;font-size:17px;text-transform:uppercase;line-height:1}
+.logo em{font-style:normal;color:var(--soca)}
+.hsub{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:#7ea8b3;text-transform:uppercase;margin-top:2px}
+.who{margin-left:auto;display:flex;gap:4px}
+.who button{
+  font:700 11px/1 var(--dsp);color:#8fb6c0;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:7px 9px;cursor:pointer;
+}
+.who button[aria-pressed=true]{background:var(--soca);border-color:var(--soca);color:#03211c}
+
+/* ---------- naamkeuze ---------- */
+#intro{
+  position:fixed;inset:0;z-index:90;
+  background:linear-gradient(165deg,#07222b,#0b4a4a 55%,#0fa98e);
+  color:#fff;display:flex;flex-direction:column;justify-content:center;
+  padding:28px;text-align:center;
+}
+#intro h1{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:.95;text-transform:uppercase}
+#intro h1 span{display:block;color:#ffd67a}
+#intro p{color:#bfe6de;margin:14px 0 26px;font-size:14px}
+.namebtn{
+  display:block;width:100%;margin:9px 0;padding:16px;border:0;border-radius:14px;
+  background:#fff;color:#07222b;font:800 19px/1 var(--dsp);cursor:pointer;
+}
+.namebtn:active{transform:scale(.98)}
+.skip{background:none;border:0;color:#9fd6cc;font:600 13px/1 var(--dsp);margin-top:16px;padding:12px;cursor:pointer;width:100%}
+
+/* ---------- aftellen ---------- */
+.count{
+  background:linear-gradient(135deg,#0b3440,#0fa98e);color:#fff;
+  border-radius:18px;padding:16px;margin:14px 0;text-align:center;
+  box-shadow:0 6px 20px rgba(11,52,64,.22);
+}
+.count .big{font-family:var(--mono);font-size:44px;font-weight:700;line-height:1;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.count .lbl{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#bdeade;margin-top:6px}
+.count.live{background:linear-gradient(135deg,#c2410c,#ff6b2c)}
+.count.live .lbl{color:#ffe0cd}
+.stats{display:flex;gap:6px;margin-top:12px}
+.stats div{flex:1;background:rgba(255,255,255,.14);border-radius:10px;padding:7px 2px}
+.stats .v{font-family:var(--mono);font-weight:700;font-size:16px}
+.stats .k{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#d8f2ec}
+
+/* ---------- secties ---------- */
+h2.sec{
+  font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:2px;
+  color:var(--mist);margin:26px 0 10px;display:flex;align-items:center;gap:8px;
+}
+h2.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+.card{background:var(--paper);border-radius:14px;padding:14px;margin:10px 0;box-shadow:0 1px 3px rgba(8,34,44,.07)}
+.card h3{font-size:16px;font-weight:800;margin-bottom:4px;letter-spacing:-.2px}
+.note{font-size:13px;color:var(--mist)}
+.tip{background:#fff6e6;border-left:4px solid var(--sun);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:10px 0}
+.warn{background:#ffeee7;border-left:4px solid var(--flare);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:10px 0}
+.cool{background:#e6f7f3;border-left:4px solid var(--soca);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:10px 0}
+
+/* ---------- dagen: de bochtenroute ---------- */
+.road{position:relative;padding-left:44px}
+.road::before{
+  content:"";position:absolute;left:17px;top:6px;bottom:6px;width:3px;border-radius:2px;
+  background:repeating-linear-gradient(180deg,var(--stone) 0 6px,transparent 6px 12px);
+}
+.road.done::before{background:var(--soca)}
+details.day{position:relative;background:var(--paper);border-radius:14px;margin:8px 0;box-shadow:0 1px 3px rgba(8,34,44,.07)}
+details.day>summary{list-style:none;cursor:pointer;padding:12px 14px;display:block;min-height:56px}
+details.day>summary::-webkit-details-marker{display:none}
+.stone{
+  position:absolute;left:-40px;top:14px;z-index:2;width:30px;height:30px;border-radius:50%;
+  background:var(--stone);color:#fff;font-family:var(--mono);font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;border:3px solid var(--ice);
+}
+.d-soca .stone{background:var(--soca)}
+.d-bled .stone{background:var(--sea)}
+.d-piran .stone{background:#e8912a}
+.d-road .stone{background:#7b8f99}
+.dtop{display:flex;align-items:baseline;gap:8px}
+.ddate{font-family:var(--mono);font-size:10.5px;color:var(--mist);letter-spacing:.5px;text-transform:uppercase}
+.dtitle{font-weight:800;font-size:15.5px;letter-spacing:-.2px;margin-top:1px}
+.dteaser{font-size:13px;color:var(--mist);margin-top:2px}
+details.day[open]>summary .dteaser{display:none}
+.dbody{padding:2px 14px 14px;border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+.dbody ul{list-style:none}
+.dbody li{font-size:14px;padding:5px 0 5px 22px;position:relative}
+.dbody li::before{content:"›";position:absolute;left:6px;top:4px;color:var(--soca);font-weight:800}
+.billie{background:#f2f0ff;border-radius:9px;padding:8px 10px;font-size:13px;color:#3f327f;margin-top:8px}
+.today{outline:3px solid var(--flare);outline-offset:0}
+.today .stone{background:var(--flare);animation:pulse 1.6s ease-in-out infinite}
+.badge-now{display:inline-block;background:var(--flare);color:#fff;font:800 9px/1 var(--dsp);letter-spacing:1.5px;text-transform:uppercase;padding:4px 7px;border-radius:5px;vertical-align:middle}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,44,.55)}50%{box-shadow:0 0 0 7px rgba(255,107,44,0)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.past{opacity:.55}
+
+/* ---------- avonturen ---------- */
+.adv{display:flex;gap:12px;align-items:flex-start}
+.adv .em{font-size:30px;line-height:1}
+.bolts{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--flare);margin-top:5px}
+.bolts .off{color:var(--line)}
+.meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.chip{background:var(--ice);border-radius:7px;padding:3px 8px;font-size:11.5px;font-weight:600;color:#3c5c66}
+.chip.hot{background:#ffe6da;color:#a63a10}
+
+/* ---------- checklists ---------- */
+.check{display:flex;gap:11px;align-items:flex-start;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.check:last-child{border-bottom:0}
+.check input{position:absolute;opacity:0;width:0;height:0}
+.box{
+  flex:0 0 24px;width:24px;height:24px;border:2px solid var(--stone);border-radius:7px;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:900;transition:.14s;
+}
+.check input:checked + .box{background:var(--soca);border-color:var(--soca)}
+.check input:checked + .box::after{content:"✓"}
+.check input:focus-visible + .box{outline:3px solid var(--flare);outline-offset:2px}
+.ctxt{font-size:14.5px;line-height:1.35;flex:1}
+.check input:checked ~ .ctxt{color:var(--mist);text-decoration:line-through}
+.ctxt small{display:block;color:var(--mist);font-size:12px;text-decoration:none;margin-top:1px}
+.check input:checked ~ .ctxt small{text-decoration:line-through}
+
+/* ---------- voortgang ---------- */
+.rank{background:linear-gradient(135deg,#08222c,#0b4a4a);color:#fff;border-radius:16px;padding:16px;margin:12px 0}
+.rank .r1{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:#7fc9bb;text-transform:uppercase}
+.rank .r2{font-size:24px;font-weight:900;letter-spacing:-.6px;margin:2px 0 10px}
+.bar{height:10px;background:rgba(255,255,255,.15);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--soca),var(--sun));border-radius:6px;transition:width .4s}
+.rank .r3{font-family:var(--mono);font-size:11px;color:#a9d8ce;margin-top:7px}
+.score{display:flex;gap:6px;margin-top:10px}
+.score div{flex:1;background:var(--paper);border-radius:10px;padding:8px 4px;text-align:center;box-shadow:0 1px 3px rgba(8,34,44,.07)}
+.score .n{font-size:11px;font-weight:700;color:var(--mist)}
+.score .p{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--ink)}
+
+/* ---------- bingo ---------- */
+.bingo{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}
+.bingo button{
+  aspect-ratio:1;border:2px solid var(--line);background:var(--paper);border-radius:10px;
+  font:600 10.5px/1.2 var(--dsp);color:var(--ink);padding:4px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+}
+.bingo button[aria-pressed=true]{background:var(--soca);border-color:var(--soca);color:#fff}
+#bingoshout{display:none;background:var(--sun);color:#5a3d00;font-weight:900;text-align:center;padding:12px;border-radius:12px;letter-spacing:2px}
+#bingoshout.on{display:block}
+.plates{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.plates button{
+  border:2px solid var(--line);background:var(--paper);border-radius:8px;padding:9px 0;width:52px;
+  font:800 13px/1 var(--mono);color:var(--ink);cursor:pointer;
+}
+.plates button[aria-pressed=true]{background:var(--sea);border-color:var(--sea);color:#fff}
+
+/* ---------- tellers ---------- */
+.cnt{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.cnt:last-child{border-bottom:0}
+.cnt .lab{flex:1;font-size:14.5px;font-weight:600}
+.cnt .num{font-family:var(--mono);font-size:20px;font-weight:700;min-width:34px;text-align:center}
+.cnt button{width:38px;height:38px;border-radius:10px;border:2px solid var(--line);background:var(--paper);font:800 18px/1 var(--dsp);color:var(--ink);cursor:pointer}
+.cnt button.plus{background:var(--soca);border-color:var(--soca);color:#fff}
+
+/* ---------- woorden ---------- */
+.word{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.word:last-child{border-bottom:0}
+.word .nl{flex:0 0 88px;font-size:13px;color:var(--mist)}
+.word .sl{flex:1;font-weight:800;font-size:15px}
+.word .sp{font-family:var(--mono);font-size:11px;color:var(--dragon);text-align:right}
+
+/* ---------- nood ---------- */
+.sos{background:#08222c;color:#fff;border-radius:16px;padding:16px;margin:14px 0}
+.sos h3{color:#fff;font-size:15px;font-weight:800;margin-bottom:8px}
+.sos a.big112{display:block;background:var(--flare);color:#fff;text-align:center;font:900 26px/1 var(--mono);padding:14px;border-radius:12px;letter-spacing:2px;margin-bottom:10px;text-decoration:none}
+.sos p{font-size:13px;color:#a9c6ce;margin-bottom:8px}
+.sos input{
+  width:100%;padding:11px;border-radius:9px;border:1px solid #24505c;background:#0d3441;color:#fff;
+  font:600 15px var(--mono);margin-top:6px;
+}
+.sos input::placeholder{color:#5d8896}
+.sos .call{display:block;margin-top:6px;text-align:center;background:#0fa98e;color:#04231d;font-weight:800;padding:10px;border-radius:9px;text-decoration:none;font-size:14px}
+
+/* ---------- tabs ---------- */
+.tabpane{display:none;animation:fade .18s ease-out}
+.tabpane.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+nav.tabs{position:sticky;top:0;z-index:60;background:#07222b;box-shadow:0 4px 14px rgba(3,26,34,.3)}
+.tabsrow{display:flex;gap:4px;padding:8px 14px}
+nav.tabs button{
+  flex:1;border:0;border-radius:11px;background:rgba(255,255,255,.07);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  color:#8fb6c0;font:700 9.5px/1 var(--dsp);letter-spacing:.3px;min-height:54px;padding:6px 2px;
+}
+nav.tabs button .i{font-size:20px;line-height:1;filter:grayscale(1) opacity(.6)}
+nav.tabs button[aria-selected=true]{background:var(--soca);color:#03211c}
+nav.tabs button[aria-selected=true] .i{filter:none}
+.reset{background:none;border:0;color:var(--mist);font:600 12px var(--dsp);padding:10px 0;cursor:pointer;text-decoration:underline}
+footer{text-align:center;color:var(--mist);font-size:11px;padding:24px 0 10px;line-height:1.7}
+@media print{nav.tabs,#intro,.reset{display:none}.tabpane{display:block!important}}
+</style>
+</head>
+<body>
+
+<div id="intro" style="display:none">
+  <h1>Slovenië<span>2026</span></h1>
+  <p>18 dagen · 3 campings · 1 setter<br>Wie ben jij?</p>
+  <button class="namebtn" data-name="Loes">Loes</button>
+  <button class="namebtn" data-name="Willem">Willem</button>
+  <button class="namebtn" data-name="Charlotte">Charlotte</button>
+  <button class="skip" data-name="Iedereen">Ik kijk gewoon even mee →</button>
+</div>
+
+<header>
+  <div class="wrap hrow">
+    <div>
+      <div class="logo">Slove<em>nië</em> 2026</div>
+      <div class="hsub" id="phase">Kids editie</div>
+    </div>
+    <div class="who" id="whopills">
+      <button data-name="Loes">Loes</button>
+      <button data-name="Willem">Willem</button>
+      <button data-name="Charlotte">Charlotte</button>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <div class="wrap tabsrow">
+    <button role="tab" aria-selected="true" data-tab="dagen"><span class="i">🗺️</span>Dagen</button>
+    <button role="tab" aria-selected="false" data-tab="avontuur"><span class="i">⚡</span>Avontuur</button>
+    <button role="tab" aria-selected="false" data-tab="missies"><span class="i">🏅</span>Missies</button>
+    <button role="tab" aria-selected="false" data-tab="spellen"><span class="i">🎲</span>Spellen</button>
+    <button role="tab" aria-selected="false" data-tab="billie"><span class="i">🐾</span>Billie</button>
+  </div>
+</nav>
+<noscript><style>.tabpane{display:block!important}nav.tabs{display:none}</style></noscript>
+
+<main class="wrap">
+
+<!-- ================= DAGEN ================= -->
+<section class="tabpane active" id="t-dagen">
+
+  <div class="warn" id="nostore" style="display:none">
+    <b>Let op:</b> op deze manier worden je vinkjes <b>niet bewaard</b>. Open het reisboek via de link die papa stuurt (niet via het bestand), dan blijft alles staan.
+  </div>
+  <div class="tip" id="a2hs" style="display:none">
+    📲 <b>Zet dit op je beginscherm</b> — dan opent het als een app én werkt het zonder internet.<br>
+    <span class="note">iPhone: Deel-knop <b>&#8679;</b> → "Zet op beginscherm". Android: menu <b>⋮</b> → "App installeren".</span>
+    <button class="reset" id="a2hsx" style="padding:6px 0 0">Verberg deze tip</button>
+  </div>
+
+  <div class="count" id="count">
+    <div class="big" id="cbig">—</div>
+    <div class="lbl" id="clbl">tot vertrek</div>
+    <div class="stats">
+      <div><div class="v">18</div><div class="k">dagen</div></div>
+      <div><div class="v">3</div><div class="k">campings</div></div>
+      <div><div class="v">3.100</div><div class="k">km</div></div>
+      <div><div class="v">1</div><div class="k">setter</div></div>
+    </div>
+  </div>
+
+  <h2 class="sec">Dag voor dag</h2>
+  <p class="note" style="margin-bottom:8px">Tik op een dag om te zien wat we doen. De dag van vandaag licht <b style="color:var(--flare)">oranje</b> op.</p>
+
+  <div class="road" id="road">
+
+    <details class="day d-road" data-date="2026-07-17">
+      <summary><span class="stone">1</span>
+        <div class="dtop"><span class="ddate">Vr 17/7 · Rijden</span></div>
+        <div class="dtitle">Duffel → Besigheim 🚗</div>
+        <div class="dteaser">De lange autodag. Zorg dat je tas klaarstaat.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li>We vertrekken om <b>06:00</b> — dus: gisteravond alles in de auto, en je koptelefoon binnen handbereik.</li>
+        <li>Ongeveer 8 uur rijden door Duitsland. Perfect voor de <b>reisbingo</b> en het landenspel (tabblad 🎲).</li>
+        <li>We slapen in een huisje in Besigheim. Eén nacht, dan door naar de bergen.</li>
+      </ul><div class="billie">🐾 Billie: elke 2–3 uur stoppen om te plassen en te drinken. Nooit alleen in de auto.</div></div>
+    </details>
+
+    <details class="day d-soca" data-date="2026-07-18">
+      <summary><span class="stone">2</span>
+        <div class="dtop"><span class="ddate">Za 18/7 · Aankomst</span></div>
+        <div class="dtitle">Camp Vodenca · de Soča! 💚</div>
+        <div class="dteaser">Eerste duik in het groenste water dat je ooit zag.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li>Door de <b>Karawankentunnel</b> Slovenië in. Vanaf hier: bergen, overal.</li>
+        <li>Tent opzetten (iedereen helpt = klaar in 30 min), dan verkennen.</li>
+        <li><b>Eerste duik in de Soča.</b> Het water is smaragdgroen én ijskoud: 12–16°C. Je kan de bodem zien op 5 meter diep.</li>
+      </ul><div class="billie">🐾 Billie: de Soča bij de camping is ondiep en koel — setterparadijs.</div>
+      <div class="tip">🎯 Missie: 10 seconden in de Soča blijven staan zonder te gillen. (Niemand haalt het.)</div></div>
+    </details>
+
+    <details class="day d-soca" data-date="2026-07-19">
+      <summary><span class="stone">3</span>
+        <div class="dtop"><span class="ddate">Zo 19/7 · Avontuur</span></div>
+        <div class="dtitle">RAFTEN op de Soča 🛶</div>
+        <div class="dteaser">Stroomversnellingen. Nat worden is de bedoeling.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li><b>09:30 — Rafting.</b> Alle drie mee (vanaf 6 jaar). Je krijgt een wetsuit, zwemvest en helm. Ongeveer 3 uur.</li>
+        <li>Klasse II–III stroomversnellingen: spannend, maar de gids weet precies wat hij doet. Peddelen op commando!</li>
+        <li><b>Middag — Boka-waterval</b>: 106 meter, de hoogste van Slovenië. Een uurtje wandelen heen en terug.</li>
+        <li>Daarna weer zwemmen bij de camping.</li>
+      </ul><div class="billie">🐾 Billie gaat niet mee raften. Ze blijft bij één ouder op de camping.</div></div>
+    </details>
+
+    <details class="day d-soca" data-date="2026-07-20">
+      <summary><span class="stone">4</span>
+        <div class="dtop"><span class="ddate">Ma 20/7 · Avontuur</span></div>
+        <div class="dtitle">Zipline & canyoning ⚡</div>
+        <div class="dteaser">1,2 km door de lucht. 60 km/u.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li><b>Zipline (iedereen):</b> 1,2 kilometer aan een kabel over de hele vallei, tot 60 km/u. Tip: ogen open.</li>
+        <li><b>Canyoning (12+):</b> abseilen langs watervallen en springen in turquoise poelen.</li>
+        <li><b>De jongste</b> doet ondertussen <b>kajak</b> met papa of mama — ook nat, ook top.</li>
+        <li>Namiddag: lange wandeling over de <b>Soča Trail</b>, langs de rivier.</li>
+      </ul><div class="billie">🐾 Billie loopt de Soča Trail mee — ze heeft die lange wandeling écht nodig.</div></div>
+    </details>
+
+    <details class="day d-soca" data-date="2026-07-21">
+      <summary><span class="stone">5</span>
+        <div class="dtop"><span class="ddate">Di 21/7 · Bergen</span></div>
+        <div class="dtitle">Achter een waterval + 50 bochten 🏔</div>
+        <div class="dteaser">Peričnik · Vršič · Lake Jasna · Zelenci</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li><b>Peričnik-waterval:</b> 52 meter hoog en je kan er <b>ACHTER</b> lopen. Je wordt nat. Dat hoort erbij.</li>
+        <li><b>Vršič-pas (1.611 m):</b> de hoogste bergweg van Slovenië, met <b>50 haarspeldbochten</b> — allemaal genummerd. Tel ze mee. Bij bocht 8 staat een houten Russische kapel.</li>
+        <li><b>Lake Jasna:</b> groen meertje, picknick. Zoek het bronzen beeld van de <b>Zlatorog</b> — de steenbok met gouden hoorns uit de Sloveense legende.</li>
+        <li><b>Zelenci:</b> houten paden over een bron die uit de grond omhoog borrelt. Superstil, superhelder.</li>
+      </ul><div class="billie">🐾 Billie mag overal mee, aan de lijn. Jasna en Zelenci zijn perfect voor haar.</div></div>
+    </details>
+
+    <details class="day d-soca" data-date="2026-07-22">
+      <summary><span class="stone">6</span>
+        <div class="dtop"><span class="ddate">Wo 22/7 · Kloof</span></div>
+        <div class="dtitle">Tolmin-kloof & Kobarid</div>
+        <div class="dteaser">Duivelsbrug, geheime grot, van de rotsen springen.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li><b>Tolmin-kloof:</b> turquoise water tussen steile rotswanden. Zoek de <b>duivelsbrug</b>, hoog boven de rivier.</li>
+        <li><b>Kozjak-waterval:</b> 20 minuten door het bos → een verborgen grot met een waterval erin. Het licht is er blauw. Eén van de mooiste plekken van de hele reis.</li>
+        <li>De oudsten kunnen het <b>WO I-museum</b> in; wie liever zwemt gaat naar de <b>Napoleonbrug</b> — diepe turquoise poelen waar je van de rotsen kan springen.</li>
+      </ul><div class="billie">🐾 Billie: korte lijn in de kloof (smal pad), maar zwemmen mag bij de Napoleonbrug.</div></div>
+    </details>
+
+    <details class="day d-bled" data-date="2026-07-23">
+      <summary><span class="stone">7</span>
+        <div class="dtop"><span class="ddate">Do 23/7 · Verhuis</span></div>
+        <div class="dtitle">→ Camping Sobec (Bled) 🏰</div>
+        <div class="dteaser">Nieuw kamp. Taart die groter is dan je hoofd.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li>Tent afbreken, ~2 uur rijden, tent weer opzetten. Sobec is groot: rivier, minigolf, klimmuur.</li>
+        <li><b>Rondje meer van Bled</b> (6 km, vlak). In het midden: een eiland met een kerk.</li>
+        <li><b>Kremna rezina</b> proeven — de beroemde slagroomtaart van Bled. Blokje bladerdeeg, vanillecrème, slagroom. Eén stuk = bijna te veel. Bijna.</li>
+      </ul><div class="billie">🐾 Billie: aan de lijn rond het meer (druk pad), maar de rivier bij Sobec is helemaal van haar.</div></div>
+    </details>
+
+    <details class="day d-bled" data-date="2026-07-24">
+      <summary><span class="stone">8</span>
+        <div class="dtop"><span class="ddate">Vr 24/7 · Bohinj</span></div>
+        <div class="dtitle">Kabelbaan Vogel + zwemmen 🚡</div>
+        <div class="dteaser">1.537 m omhoog, dan het warmste meer in.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li><b>Vogel-kabelbaan:</b> in een paar minuten naar 1.537 meter. Boven zie je de <b>Triglav</b> (2.864 m) — de hoogste berg van Slovenië, die zelfs op de vlag staat.</li>
+        <li>Neem een trui mee: boven is het veel kouder dan beneden.</li>
+        <li><b>Bohinj-meer:</b> 20–22°C — het warmste water tot nu toe. Zwemmen en SUP.</li>
+        <li><b>Savica-waterval:</b> een flinke trappenklim, maar dan zie je hem.</li>
+      </ul><div class="billie">🐾 Billie mag zwemmen aan de oostkant van het Bohinj-meer.</div></div>
+    </details>
+
+    <details class="day d-bled" data-date="2026-07-25">
+      <summary><span class="stone">9</span>
+        <div class="dtop"><span class="ddate">Za 25/7 · Bohinj</span></div>
+        <div class="dtitle">Olifantenrots + kano 🐘</div>
+        <div class="dteaser">Zoek de rots die op een olifant lijkt.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li><b>Mostnica-kloof:</b> 3 km langs een kloof met glashelder water. Ergens onderweg staat een rots die er precies uitziet als een <b>olifant</b>. Wie ziet hem eerst?</li>
+        <li>Lunch in Stara Fužina. Daar maken ze <b>Mohant</b>: een kaas die officieel stinkt. Durf je één hapje?</li>
+        <li><b>Kanoën op het meer</b> — en Billie mag mee in de kano. Niet omslaan.</li>
+      </ul><div class="billie">🐾 Billie duikt na de wandeling in de Mostnica-rivier. IJskoud. Zij vindt dat prima.</div></div>
+    </details>
+
+    <details class="day d-bled" data-date="2026-07-26">
+      <summary><span class="stone">10</span>
+        <div class="dtop"><span class="ddate">Zo 26/7 · Bled</span></div>
+        <div class="dtitle">Kloof, kasteel & rodelbaan 🛷</div>
+        <div class="dteaser">De toboggan. Dé dag.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li><b>Vintgar-kloof (vroeg!):</b> 1,6 km houten bruggetjes vlak boven het turquoise water. Tel de bruggen.</li>
+        <li><b>Ojstrica:</b> 20 minuten stevig klimmen → het uitzicht waar iedereen die foto van Bled maakt.</li>
+        <li><b>Kasteel van Bled:</b> hoog op een rots. Beneden in de smederij slaan ze nog altijd munten.</li>
+        <li><b>Straža-toboggan:</b> met de stoeltjeslift omhoog, met de rodelbaan naar beneden. Je stuurt zelf hoe snel je gaat. 🏆 Wie is de snelste van het gezin?</li>
+      </ul><div class="billie">🐾 Vintgar is smal en druk: één ouder gaat met Billie langs de Sava wandelen.</div></div>
+    </details>
+
+    <details class="day d-bled" data-date="2026-07-27">
+      <summary><span class="stone">11</span>
+        <div class="dtop"><span class="ddate">Ma 27/7 · Stad</span></div>
+        <div class="dtitle">Ljubljana — stad van draken 🐉</div>
+        <div class="dteaser">Kabeltreintje naar de burcht, streetart, ijsjes.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li>Met de <b>funiculair</b> (kabeltreintje) omhoog naar de burcht.</li>
+        <li>Het symbool van Ljubljana is een <b>draak</b>. Op de Drakenbrug staan er vier — ga ze fotograferen.</li>
+        <li><b>Metelkova</b>: een hele wijk vol streetart en rare beelden.</li>
+        <li>Langs de rivier lunchen. Burgers bestaan hier ook, geen paniek.</li>
+      </ul><div class="billie">🐾 Ljubljana is superhondvriendelijk: bij veel terrassen staat een waterbakje klaar.</div></div>
+    </details>
+
+    <details class="day d-bled" data-date="2026-07-28">
+      <summary><span class="stone">12</span>
+        <div class="dtop"><span class="ddate">Di 28/7 · Ondergronds</span></div>
+        <div class="dtitle">Škocjan-grotten + witte paarden 🐴</div>
+        <div class="dteaser">Een brug van 45 m hoog, onder de grond.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li><b>Škocjan:</b> een gigantische grot met een <b>rivier</b> erin. Je loopt over een brug die <b>45 meter</b> boven het water hangt. Naar beneden kijken = kippenvel.</li>
+        <li>Het is er maar <b>12°C</b>: trui mee! En: foto's maken mag niet, dus goed kijken.</li>
+        <li><b>Lipica:</b> hier komen de witte <b>Lipizzaner-paarden</b> vandaan, al sinds 1580. Grappig detail: de veulens worden <b>donkerbruin</b> geboren en worden pas na jaren wit.</li>
+      </ul><div class="billie">🐾 Billie mag de grot niet in. Zij wacht in de schaduw bij één ouder.</div></div>
+    </details>
+
+    <details class="day d-piran" data-date="2026-07-29">
+      <summary><span class="stone">13</span>
+        <div class="dtop"><span class="ddate">Wo 29/7 · Verhuis</span></div>
+        <div class="dtitle">Grot-treintje → de zee! 🌊</div>
+        <div class="dteaser">Postojna, een kasteel in een rots, en dan Piran.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li><b>Postojna-grot:</b> je gaat met een <b>ondergronds treintje</b> de grot in. Binnen: het <b>mensvisje</b> (proteus) — een blinde grotsalamander die "babydraak" wordt genoemd, meer dan 100 jaar oud kan worden en járen zonder eten kan.</li>
+        <li>10°C onder de grond. Trui. Echt.</li>
+        <li><b>Predjama-kasteel:</b> gebouwd ín een rotswand van 123 meter. Volgens de legende woonde hier roverridder Erasmus — hij werd verraden en geraakt door een kanonskogel… terwijl hij op het toilet zat.</li>
+        <li>Daarna: <b>Kaki Plac</b> bij Piran. Pop-uptenten opzetten = zo gepiept.</li>
+      </ul><div class="billie">🐾 Billie mag niet in de grot, maar Postojna heeft een bewaakte hondenparkeerplaats in de schaduw.</div></div>
+    </details>
+
+    <details class="day d-piran" data-date="2026-07-30">
+      <summary><span class="stone">14</span>
+        <div class="dtop"><span class="ddate">Do 30/7 · Kust</span></div>
+        <div class="dtitle">Fietsen, zout & kampvuur 🔥</div>
+        <div class="dteaser">De zee is 24–26°C. Eindelijk warm water.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li><b>Gratis fietsen</b> van de camping naar Piran (20 min).</li>
+        <li><b>Sečovlje-zoutpannen:</b> al 700 jaar halen ze hier zout uit zeewater, met de hand. Proef een korreltje.</li>
+        <li><b>Strand Fiesa:</b> een beschut baaitje. Zwemmen in de Adriatische Zee.</li>
+        <li>'s Avonds: <b>kampvuur</b> op Kaki Plac. Marshmallows.</li>
+      </ul><div class="billie">🐾 Billie: aan de lijn bij de zoutpannen (vogels broeden er). 's Ochtends vroeg mag ze op het strand.</div></div>
+    </details>
+
+    <details class="day d-piran" data-date="2026-07-31">
+      <summary><span class="stone">15</span>
+        <div class="dtop"><span class="ddate">Vr 31/7 · Kroatië</span></div>
+        <div class="dtitle">Pula — gladiatoren 🏛</div>
+        <div class="dteaser">Een echt Romeins amfitheater, met tunnels eronder.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li>Vroeg vertrekken (vóór de hitte), 1,5 uur rijden naar Kroatië. Geen grenscontrole.</li>
+        <li><b>Pula Arena:</b> bijna 2000 jaar oud, één van de grootste van de wereld. Je kan de <b>ondergrondse tunnels</b> in — daar wachtten de gladiatoren.</li>
+        <li>Daarna nog het Forum en de markthal, en terug voor een luie namiddag.</li>
+      </ul><div class="billie">🐾 Billie blijft thuis op Kaki Plac (dog park!). 30–35°C is veel te warm voor haar in de stad.</div></div>
+    </details>
+
+    <details class="day d-piran" data-date="2026-08-01">
+      <summary><span class="stone">16</span>
+        <div class="dtop"><span class="ddate">Za 1/8 · Rust</span></div>
+        <div class="dtitle">Uitslapen + stadsmuren 🌅</div>
+        <div class="dteaser">Laatste kampvuur. Laatste ijsje. (Niet echt.)</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li>Uitslapen. Niets moet.</li>
+        <li>Strand, fietsen of gewoon niksen.</li>
+        <li><b>Stadsmuren van Piran beklimmen</b> — vanaf boven zie je het hele schiereiland in zee steken. Beste zonsondergang van de reis.</li>
+        <li>Gelato. En dan het <b>laatste kampvuur</b>, met sterren erbij.</li>
+      </ul><div class="billie">🐾 Billie krijgt een lange ochtendwandeling langs de kust, om 7 uur — voor de hitte.</div></div>
+    </details>
+
+    <details class="day d-road" data-date="2026-08-02">
+      <summary><span class="stone">17</span>
+        <div class="dtop"><span class="ddate">Zo 2/8 · Rijden</span></div>
+        <div class="dtitle">Piran → München</div>
+        <div class="dteaser">Eén nacht in een écht bed.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li>Tent voor de laatste keer afbreken. ~5 uur rijden.</li>
+        <li>Hotel in München — matras, douche, geen slaapzak. Geniet ervan.</li>
+        <li>'s Avonds nog even de stad in.</li>
+      </ul><div class="billie">🐾 Billie mag mee het hotel in, maar het is een stad: korte avondwandeling in plaats van een rivier.</div></div>
+    </details>
+
+    <details class="day d-road" data-date="2026-08-03">
+      <summary><span class="stone">18</span>
+        <div class="dtop"><span class="ddate">Ma 3/8 · Thuis</span></div>
+        <div class="dtitle">München → Duffel 🏠</div>
+        <div class="dteaser">Laatste ronde reisbingo.</div>
+      </summary>
+      <div class="dbody"><ul>
+        <li>Nog ~7 uur rijden. Playlist aan.</li>
+        <li>Thuis: tent uitrollen om te drogen (anders schimmelt hij), tas uitpakken.</li>
+        <li>En dan: alle missies natellen. Wie is er Zlatorog geworden? 🏆</li>
+      </ul><div class="billie">🐾 Billie ploft neer in haar eigen mand en slaapt 14 uur. Verdiend.</div></div>
+    </details>
+
+  </div>
+
+  <div class="sos">
+    <h3>📞 Als er iets is</h3>
+    <a class="big112" href="tel:112">112</a>
+    <p>Werkt in heel Europa — ook in Slovenië en Kroatië. Gratis, ook zonder beltegoed.</p>
+    <p><b style="color:#fff">Verdwaald?</b> Blijf staan waar je bent of ga terug naar het afgesproken punt. Vraag hulp aan iemand met kinderen of aan iemand van een winkel. Zeg: <i>"I am lost, please call my parents."</i></p>
+    <p><b style="color:#fff">Ken deze uit je hoofd:</b> Camp Vodenca (Bovec) · Camping Sobec (Bled) · Kaki Plac (Piran).</p>
+    <input id="tel1" type="tel" placeholder="Nummer papa" inputmode="tel">
+    <a class="call" id="call1" href="#">Bel papa</a>
+    <input id="tel2" type="tel" placeholder="Nummer mama" inputmode="tel">
+    <a class="call" id="call2" href="#">Bel mama</a>
+  </div>
+</section>
+
+<!-- ================= AVONTUUR ================= -->
+<section class="tabpane" id="t-avontuur">
+  <h2 class="sec">De 10 grootste dingen</h2>
+  <p class="note" style="margin-bottom:10px">⚡ = hoe spannend. 5 bliksems = knijp je billen samen.</p>
+
+  <div class="card"><div class="adv"><span class="em">🛶</span><div>
+    <h3>Rafting op de Soča</h3>
+    <div class="note">Echte stroomversnellingen door een smaragdgroene kloof. Je krijgt wetsuit, zwemvest en helm. Peddelen op commando — en ja, je wordt kletsnat.</div>
+    <div class="bolts">⚡⚡⚡⚡<span class="off">⚡</span></div>
+    <div class="meta"><span class="chip">Vanaf 6 jaar</span><span class="chip">±3 uur</span><span class="chip">Dag 3</span></div>
+  </div></div></div>
+
+  <div class="card"><div class="adv"><span class="em">🪂</span><div>
+    <h3>Zipline Bovec</h3>
+    <div class="note">1,2 kilometer aan een kabel dwars over de vallei, tot 60 km/u, met bergen aan alle kanten. Iedereen mag. De eerste seconde is de ergste.</div>
+    <div class="bolts">⚡⚡⚡⚡⚡</div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip">±1 uur</span><span class="chip">Dag 4</span></div>
+  </div></div></div>
+
+  <div class="card"><div class="adv"><span class="em">💦</span><div>
+    <h3>Canyoning</h3>
+    <div class="note">Aan een touw langs watervallen naar beneden, en springen in poelen. Alleen voor 12+. De jongste doet kajak met een ouder — ook nat, ook goed.</div>
+    <div class="bolts">⚡⚡⚡⚡⚡</div>
+    <div class="meta"><span class="chip hot">12+</span><span class="chip">±3 uur</span><span class="chip">Dag 4</span></div>
+  </div></div></div>
+
+  <div class="card"><div class="adv"><span class="em">🛷</span><div>
+    <h3>Straža-toboggan (Bled)</h3>
+    <div class="note">Stoeltjeslift omhoog, rodelbaan naar beneden. Jij bepaalt met de hendel hoe hard je gaat. Familierecord verbreken = jouw taak.</div>
+    <div class="bolts">⚡⚡⚡⚡<span class="off">⚡</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 10</span></div>
+  </div></div></div>
+
+  <div class="card"><div class="adv"><span class="em">🚂</span><div>
+    <h3>Postojna: treintje in de grot</h3>
+    <div class="note">Een échte trein die de grot in rijdt. Binnen woont het <b>mensvisje</b>: een blinde, bleke salamander die "babydraak" heet, 100+ jaar oud wordt en jaren zonder eten kan.</div>
+    <div class="bolts">⚡⚡<span class="off">⚡⚡⚡</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip hot">10°C — trui!</span><span class="chip">Dag 13</span></div>
+  </div></div></div>
+
+  <div class="card"><div class="adv"><span class="em">🌊</span><div>
+    <h3>Achter de Peričnik-waterval</h3>
+    <div class="note">52 meter water valt naar beneden — en er loopt een pad áchter langs. Je komt er nat en gillend uit. Precies zoals het hoort.</div>
+    <div class="bolts">⚡⚡⚡<span class="off">⚡⚡</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 5</span></div>
+  </div></div></div>
+
+  <div class="card"><div class="adv"><span class="em">🕳</span><div>
+    <h3>Škocjan: de brug in de grot</h3>
+    <div class="note">Een ondergrondse canyon met een rivier, en een brug die 45 meter boven het water hangt. Foto's mogen niet — dus onthouden.</div>
+    <div class="bolts">⚡⚡⚡⚡<span class="off">⚡</span></div>
+    <div class="meta"><span class="chip hot">12°C — trui!</span><span class="chip">Dag 12</span></div>
+  </div></div></div>
+
+  <div class="card"><div class="adv"><span class="em">🛶</span><div>
+    <h3>Kano op het Bohinj-meer</h3>
+    <div class="note">Je eigen kano, bergen rondom, en een setter die probeert mee te varen. Het meer is 20–22°C: het warmste zoete water van de reis.</div>
+    <div class="bolts">⚡⚡<span class="off">⚡⚡⚡</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip">🐾 Billie mag mee</span><span class="chip">Dag 9</span></div>
+  </div></div></div>
+
+  <div class="card"><div class="adv"><span class="em">🏛</span><div>
+    <h3>Gladiatorentunnels in Pula</h3>
+    <div class="note">Een Romeins amfitheater van bijna 2000 jaar oud. Onder de arena lopen de tunnels waar de gladiatoren stonden te wachten.</div>
+    <div class="bolts">⚡⚡<span class="off">⚡⚡⚡</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 15</span></div>
+  </div></div></div>
+
+  <div class="card"><div class="adv"><span class="em">🐴</span><div>
+    <h3>Lipizzaners aaien in Lipica</h3>
+    <div class="note">Beroemde witte paarden, gefokt sinds 1580. De veulens worden donkerbruin geboren en worden pas na jaren wit. Aaien mag.</div>
+    <div class="bolts">⚡<span class="off">⚡⚡⚡⚡</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 12</span></div>
+  </div></div></div>
+
+  <h2 class="sec">Waar kan je zwemmen?</h2>
+  <div class="card">
+    <div class="cnt"><span class="lab">Soča bij de camping <small style="display:block;color:var(--mist);font-weight:400">Ondiep, ijskoud, spectaculair</small></span><span class="num" style="color:var(--sea)">14°</span></div>
+    <div class="cnt"><span class="lab">Soča bij de Napoleonbrug <small style="display:block;color:var(--mist);font-weight:400">Diepe poelen — van de rotsen springen</small></span><span class="num" style="color:var(--sea)">16°</span></div>
+    <div class="cnt"><span class="lab">Mostnica-rivier <small style="display:block;color:var(--mist);font-weight:400">Bergwater. Adem inhouden.</small></span><span class="num" style="color:var(--sea)">12°</span></div>
+    <div class="cnt"><span class="lab">Sava bij Camping Sobec <small style="display:block;color:var(--mist);font-weight:400">Vlak naast de tent</small></span><span class="num" style="color:var(--sea)">19°</span></div>
+    <div class="cnt"><span class="lab">Bohinj-meer <small style="display:block;color:var(--mist);font-weight:400">Zwemmen, SUP, kano</small></span><span class="num" style="color:var(--soca)">21°</span></div>
+    <div class="cnt"><span class="lab">Adriatische Zee (Fiesa) <small style="display:block;color:var(--mist);font-weight:400">Eindelijk warm. Zout. Zonnecrème!</small></span><span class="num" style="color:var(--flare)">25°</span></div>
+  </div>
+  <div class="cool">💡 Waterschoenen zijn geen suf idee: de bodem van de Soča ligt vol gladde keien.</div>
+
+  <h2 class="sec">Durf je dit te eten?</h2>
+  <div class="card">
+    <h3>Kremna rezina 🍰</h3>
+    <div class="note">De taart van Bled: bladerdeeg, dikke laag vanillecrème, dikke laag slagroom. Zo groot dat delen slim is (maar niemand deelt).</div>
+  </div>
+  <div class="card">
+    <h3>Mohant-kaas 🧀</h3>
+    <div class="note">Kaas uit Bohinj die officieel stinkt. Scherp, sterk, raar. Eén hapje telt al als missie geslaagd.</div>
+  </div>
+  <div class="card">
+    <h3>Štruklji &amp; žlikrofi 🥟</h3>
+    <div class="note">Štruklji = opgerold deeg met kwark of noten. Žlikrofi = Sloveense ravioli met aardappel. Klinkt raar, smaakt zoals pasta bij oma.</div>
+  </div>
+  <div class="card">
+    <h3>Sladoled 🍦</h3>
+    <div class="note">IJs. Belangrijkste woord van de hele reis. Zie het tabblad 🎲 voor hoe je het bestelt.</div>
+  </div>
+</section>
+
+<!-- ================= MISSIES ================= -->
+<section class="tabpane" id="t-missies">
+  <div class="rank">
+    <div class="r1">Jouw rang</div>
+    <div class="r2" id="rankname">Kampeerder in opleiding</div>
+    <div class="bar"><i id="rankbar" style="width:0%"></i></div>
+    <div class="r3"><span id="rankcount">0</span> van de 30 missies volbracht</div>
+  </div>
+
+  <div class="score" id="scoreboard"></div>
+  <p class="note" style="text-align:center;margin-top:6px;font-size:11px">Scorebord van dit toestel</p>
+
+  <h2 class="sec">Missies · Soča-vallei</h2>
+  <div class="card" data-mission-group>
+    <label class="check"><input type="checkbox" data-m="m01"><span class="box"></span><span class="ctxt">Spring in de Soča<small>En hou het 10 seconden vol. 14°C.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m02"><span class="box"></span><span class="ctxt">Overleef de rafting<small>Uit de boot vallen mag ook — telt dubbel.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m03"><span class="box"></span><span class="ctxt">Zipline mét je ogen open</span></label>
+    <label class="check"><input type="checkbox" data-m="m04"><span class="box"></span><span class="ctxt">Loop achter de Peričnik-waterval<small>En kom er nat weer uit.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m05"><span class="box"></span><span class="ctxt">Tel de 50 bochten van de Vršič<small>Ze zijn genummerd. Geen smoesjes.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m06"><span class="box"></span><span class="ctxt">Vind de Zlatorog bij Lake Jasna<small>Bronzen steenbok met gouden hoorns.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m07"><span class="box"></span><span class="ctxt">Zoek de duivelsbrug in de Tolmin-kloof</span></label>
+    <label class="check"><input type="checkbox" data-m="m08"><span class="box"></span><span class="ctxt">Vind de waterval ín de Kozjak-grot</span></label>
+    <label class="check"><input type="checkbox" data-m="m09"><span class="box"></span><span class="ctxt">Spring van de rotsen bij de Napoleonbrug</span></label>
+    <label class="check"><input type="checkbox" data-m="m10"><span class="box"></span><span class="ctxt">Canyoning (12+) of kajak (jongste)</span></label>
+  </div>
+
+  <h2 class="sec">Missies · Bled &amp; Bohinj</h2>
+  <div class="card" data-mission-group>
+    <label class="check"><input type="checkbox" data-m="m11"><span class="box"></span><span class="ctxt">Luid de klok op het eiland van Bled<small>99 trappen omhoog. Dan een wens doen.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m12"><span class="box"></span><span class="ctxt">Eet een hele kremna rezina<small>In je eentje. Succes.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m13"><span class="box"></span><span class="ctxt">Win de toboggan-race van het gezin</span></label>
+    <label class="check"><input type="checkbox" data-m="m14"><span class="box"></span><span class="ctxt">Kano zonder om te slaan<small>Met Billie aan boord = hard level.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m15"><span class="box"></span><span class="ctxt">Vind de Olifantenrots (Mostnica)</span></label>
+    <label class="check"><input type="checkbox" data-m="m16"><span class="box"></span><span class="ctxt">Spot de Triglav vanaf Vogel<small>2.864 m. Staat op de vlag.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m17"><span class="box"></span><span class="ctxt">Tel de bruggen in de Vintgar-kloof</span></label>
+    <label class="check"><input type="checkbox" data-m="m18"><span class="box"></span><span class="ctxt">Klim naar het uitzichtpunt Ojstrica<small>20 minuten steil. Beste foto van Bled.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m19"><span class="box"></span><span class="ctxt">Bezoek de smederij van het kasteel van Bled</span></label>
+    <label class="check"><input type="checkbox" data-m="m20"><span class="box"></span><span class="ctxt">Proef de Mohant-stinkkaas<small>Eén hap. Niet uitspugen.</small></span></label>
+  </div>
+
+  <h2 class="sec">Missies · Grotten &amp; kust</h2>
+  <div class="card" data-mission-group>
+    <label class="check"><input type="checkbox" data-m="m21"><span class="box"></span><span class="ctxt">Kijk naar beneden vanaf de brug in Škocjan<small>45 meter. Durf je?</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m22"><span class="box"></span><span class="ctxt">Spot een mensvisje in Postojna<small>De blinde babydraak.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m23"><span class="box"></span><span class="ctxt">Vind het toilet van ridder Erasmus (Predjama)<small>Volgens de legende zijn ongelukkigste plek.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m24"><span class="box"></span><span class="ctxt">Aai een Lipizzaner</span></label>
+    <label class="check"><input type="checkbox" data-m="m25"><span class="box"></span><span class="ctxt">Beklim de stadsmuren van Piran</span></label>
+    <label class="check"><input type="checkbox" data-m="m26"><span class="box"></span><span class="ctxt">Proef zout uit de zoutpannen<small>Met de hand geoogst, al 700 jaar.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m27"><span class="box"></span><span class="ctxt">Zwem in de Adriatische Zee</span></label>
+    <label class="check"><input type="checkbox" data-m="m28"><span class="box"></span><span class="ctxt">Loop door de gladiatorentunnels van Pula</span></label>
+    <label class="check"><input type="checkbox" data-m="m29"><span class="box"></span><span class="ctxt">Bestel iets in het Sloveens<small>"Sladoled, prosim!" telt.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m30"><span class="box"></span><span class="ctxt">Roep BINGO in de auto</span></label>
+  </div>
+
+  <h2 class="sec">Jouw rugzak</h2>
+  <p class="note" style="margin-bottom:8px">Vink pas af als het <b>echt in je tas zit</b>. Niet "ga ik nog doen".</p>
+  <div class="card">
+    <h3 style="margin-bottom:6px">Kleding</h3>
+    <label class="check"><input type="checkbox" data-p="p01"><span class="box"></span><span class="ctxt">T-shirts (8)</span></label>
+    <label class="check"><input type="checkbox" data-p="p02"><span class="box"></span><span class="ctxt">Korte broeken / rokjes (5)</span></label>
+    <label class="check"><input type="checkbox" data-p="p03"><span class="box"></span><span class="ctxt">Lange broek (2)<small>Bergen = koud, ook in juli.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="p04"><span class="box"></span><span class="ctxt">Warme hoodie of fleece<small>Voor de grotten (10°C) en de kabelbaan.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="p05"><span class="box"></span><span class="ctxt">Regenjas<small>Niet vergeten. Echt niet vergeten.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="p06"><span class="box"></span><span class="ctxt">Zwemkleding (2)</span></label>
+    <label class="check"><input type="checkbox" data-p="p07"><span class="box"></span><span class="ctxt">Ondergoed + sokken (10)</span></label>
+    <label class="check"><input type="checkbox" data-p="p08"><span class="box"></span><span class="ctxt">Pyjama</span></label>
+    <label class="check"><input type="checkbox" data-p="p09"><span class="box"></span><span class="ctxt">Pet of zonnehoed</span></label>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:6px">Schoenen</h3>
+    <label class="check"><input type="checkbox" data-p="p10"><span class="box"></span><span class="ctxt">Wandelschoenen<small>Voor kloven en watervallen.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="p11"><span class="box"></span><span class="ctxt">Waterschoenen<small>De Soča ligt vol gladde keien.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="p12"><span class="box"></span><span class="ctxt">Slippers (camping + douche)</span></label>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:6px">Jouw eigen spullen</h3>
+    <label class="check"><input type="checkbox" data-p="p13"><span class="box"></span><span class="ctxt">Drinkbus<small>Kraanwater is overal drinkbaar in Slovenië.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="p14"><span class="box"></span><span class="ctxt">Zaklamp of hoofdlamp<small>Voor naar de wc 's nachts. Vertrouw ons.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="p15"><span class="box"></span><span class="ctxt">Handdoek + zwemhanddoek</span></label>
+    <label class="check"><input type="checkbox" data-p="p16"><span class="box"></span><span class="ctxt">Zonnecrème + zonnebril</span></label>
+    <label class="check"><input type="checkbox" data-p="p17"><span class="box"></span><span class="ctxt">Boek, strip of kaartspel</span></label>
+    <label class="check"><input type="checkbox" data-p="p18"><span class="box"></span><span class="ctxt">Koptelefoon + powerbank<small>En muziek/films offline gedownload!</small></span></label>
+    <label class="check"><input type="checkbox" data-p="p19"><span class="box"></span><span class="ctxt">Slaapzak + kussen + matje<small>De pop-uptenten in Piran hebben géén matras.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="p20"><span class="box"></span><span class="ctxt">Iets voor onderweg (8 uur auto!)</span></label>
+  </div>
+  <button class="reset" id="resetme">Alles van mij wissen</button>
+</section>
+
+<!-- ================= SPELLEN ================= -->
+<section class="tabpane" id="t-spellen">
+  <h2 class="sec">Reisbingo</h2>
+  <p class="note">Tik aan wat je ziet. Een volle rij — horizontaal, verticaal of schuin — en je roept <b>BINGO!</b></p>
+  <div class="bingo" id="bingo"></div>
+  <div id="bingoshout">🎉 BINGO! 🎉</div>
+  <button class="reset" id="resetbingo">Bingokaart leegmaken</button>
+
+  <h2 class="sec">Landenspel</h2>
+  <p class="note">Tik een land aan als je die nummerplaat spot. Wie heeft er op het einde het meest?</p>
+  <div class="plates" id="plates"></div>
+  <p class="note" style="margin-top:8px;font-weight:700;color:var(--ink)">Gespot: <span id="platecount" style="font-family:var(--mono)">0</span> / 18</p>
+
+  <h2 class="sec">Nog 3 spelletjes</h2>
+  <div class="card">
+    <h3>20 vragen</h3>
+    <div class="note">Eén iemand denkt aan iets. De rest mag 20 ja/nee-vragen stellen om te raden wat het is.</div>
+  </div>
+  <div class="card">
+    <h3>Verhaal-estafette</h3>
+    <div class="note">Om de beurt voeg je één zin toe aan hetzelfde verhaal. Het wordt gegarandeerd belachelijk.</div>
+  </div>
+  <div class="card">
+    <h3>Playlist</h3>
+    <div class="note">Ieder kiest 5 nummers voor de gezinsplaylist. <b>Download hem offline</b> — in de bergtunnels heb je geen bereik.</div>
+  </div>
+
+  <h2 class="sec">Sloveens voor beginners</h2>
+  <div class="card">
+    <div class="word"><span class="nl">Hallo</span><span class="sl">Živijo</span><span class="sp">zjie-VIE-jo</span></div>
+    <div class="word"><span class="nl">Dank je</span><span class="sl">Hvala</span><span class="sp">HFAA-la</span></div>
+    <div class="word"><span class="nl">Alsjeblieft</span><span class="sl">Prosim</span><span class="sp">PRO-sim</span></div>
+    <div class="word"><span class="nl">Ja / Nee</span><span class="sl">Da / Ne</span><span class="sp">da / ne</span></div>
+    <div class="word"><span class="nl">Een ijsje!</span><span class="sl">Sladoled</span><span class="sp">sla-do-LED</span></div>
+    <div class="word"><span class="nl">Water</span><span class="sl">Voda</span><span class="sp">VO-da</span></div>
+    <div class="word"><span class="nl">Hond</span><span class="sl">Pes</span><span class="sp">pes</span></div>
+    <div class="word"><span class="nl">Waar is de wc?</span><span class="sl">Kje je stranišče?</span><span class="sp">kje je stra-NIESJ-tsje</span></div>
+    <div class="word"><span class="nl">Hoeveel kost het?</span><span class="sl">Koliko stane?</span><span class="sp">KO-li-ko STA-ne</span></div>
+    <div class="word"><span class="nl">Help!</span><span class="sl">Na pomoč!</span><span class="sp">na po-MOTSJ</span></div>
+    <div class="word"><span class="nl">Proost!</span><span class="sl">Živeli!</span><span class="sp">ZJIE-ve-li</span></div>
+    <div class="word"><span class="nl">Tot ziens</span><span class="sl">Nasvidenje</span><span class="sp">nas-VIE-den-je</span></div>
+  </div>
+  <div class="tip">🎯 Missie 29: bestel één keer helemaal zelf een ijsje. <b>"Sladoled, prosim!"</b></div>
+
+  <h2 class="sec">Wist je dat…</h2>
+  <div class="card">
+    <div class="dbody" style="border:0;padding:0;margin:0"><ul>
+      <li>Slovenië is één van de groenste landen ter wereld: ongeveer <b>60% is bos</b>.</li>
+      <li>De hoogste berg, de <b>Triglav (2.864 m)</b>, staat gewoon op de vlag.</li>
+      <li>Slovenië is het enige land met "love" in zijn naam: s-<b>LOVE</b>-nia.</li>
+      <li>De Soča is zó groen door piepklein <b>kalksteenpoeder</b> dat in het water zweeft.</li>
+      <li>Het eiland in het meer van Bled heeft <b>99 trappen</b>. Luid de klok en doe een wens.</li>
+      <li>In de Postojna-grot leeft het <b>mensvisje</b>: blind, bleek, wordt 100+ jaar en kan járen zonder eten.</li>
+      <li>Het symbool van hoofdstad Ljubljana is een <b>draak</b> — er staan er vier op de Drakenbrug.</li>
+      <li>De witte Lipizzaner-paarden worden <b>donkerbruin geboren</b>.</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- ================= BILLIE ================= -->
+<section class="tabpane" id="t-billie">
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,#f2f0ff,#fff)">
+    <div style="font-size:44px">🐕‍🦺</div>
+    <h3 style="font-size:20px">Billie gaat mee</h3>
+    <div class="note">18 dagen, 5 rivieren, 1 zee. Ze rekent op jullie.</div>
+  </div>
+
+  <h2 class="sec">Jullie taken</h2>
+  <div class="card">
+    <label class="check"><input type="checkbox" data-p="b01"><span class="box"></span><span class="ctxt">Waterbak bijvullen<small>Elke ochtend en avond, ook onderweg.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="b02"><span class="box"></span><span class="ctxt">Tekencheck<small>Elke avond: oren, nek, buik, poten, tussen de tenen.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="b03"><span class="box"></span><span class="ctxt">Schaduw zoeken<small>Zet haar mand nooit in de volle zon.</small></span></label>
+    <label class="check"><input type="checkbox" data-p="b04"><span class="box"></span><span class="ctxt">Poepzakje mee<small>Altijd. Overal. Ja, ook in het bos.</small></span></label>
+  </div>
+  <div class="warn"><b>Regel nummer 1:</b> Billie blijft <b>nooit</b> alleen in de auto. Ook niet "heel even". Ook niet met een raampje open.</div>
+
+  <h2 class="sec">Waar mag Billie zwemmen?</h2>
+  <div class="card">
+    <div class="dbody" style="border:0;padding:0;margin:0"><ul>
+      <li><b>Soča bij Camp Vodenca</b> — ondiep, koel, van haar.</li>
+      <li><b>Bohinj-meer (oostkant)</b> — officiële hondenzwemzone.</li>
+      <li><b>Sava bij Camping Sobec</b> — vlak naast de tent.</li>
+      <li><b>Mostnica-rivier</b> — ijskoud. Ze duikt er meteen in.</li>
+      <li><b>Soča bij de Napoleonbrug</b> — met jullie erbij.</li>
+    </ul></div>
+  </div>
+
+  <h2 class="sec">Waar mag ze NIET binnen?</h2>
+  <div class="card">
+    <div class="dbody" style="border:0;padding:0;margin:0"><ul>
+      <li>De grotten van <b>Postojna</b> en <b>Škocjan</b> (Postojna heeft wel een bewaakte hondenplek in de schaduw).</li>
+      <li>Musea en het kasteel binnenin.</li>
+      <li><b>Pula</b>: veel te warm (30–35°C). Ze blijft die dag op Kaki Plac, in het dog park.</li>
+      <li>Bij de <b>zoutpannen</b>: aan de lijn — daar broeden vogels.</li>
+    </ul></div>
+  </div>
+
+  <h2 class="sec">Billie's wandelrapport</h2>
+  <p class="note">Bijhouden en elke avond voorlezen aan Billie. Zij doet alsof ze luistert.</p>
+  <div class="card" id="counters">
+    <div class="cnt"><span class="lab">🏊 Meren &amp; rivieren in gesprongen</span><button data-c="c1" data-d="-1">−</button><span class="num" id="c1">0</span><button class="plus" data-c="c1" data-d="1">+</button></div>
+    <div class="cnt"><span class="lab">🦴 Stokken veroverd</span><button data-c="c2" data-d="-1">−</button><span class="num" id="c2">0</span><button class="plus" data-c="c2" data-d="1">+</button></div>
+    <div class="cnt"><span class="lab">🐶 Andere honden ontmoet</span><button data-c="c3" data-d="-1">−</button><span class="num" id="c3">0</span><button class="plus" data-c="c3" data-d="1">+</button></div>
+    <div class="cnt"><span class="lab">🐐 Geiten/steenbokken gespot</span><button data-c="c4" data-d="-1">−</button><span class="num" id="c4">0</span><button class="plus" data-c="c4" data-d="1">+</button></div>
+  </div>
+
+  <footer>
+    Reisboek Slovenië 2026 · Kids editie<br>
+    Prijzen, boekingen en andere saaie dingen staan in het boek van papa &amp; mama.<br>
+    Živeli! 🥤
+  </footer>
+</section>
+
+</main>
+
+<script>
+(function(){
+"use strict";
+
+if(window.NodeList && !NodeList.prototype.forEach){ NodeList.prototype.forEach = Array.prototype.forEach; }
+
+/* ---------- opslag (valt terug op geheugen als de browser het blokkeert) ---------- */
+var mem = {};
+function put(k,v){ try{ localStorage.setItem(k,v); }catch(e){} mem[k]=v; }
+function get(k){ try{ var v=localStorage.getItem(k); if(v!==null) return v; }catch(e){} return (k in mem)?mem[k]:null; }
+function del(k){ try{ localStorage.removeItem(k); }catch(e){} delete mem[k]; }
+
+var NAMES = ["Loes","Willem","Charlotte"];
+var who = get("sl26:who") || "";
+
+/* ---------- naamkeuze ---------- */
+var intro = document.getElementById("intro");
+function setWho(n){
+  who = n;
+  put("sl26:who", n);
+  intro.style.display = "none";
+  document.querySelectorAll("#whopills button").forEach(function(b){
+    b.setAttribute("aria-pressed", b.dataset.name === n ? "true" : "false");
+  });
+  loadTicks();
+  loadBingo();
+  loadPlates();
+  updateRank();
+  updateScoreboard();
+}
+var VALID = ["Loes","Willem","Charlotte","Iedereen"];
+document.querySelectorAll("[data-name]").forEach(function(b){
+  b.addEventListener("click", function(){ setWho(b.dataset.name); });
+});
+
+/* ---------- tabs ---------- */
+document.querySelectorAll("nav.tabs button").forEach(function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll("nav.tabs button").forEach(function(x){ x.setAttribute("aria-selected","false"); });
+    b.setAttribute("aria-selected","true");
+    document.querySelectorAll(".tabpane").forEach(function(p){ p.classList.remove("active"); });
+    document.getElementById("t"+"-"+b.dataset.tab).classList.add("active");
+    window.scrollTo(0,0);
+  });
+});
+
+/* ---------- aftellen + vandaag ---------- */
+var DEP = new Date(2026,6,17,6,0,0);      // 17 juli 2026, 06:00
+var END = new Date(2026,7,3,23,59,59);    // 3 augustus 2026
+function ymd(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+
+function tick(){
+  var now = new Date();
+  var box = document.getElementById("count");
+  var big = document.getElementById("cbig");
+  var lbl = document.getElementById("clbl");
+  var days = document.querySelectorAll("details.day");
+  var todayKey = ymd(now);
+  var idx = -1;
+
+  days.forEach(function(d,i){
+    d.classList.remove("today","past");
+    if(d.dataset.date === todayKey){ d.classList.add("today"); idx = i; }
+    else if(d.dataset.date < todayKey){ d.classList.add("past"); }
+  });
+
+  if(now < DEP){
+    // slapen = kalendernachten, niet afgeronde uren
+    var d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var d1 = new Date(DEP.getFullYear(), DEP.getMonth(), DEP.getDate());
+    var dd = Math.round((d1 - d0)/86400000);
+    var ms = DEP - now;
+    var hh = Math.floor(ms/3600000);
+    var mm = Math.floor(ms%3600000/60000);
+    box.classList.remove("live");
+    if(dd > 1){ big.textContent = dd; lbl.textContent = "nachtjes slapen"; }
+    else if(dd === 1){ big.textContent = "1"; lbl.textContent = "nachtje slapen — morgen gaan we!"; }
+    else { big.textContent = hh+":"+String(mm).padStart(2,"0"); lbl.textContent = "uur tot vertrek"; }
+    document.getElementById("phase").textContent = "Kids editie";
+  } else if(now <= END){
+    box.classList.add("live");
+    var n = idx>=0 ? idx+1 : 18;
+    big.textContent = "Dag "+n;
+    lbl.textContent = "van 18 · we zijn er!";
+    var where = ["onderweg","Soča","Soča","Soča","Soča","Soča","Bled","Bled","Bled","Bled","Bled","Bled","Piran","Piran","Piran","Piran","onderweg","bijna thuis"][n-1];
+    document.getElementById("phase").textContent = "Dag "+n+" · "+where;
+    document.getElementById("road").classList.add("done");
+    if(idx>=0 && !days[idx].dataset.opened){ days[idx].open = true; days[idx].dataset.opened = "1"; }
+  } else {
+    box.classList.remove("live");
+    big.textContent = "🏔";
+    lbl.textContent = "Terug thuis — Živeli!";
+    document.getElementById("phase").textContent = "Kids editie";
+  }
+}
+tick();
+setInterval(tick, 30000);
+
+/* ---------- vinkjes (missies, rugzak, taken) ---------- */
+function key(id){ return "sl26:"+(who||"gast")+":"+id; }
+var ticks = document.querySelectorAll("input[data-m], input[data-p]");
+function loadTicks(){
+  if(!ticks) return;
+  ticks.forEach(function(inp){
+    var id = inp.dataset.m || inp.dataset.p;
+    inp.checked = get(key(id)) === "1";
+  });
+}
+ticks.forEach(function(inp){
+  inp.addEventListener("change", function(){
+    var id = inp.dataset.m || inp.dataset.p;
+    if(inp.checked) put(key(id),"1"); else del(key(id));
+    updateRank();
+    updateScoreboard();
+  });
+});
+
+/* ---------- rang ---------- */
+var RANKS = [
+  [0,  "Kampeerder in opleiding"],
+  [8,  "Bergwandelaar"],
+  [15, "Kloofduiker"],
+  [22, "Soča-held"],
+  [29, "Zlatorog 🏆"]
+];
+function countM(person){
+  var n = 0;
+  for(var i=1;i<=30;i++){
+    var id = "m"+String(i).padStart(2,"0");
+    if(get("sl26:"+(person||"gast")+":"+id) === "1") n++;
+  }
+  return n;
+}
+function updateRank(){
+  var n = countM(who);
+  document.getElementById("rankcount").textContent = n;
+  document.getElementById("rankbar").style.width = Math.round(n/30*100)+"%";
+  var name = RANKS[0][1];
+  RANKS.forEach(function(r){ if(n >= r[0]) name = r[1]; });
+  document.getElementById("rankname").textContent = name;
+}
+function updateScoreboard(){
+  var el = document.getElementById("scoreboard");
+  el.innerHTML = "";
+  NAMES.forEach(function(n){
+    var d = document.createElement("div");
+    d.innerHTML = '<div class="p">'+countM(n)+'</div><div class="n">'+n+'</div>';
+    if(n === who) d.style.outline = "2px solid var(--soca)";
+    el.appendChild(d);
+  });
+}
+
+/* ---------- bingo ---------- */
+var BINGO = ["Tunnel","Kasteel op een berg","Koe in de wei","Sneeuw op een bergtop",
+             "Meer of rivier","Tractor","Camper","Brug over water",
+             "Geit of steenbok","Bord \"Slovenija\"","Fietser","Kerktoren",
+             "Auto met kano","Bord met waterval","Zonnepanelen","Regenboog of bui"];
+var bg = document.getElementById("bingo");
+BINGO.forEach(function(t,i){
+  var b = document.createElement("button");
+  b.type = "button";
+  b.textContent = t;
+  b.setAttribute("aria-pressed","false");
+  b.addEventListener("click", function(){
+    var on = b.getAttribute("aria-pressed") === "true";
+    b.setAttribute("aria-pressed", on ? "false" : "true");
+    if(on) del(key("bingo"+i)); else put(key("bingo"+i),"1");
+    checkBingo();
+  });
+  bg.appendChild(b);
+});
+function loadBingo(){
+  if(!bg) return;
+  bg.querySelectorAll("button").forEach(function(b,i){
+    b.setAttribute("aria-pressed", get(key("bingo"+i)) === "1" ? "true" : "false");
+  });
+  checkBingo();
+}
+function checkBingo(){
+  var c = [];
+  bg.querySelectorAll("button").forEach(function(b){ c.push(b.getAttribute("aria-pressed")==="true"); });
+  var lines = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],
+               [0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],
+               [0,5,10,15],[3,6,9,12]];
+  var win = lines.some(function(l){ return l.every(function(i){ return c[i]; }); });
+  document.getElementById("bingoshout").classList.toggle("on", win);
+}
+document.getElementById("resetbingo").addEventListener("click", function(){
+  for(var i=0;i<16;i++) del(key("bingo"+i));
+  loadBingo();
+});
+
+/* ---------- landenspel ---------- */
+var PLATES = ["B","NL","D","F","L","A","SI","HR","I","CH","CZ","SK","PL","H","E","P","DK","S"];
+var pl = document.getElementById("plates");
+PLATES.forEach(function(p){
+  var b = document.createElement("button");
+  b.type = "button";
+  b.textContent = p;
+  b.setAttribute("aria-pressed","false");
+  b.addEventListener("click", function(){
+    var on = b.getAttribute("aria-pressed") === "true";
+    b.setAttribute("aria-pressed", on ? "false" : "true");
+    if(on) del(key("plate"+p)); else put(key("plate"+p),"1");
+    countPlates();
+  });
+  pl.appendChild(b);
+});
+function loadPlates(){
+  if(!pl) return;
+  pl.querySelectorAll("button").forEach(function(b){
+    b.setAttribute("aria-pressed", get(key("plate"+b.textContent)) === "1" ? "true" : "false");
+  });
+  countPlates();
+}
+function countPlates(){
+  var n = pl.querySelectorAll('button[aria-pressed="true"]').length;
+  document.getElementById("platecount").textContent = n;
+}
+
+/* ---------- Billie's tellers (gezin, niet per persoon) ---------- */
+document.querySelectorAll("#counters button").forEach(function(b){
+  b.addEventListener("click", function(){
+    var c = b.dataset.c;
+    var v = Math.max(0, (parseInt(get("sl26:fam:"+c)||"0",10)) + parseInt(b.dataset.d,10));
+    put("sl26:fam:"+c, String(v));
+    document.getElementById(c).textContent = v;
+  });
+});
+["c1","c2","c3","c4"].forEach(function(c){
+  document.getElementById(c).textContent = get("sl26:fam:"+c) || "0";
+});
+
+/* ---------- noodnummers ---------- */
+[["tel1","call1"],["tel2","call2"]].forEach(function(pair){
+  var inp = document.getElementById(pair[0]);
+  var a = document.getElementById(pair[1]);
+  inp.value = get("sl26:fam:"+pair[0]) || "";
+  function sync(){
+    var v = inp.value.replace(/[^0-9+]/g,"");
+    a.href = v ? "tel:"+v : "#";
+    a.style.opacity = v ? "1" : ".4";
+  }
+  inp.addEventListener("input", function(){ put("sl26:fam:"+pair[0], inp.value); sync(); });
+  sync();
+});
+
+/* ---------- reset ---------- */
+document.getElementById("resetme").addEventListener("click", function(){
+  if(!confirm("Al jouw vinkjes wissen?")) return;
+  ticks.forEach(function(inp){ del(key(inp.dataset.m || inp.dataset.p)); inp.checked = false; });
+  updateRank();
+  updateScoreboard();
+});
+
+/* ---------- werkt de opslag hier écht? ---------- */
+var persists = false;
+try{ localStorage.setItem("sl26:probe","1"); persists = localStorage.getItem("sl26:probe")==="1"; localStorage.removeItem("sl26:probe"); }catch(e){ persists = false; }
+if(!persists){ document.getElementById("nostore").style.display = "block"; }
+
+/* ---------- tip: zet op beginscherm ---------- */
+var standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+if(!standalone && persists && get("sl26:fam:a2hs") !== "off"){
+  document.getElementById("a2hs").style.display = "block";
+}
+document.getElementById("a2hsx").addEventListener("click", function(){
+  put("sl26:fam:a2hs","off");
+  document.getElementById("a2hs").style.display = "none";
+});
+
+/* ---------- offline maken (werkt alleen via een https-link) ---------- */
+if("serviceWorker" in navigator && location.protocol === "https:"){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("sw.js").catch(function(){});
+  });
+}
+
+/* ---------- start (pas hier bestaat alles) ---------- */
+if(who && VALID.indexOf(who) >= 0){
+  setWho(who);                       // vult ook alle lijsten in
+} else {
+  intro.style.display = "flex";      // eerst je naam kiezen
+  loadTicks(); loadBingo(); loadPlates(); updateRank(); updateScoreboard();
+}
+
+})();
+</script>
+</body>
+</html>
