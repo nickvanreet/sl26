@@ -15,7 +15,10 @@ function load(seed, when, storageWorks = true){
       Object.defineProperty(w,"localStorage",{value:{
         getItem:k=>storageWorks?(k in store?store[k]:null):boom(),
         setItem:(k,v)=>storageWorks?(store[k]=String(v)):boom(),
-        removeItem:k=>storageWorks?delete store[k]:boom(), clear:()=>{}}});
+        removeItem:k=>storageWorks?delete store[k]:boom(),
+        key:i=>{ const ks=Object.keys(store); return i<ks.length?ks[i]:null; },
+        get length(){ return Object.keys(store).length; },
+        clear:()=>{ for(const k of Object.keys(store)) delete store[k]; }}});
       if(when){
         const T = new w.Date(when).getTime();
         const Real = w.Date;
@@ -41,15 +44,17 @@ function scenario(label, seed, when, storageWorks = true){
   ok(switched === 6, `alle 6 tabbladen wisselen (${switched}/6)`);
 
   ok(doc.querySelectorAll("details.day").length === 18, "18 dagkaarten");
-  ok(doc.querySelectorAll("input[data-m]").length === 40, `40 missies (30 + 10 foto)`);
+  ok(doc.querySelectorAll("input[data-m]").length === 46, `46 missies (36 + 10 foto) (${doc.querySelectorAll("input[data-m]").length})`);
   ok(!!doc.getElementById("t-dagboek"), "dagboek-tab aanwezig");
   ok(doc.querySelectorAll("#dagboek .dbentry").length === 18, `dagboek heeft 18 dag-entries (${doc.querySelectorAll("#dagboek .dbentry").length})`);
   ok(doc.querySelectorAll("#wheel path").length === 5, "Het Rad met 5 vakken (incl. Mama & Papa)");
-  ok(doc.querySelectorAll("#wheeltasks button").length === 4, "rad heeft 4 kiesbare klussen");
+  ok(doc.querySelectorAll("#wheeltasks button").length === 12, `rad heeft 12 kiesbare klussen (${doc.querySelectorAll("#wheeltasks button").length})`);
+  ok(doc.querySelectorAll("#bingo button").length === 25, `bingo is 5x5 (${doc.querySelectorAll("#bingo button").length} tegels)`);
   ok(/Vraag 1\/10/.test((doc.getElementById("quiz")||{}).textContent||""), "quiz toont vraag 1 van 10");
   ok(doc.querySelectorAll(".lnk a").length >= 40, `links aanwezig (${doc.querySelectorAll(".lnk a").length})`);
   ok([...doc.querySelectorAll(".lnk a")].every(a => /^https:\/\//.test(a.href)), "alle links zijn https");
-  ok(doc.querySelectorAll("#kast button").length === 40, "prijzenkast heeft 40 medailles");
+  ok(doc.querySelectorAll("#kast button").length === 46, `prijzenkast heeft 46 medailles (${doc.querySelectorAll("#kast button").length})`);
+  ok(doc.querySelectorAll("#badges .badge").length === 11, `11 badges (${doc.querySelectorAll("#badges .badge").length})`);
   ok(!/€|budget/i.test(doc.body.textContent), "nog steeds geen prijzen");
   return { dom, doc };
 }
@@ -117,12 +122,12 @@ console.log("\n5. Badge ontgrendelt met datum-waarden (v8-migratie, was kapot)")
   dom.window.close(); legacy.dom.window.close();
 }
 
-console.log("\n6. Familie-scorebord toont /40, niet /30");
+console.log("\n6. Familie-scorebord toont /46 (MIDS.length), niet /30");
 {
   const { dom, doc } = load({ "sl26:who":"Loes", "sl26:Loes:m01":"2026-07-18" }, "2026-07-18T09:00:00");
   const fam = doc.getElementById("family").textContent;
-  ok(/1\/40/.test(fam), `familie-scorebord noemer is /40 ("${fam.replace(/\s+/g,' ').trim().slice(0,42)}")`);
-  ok(!/\/30/.test(fam), "geen /30 meer in familie-scorebord");
+  ok(/1\/46/.test(fam), `familie-scorebord noemer is /46 ("${fam.replace(/\s+/g,' ').trim().slice(0,42)}")`);
+  ok(!/\/30/.test(fam) && !/\/40/.test(fam), "geen oude noemer (/30 of /40) meer");
   dom.window.close();
 }
 
@@ -222,6 +227,61 @@ console.log("\n13. Inpak-trofee: 🎒 ontgrendelt als de rugzak vol is");
   const t2 = [...partial.doc.querySelectorAll("#badges .badge")].find(b => /Ingepakt/.test(b.textContent));
   ok(t2 && !t2.classList.contains("on") && /1\/20/.test(t2.textContent), "trofee nog niet ontgrendeld bij 1/20");
   dom.window.close(); partial.dom.window.close();
+}
+
+console.log("\n14. Bingo 5x5: punten per volle lijn");
+{
+  const { dom, doc } = load({ "sl26:who":"Loes" }, "2026-07-20T09:00:00");
+  const btns = doc.querySelectorAll("#bingo button");
+  ok(btns.length === 25, `25 tegels (${btns.length})`);
+  for(let i=0;i<5;i++) click(dom, btns[i]);   // bovenste rij (posities 0-4)
+  ok(doc.getElementById("bingolines").textContent === "1", `1 volle lijn (${doc.getElementById("bingolines").textContent})`);
+  ok(doc.getElementById("bingopts").textContent === "10", `10 punten voor 1 lijn (${doc.getElementById("bingopts").textContent})`);
+  dom.window.close();
+}
+
+console.log("\n15. Familie-scorebord: balk, kroon & streak van anderen");
+{
+  const { dom, doc } = load({
+    "sl26:who":"Loes", "sl26:Loes:m01":"2026-07-18",
+    "sl26:shared:Willem":"20~2~2~20260721~3"
+  }, "2026-07-20T09:00:00");
+  const fam = doc.getElementById("family");
+  ok(fam.querySelectorAll(".fbar i").length === 2, `2 voortgangsbalken (${fam.querySelectorAll(".fbar i").length})`);
+  ok(/👑/.test(fam.textContent), "de leider (Willem, 20) krijgt een kroon");
+  ok(/🔥3/.test(fam.textContent), "streak van een gedeelde speler wordt getoond");
+  dom.window.close();
+}
+
+console.log("\n16. Verhaal-estafette: voorlees-knop (TTS)");
+{
+  const { dom, doc } = load({ "sl26:who":"Loes", "sl26:fam:story":JSON.stringify(["Er was eens een draak."]) }, "2026-07-20T09:00:00");
+  ok(/Lees voor/.test(doc.getElementById("vhread").textContent), "voorlees-knop aanwezig");
+  ok(!!doc.getElementById("vhstop"), "stop-knop aanwezig");
+  click(dom, doc.getElementById("vhread"));
+  ok(/draak/.test(doc.getElementById("vhfull").textContent), "verhaal wordt ook getoond bij voorlezen");
+}
+
+console.log("\n17. Volledige reset per speler (incl. medailles, badges, bingo)");
+{
+  const seed = { "sl26:who":"Loes" };
+  for(let i=1;i<=36;i++) seed["sl26:Loes:m"+String(i).padStart(2,"0")] = "2026-07-20";
+  seed["sl26:Loes:p01"] = "1";
+  seed["sl26:Loes:bingo0"] = "1"; seed["sl26:Loes:bingo1"] = "1";
+  seed["sl26:Loes:cold"] = "8";
+  seed["sl26:Loes:note:2026-07-18"] = "Test-notitie";
+  const { dom, doc } = load(seed, "2026-07-20T09:00:00");
+  ok(doc.getElementById("rankcount").textContent === "36", `36 missies vóór reset (${doc.getElementById("rankcount").textContent})`);
+  ok([...doc.querySelectorAll("#kast button.won")].length > 0, "medailles gewonnen vóór reset");
+  ok([...doc.querySelectorAll("#badges .badge.on")].length > 0, "badges verdiend vóór reset");
+  dom.window.confirm = () => true;
+  click(dom, doc.getElementById("resetme"));
+  ok(doc.getElementById("rankcount").textContent === "0", `0 missies na reset (${doc.getElementById("rankcount").textContent})`);
+  ok([...doc.querySelectorAll("#kast button.won")].length === 0, "geen medailles meer na reset (trofeeën resetten óók)");
+  ok([...doc.querySelectorAll("#badges .badge.on")].length === 0, "geen badges meer na reset");
+  ok(doc.querySelectorAll('#bingo button[aria-pressed="true"]').length === 0, "bingo leeg na reset");
+  ok(!/8°/.test(doc.getElementById("coldboard").textContent), "koudste-record weg na reset");
+  dom.window.close();
 }
 
 console.log(failed ? `\n${failed} test(s) GEFAALD\n` : "\nAlles in orde.\n");

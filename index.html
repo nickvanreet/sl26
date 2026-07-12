@@ -178,14 +178,18 @@ details.day[open]>summary .dteaser{display:none}
 .score .p{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--ink)}
 
 /* ---------- bingo ---------- */
-.bingo{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}
+.bingo{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:10px 0}
 .bingo button{
-  aspect-ratio:1;border:2px solid var(--line);background:var(--paper);border-radius:10px;
-  font:600 10.5px/1.2 var(--dsp);color:var(--ink);padding:4px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;text-align:center;
+  aspect-ratio:1;border:2px solid var(--line);background:var(--paper);border-radius:9px;
+  font:600 8.5px/1.1 var(--dsp);color:var(--ink);padding:2px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;
 }
 .bingo button[aria-pressed=true]{background:var(--soca);border-color:var(--soca);color:#fff}
-#bingoshout{display:none;background:var(--sun);color:#5a3d00;font-weight:900;text-align:center;padding:12px;border-radius:12px;letter-spacing:2px}
+.bingoscore{display:flex;gap:8px;margin:8px 0}
+.bingoscore div{flex:1;background:var(--paper);border-radius:10px;padding:8px 4px;text-align:center;box-shadow:0 1px 3px rgba(8,34,44,.07)}
+.bingoscore .v{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--soca);line-height:1}
+.bingoscore .k{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--mist);margin-top:2px}
+#bingoshout{display:none;background:var(--sun);color:#5a3d00;font-weight:900;text-align:center;padding:12px;border-radius:12px;letter-spacing:2px;margin-top:8px}
 #bingoshout.on{display:block}
 .plates{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .plates button{
@@ -287,12 +291,15 @@ body.night .tip small,body.night .note{color:var(--mist)}
 .sharerow button{border:0;border-radius:9px;background:var(--sea);color:#fff;font:800 13px var(--dsp);padding:0 14px;cursor:pointer}
 #shareMsg{min-height:16px;margin-top:6px;font-weight:600}
 #family{margin-top:6px}
-#family .fam{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+#family .fam{padding:10px 0;border-bottom:1px solid var(--line)}
 #family .fam:last-child{border-bottom:0}
+#family .famtop{display:flex;align-items:center;gap:8px}
 #family .fnm{flex:1;font-weight:800;font-size:14.5px}
 #family .fnm.me{color:var(--soca)}
-#family .fnm small{display:block;font-weight:500;color:var(--mist);font-size:11px}
+#family .fnm small{display:block;font-weight:500;color:var(--mist);font-size:11px;margin-top:1px}
 #family .fsc{font-family:var(--mono);font-weight:700;font-size:16px}
+#family .fbar{height:8px;background:rgba(159,179,187,.25);border-radius:5px;overflow:hidden;margin-top:6px}
+#family .fbar i{display:block;height:100%;background:linear-gradient(90deg,var(--soca),var(--sun));border-radius:5px;transition:width .4s}
 
 /* ---------- links (allemaal uit het boek van papa) ---------- */
 .lnk{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;padding-top:10px;border-top:1px dashed var(--line)}
@@ -897,7 +904,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
     <div class="r1">Jouw rang</div>
     <div class="r2" id="rankname">Kampeerder in opleiding</div>
     <div class="bar"><i id="rankbar" style="width:0%"></i></div>
-    <div class="r3"><span id="rankcount">0</span> van de 40 missies volbracht</div>
+    <div class="r3"><span id="rankcount">0</span> van de <span id="ranktotal">40</span> missies volbracht</div>
   </div>
 
   <div class="score" id="scoreboard"></div>
@@ -966,6 +973,16 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
     <label class="check"><input type="checkbox" data-m="m30"><span class="box"></span><span class="ctxt">Roep BINGO in de auto</span></label>
   </div>
 
+  <h2 class="sec">Extra uitdagingen 🏕️</h2>
+  <div class="card" data-mission-group>
+    <label class="check"><input type="checkbox" data-m="m31"><span class="box"></span><span class="ctxt">Help de tent opzetten of afbreken</span></label>
+    <label class="check"><input type="checkbox" data-m="m32"><span class="box"></span><span class="ctxt">Maak een kampvuur mee<small>Marshmallows tellen als bonus.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m33"><span class="box"></span><span class="ctxt">Was een keer zelf de afwas</span></label>
+    <label class="check"><input type="checkbox" data-m="m34"><span class="box"></span><span class="ctxt">Sta een ochtend als allereerste op<small>Zonsopgang boven de bergen.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="m35"><span class="box"></span><span class="ctxt">Zwem op 3 verschillende plekken</span></label>
+    <label class="check"><input type="checkbox" data-m="m36"><span class="box"></span><span class="ctxt">Ken 5 Sloveense woorden uit je hoofd<small>Živijo · Hvala · Prosim · Voda · Sladoled</small></span></label>
+  </div>
+
   <h2 class="sec">Foto-missies</h2>
   <p class="note" style="margin-bottom:8px">Tien foto's om te maken. Op de laatste dag stemt iedereen: welke is de beste van de reis?</p>
   <div class="card" data-mission-group>
@@ -1020,6 +1037,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   <h2 class="sec">Reisbingo</h2>
   <p class="note">Tik aan wat je ziet. Een volle rij — horizontaal, verticaal of schuin — en je roept <b>BINGO!</b></p>
   <div class="bingo" id="bingo"></div>
+  <div class="bingoscore"><div><div class="v" id="bingolines">0</div><div class="k">volle lijnen</div></div><div><div class="v" id="bingopts">0</div><div class="k">punten</div></div></div>
   <div id="bingoshout">🎉 BINGO! 🎉</div>
   <button class="reset" id="resetbingo">Bingokaart leegmaken</button>
 
@@ -1200,6 +1218,10 @@ var mem = {};
 function put(k,v){ try{ localStorage.setItem(k,v); }catch(e){} mem[k]=v; }
 function get(k){ try{ var v=localStorage.getItem(k); if(v!==null) return v; }catch(e){} return (k in mem)?mem[k]:null; }
 function del(k){ try{ localStorage.removeItem(k); }catch(e){} delete mem[k]; }
+function clearPrefix(prefix){
+  try{ var rm = []; for(var i=0;i<localStorage.length;i++){ var kk = localStorage.key(i); if(kk && kk.indexOf(prefix) === 0) rm.push(kk); } rm.forEach(function(kk){ try{ localStorage.removeItem(kk); }catch(e){} }); }catch(e){}
+  Object.keys(mem).forEach(function(kk){ if(kk.indexOf(prefix) === 0) delete mem[kk]; });
+}
 
 /* ---------- feestjes: confetti + geluid (geen bestanden, alles gegenereerd) ---------- */
 var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -1285,6 +1307,7 @@ document.querySelectorAll("[data-name]").forEach(function(b){
 /* ---------- tabs ---------- */
 document.querySelectorAll("nav.tabs button").forEach(function(b){
   b.addEventListener("click", function(){
+    if(typeof stopSpeak === "function") stopSpeak();
     document.querySelectorAll("nav.tabs button").forEach(function(x){ x.setAttribute("aria-selected","false"); });
     b.setAttribute("aria-selected","true");
     document.querySelectorAll(".tabpane").forEach(function(p){ p.classList.remove("active"); });
@@ -1375,13 +1398,13 @@ ticks.forEach(function(inp){
 /* ---------- rang ---------- */
 var RANKS = [
   [0,  "Kampeerder in opleiding"],
-  [10, "Bergwandelaar"],
-  [19, "Kloofduiker"],
-  [28, "Soča-held"],
-  [38, "Zlatorog 🏆"]
+  [11, "Bergwandelaar"],
+  [22, "Kloofduiker"],
+  [34, "Soča-held"],
+  [44, "Zlatorog 🏆"]
 ];
 var MIDS = [];
-for(var _i=1;_i<=30;_i++) MIDS.push("m"+String(_i).padStart(2,"0"));
+for(var _i=1;_i<=36;_i++) MIDS.push("m"+String(_i).padStart(2,"0"));
 for(var _i=1;_i<=10;_i++) MIDS.push("f"+String(_i).padStart(2,"0"));
 
 /* Sinds v8 slaan we de datum op i.p.v. "1". Oude "1"-waarden blijven gewoon geldig. */
@@ -1405,6 +1428,7 @@ function celebrateRank(idx){
 function updateRank(animate){
   var n = countM(who);
   document.getElementById("rankcount").textContent = n;
+  var rt = document.getElementById("ranktotal"); if(rt) rt.textContent = MIDS.length;
   document.getElementById("rankbar").style.width = Math.round(n/MIDS.length*100)+"%";
   var idx = rankIdxFor(n);
   document.getElementById("rankname").textContent = RANKS[idx][1];
@@ -1421,6 +1445,10 @@ var BADGES = [
   {k:"bergkoning", em:"🏔", name:"Bergkoning",   ms:["m05","m16","m18"]},
   {k:"smuller",    em:"🧀", name:"Durfsmuller",  ms:["m12","m20","m26"]},
   {k:"legende",    em:"🐉", name:"Legendejager", ms:["m06","m22","m23"]},
+  {k:"fotograaf",  em:"📸", name:"Fotograaf",    ms:["f01","f02","f03","f04","f05","f06","f07","f08","f09","f10"]},
+  {k:"cultuur",    em:"🏰", name:"Cultuurkenner",ms:["m19","m23","m28"]},
+  {k:"hoogte",     em:"😱", name:"Hoogtevrees weg", ms:["m03","m18","m21"]},
+  {k:"kampeerder", em:"🏕", name:"Kampeerder",   ms:["m31","m32","m33","m34"]},
   {k:"inpakker",   em:"🎒", name:"Ingepakt!",    ms:["p01","p02","p03","p04","p05","p06","p07","p08","p09","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"]}
 ];
 var badgeDone = {};
@@ -1453,12 +1481,13 @@ function updateScoreboard(){
 }
 
 /* ---------- bingo ---------- */
-var BINGO = ["Tunnel","Kasteel op een berg","Koe in de wei","Sneeuw op een bergtop",
-             "Meer of rivier","Tractor","Camper","Brug over water",
-             "Geit of steenbok","Bord \"Slovenija\"","Fietser","Kerktoren",
-             "Auto met kano","Bord met waterval","Zonnepanelen","Regenboog of bui"];
+var BINGO = ["Tunnel","Kasteel op een berg","Koe in de wei","Sneeuw op een bergtop","Meer of rivier",
+             "Tractor","Camper","Brug over water","Geit of steenbok","Bord \"Slovenija\"",
+             "Fietser","Kerktoren","Auto met kano","Bord met waterval","Zonnepanelen",
+             "Regenboog of bui","Politieauto","Kudde schapen","Paard in een wei","Motorrijder",
+             "Kerk met ui-koepel","Grensbord","Speeltuin","Zwembad of glijbaan","Iemand die zwaait"];
 var bg = document.getElementById("bingo");
-var bingoWon = false;
+var bingoLines = 0;
 /* Elk kind krijgt zijn eigen kaartvolgorde (vast per naam), zodat broer & zus
    niet dezelfde kaart hebben — maar wél altijd dezelfde bij elke keer openen.
    De vinkjes staan opgeslagen per tegel-id, niet per positie, dus ze blijven
@@ -1489,20 +1518,31 @@ function renderBingo(){
     bg.appendChild(b);
   });
 }
-function loadBingo(){ if(!bg) return; bingoWon = false; renderBingo(); checkBingo(false); }
+function loadBingo(){ if(!bg) return; bingoLines = 0; renderBingo(); checkBingo(false); }
+var BINGO_LINES = [
+  [0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],  /* rijen */
+  [0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],  /* kolommen */
+  [0,6,12,18,24],[4,8,12,16,20]                                                 /* diagonalen */
+];
 function checkBingo(animate){
   var c = [];
   bg.querySelectorAll("button").forEach(function(b){ c.push(b.getAttribute("aria-pressed")==="true"); });
-  var lines = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],
-               [0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],
-               [0,5,10,15],[3,6,9,12]];
-  var win = lines.some(function(l){ return l.every(function(i){ return c[i]; }); });
-  document.getElementById("bingoshout").classList.toggle("on", win);
-  if(win && !bingoWon && animate){ confetti(); beep([659,784,988,1319], 0.28); }
-  bingoWon = win;
+  var done = BINGO_LINES.filter(function(l){ return l.every(function(i){ return c[i]; }); }).length;
+  var full = c.length === 25 && c.every(function(x){ return x; });
+  var pts = done * 10 + (full ? 25 : 0);
+  var lel = document.getElementById("bingolines"), pel = document.getElementById("bingopts");
+  if(lel) lel.textContent = done;
+  if(pel) pel.textContent = pts;
+  var shout = document.getElementById("bingoshout");
+  if(shout){
+    shout.classList.toggle("on", done > 0);
+    shout.textContent = full ? "🎉 VOLLE KAART! 🎉" : (done > 0 ? "🎉 " + done + " volle lijn" + (done > 1 ? "en" : "") + "! 🎉" : "");
+  }
+  if(animate && done > bingoLines){ confetti(); beep(full ? [523,659,784,1047,1319] : [659,784,988,1319], 0.28); }
+  bingoLines = done;
 }
 document.getElementById("resetbingo").addEventListener("click", function(){
-  for(var i=0;i<16;i++) del(key("bingo"+i));
+  for(var i=0;i<25;i++) del(key("bingo"+i));
   loadBingo();
 });
 
@@ -1671,7 +1711,7 @@ function refreshDagboek(){ renderDagboek(); renderFotoReis(); }
 /* ---------- Het Rad: wie doet de klus? (5 namen, kiesbare klus) ---------- */
 var WHEELNAMES = ["Loes","Willem","Charlotte","Mama","Papa"];
 var WHEELCOLORS = ["#0fa98e","#2b8fd4","#ff6b2c","#6d5bd0","#ffc233"];
-var WHEELTASKS = ["de afwas","water halen","de middenstoel","het laatste ijsje kiezen"];
+var WHEELTASKS = ["de afwas","water halen","eerst douchen","de hond uitlaten","de tafel dekken","afruimen","de tent opruimen","het vuur maken","de boodschappen dragen","de middenstoel","de kaart lezen","het laatste ijsje kiezen"];
 var _wheelTask = 0;
 (function(){
   var svg = document.getElementById("wheel"); if(!svg) return;
@@ -1859,8 +1899,28 @@ renderWoordraden();
 /* ---------- Verhaal-estafette ---------- */
 function storyGet(){ try{ return JSON.parse(get("sl26:fam:story") || "[]"); }catch(e){ return []; } }
 function storySet(a){ put("sl26:fam:story", JSON.stringify(a)); }
+var _ttsOk = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
+function speakStory(text){
+  if(!_ttsOk || !text) return false;
+  try{
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "nl-NL"; u.rate = 0.95;
+    var vs = speechSynthesis.getVoices() || [];
+    var nl = vs.filter(function(v){ return /^nl/i.test(v.lang); })[0];
+    if(nl) u.voice = nl;
+    var stopBtn = document.getElementById("vhstop");
+    u.onstart = function(){ if(stopBtn) stopBtn.style.display = ""; };
+    u.onend = function(){ if(stopBtn) stopBtn.style.display = "none"; };
+    u.onerror = function(){ if(stopBtn) stopBtn.style.display = "none"; };
+    speechSynthesis.speak(u);
+    return true;
+  }catch(e){ return false; }
+}
+function stopSpeak(){ try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){} var b = document.getElementById("vhstop"); if(b) b.style.display = "none"; }
 function renderVerhaal(){
   var box = document.getElementById("verhaal"); if(!box) return;
+  stopSpeak();
   var story = storyGet();
   var last = story.length ? story[story.length-1] : "Er was eens…";
   box.innerHTML =
@@ -1868,7 +1928,8 @@ function renderVerhaal(){
     '<textarea class="vh-input" id="vhinput" rows="2" placeholder="…jouw zin erbij"></textarea>' +
     '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
       '<button class="gamebtn" id="vhadd">Voeg toe & geef door</button>' +
-      '<button class="gamebtn ghost" id="vhread">Lees voor ('+story.length+')</button>' +
+      '<button class="gamebtn ghost" id="vhread">🔊 Lees voor ('+story.length+')</button>' +
+      '<button class="gamebtn ghost" id="vhstop" style="display:none">⏹ Stop</button>' +
       (story.length ? '<button class="gamebtn ghost" id="vhnew">Nieuw</button>' : '') +
     '</div><div class="vh-full" id="vhfull"></div>';
   document.getElementById("vhadd").addEventListener("click", function(){
@@ -1878,7 +1939,10 @@ function renderVerhaal(){
   document.getElementById("vhread").addEventListener("click", function(){
     var s = storyGet(), full = document.getElementById("vhfull");
     full.innerHTML = s.length ? s.map(function(x){ return '<div class="s">'+esc(x)+'</div>'; }).join("") : '<p class="note">Nog niks geschreven.</p>';
+    if(!s.length) return;
+    if(!speakStory(s.join(" "))) full.insertAdjacentHTML("afterbegin", '<p class="note">(Voorlezen kan niet op dit toestel — lees het zelf voor. 🎭)</p>');
   });
+  document.getElementById("vhstop").addEventListener("click", stopSpeak);
   var nw = document.getElementById("vhnew");
   if(nw) nw.addEventListener("click", function(){ if(confirm("Nieuw verhaal beginnen? Het oude wordt gewist.")){ storySet([]); renderVerhaal(); } });
 }
@@ -2032,7 +2096,7 @@ function parseScore(code){
   if(NAMES.indexOf(p[1]) < 0) return null;
   var m = parseInt(p[2],10), b = parseInt(p[3],10), r = parseInt(p[4],10);
   if(isNaN(m) || m < 0 || m > 60 || isNaN(b) || isNaN(r)) return null;
-  return { name:p[1], m:m, b:b, r:r, d:p[5] };
+  return { name:p[1], m:m, b:b, r:r, d:p[5], st:(p.length > 7 ? (parseInt(p[7],10) || 0) : 0) };
 }
 function shareMsg(t, warn){
   var el = document.getElementById("shareMsg"); if(!el) return;
@@ -2042,7 +2106,7 @@ function importScore(code){
   var s = parseScore(code);
   if(!s){ shareMsg("Hmm, die code snap ik niet. 🤔", true); return false; }
   if(s.name === who){ shareMsg("Dat ben jij zelf — jouw score staat al bovenaan. 🙂", true); return false; }
-  put("sl26:shared:"+s.name, s.m+"~"+s.b+"~"+s.r+"~"+s.d);
+  put("sl26:shared:"+s.name, s.m+"~"+s.b+"~"+s.r+"~"+s.d+"~"+s.st);
   renderFamily();
   shareMsg("Score van "+s.name+" toegevoegd! 🎉", false);
   return true;
@@ -2052,23 +2116,31 @@ function renderFamily(){
   var rows = [];
   if(who && NAMES.indexOf(who) >= 0){
     var m = countM(who);
-    rows.push({ name:who, m:m, b:countBadges(who), r:rankIdxFor(m), me:true, d:null });
+    rows.push({ name:who, m:m, b:countBadges(who), r:rankIdxFor(m), st:streakOf(who), me:true, d:null });
   }
   NAMES.forEach(function(nm){
     if(nm === who) return;
     var raw = get("sl26:shared:"+nm); if(!raw) return;
     var p = raw.split("~");
-    rows.push({ name:nm, m:parseInt(p[0],10)||0, b:parseInt(p[1],10)||0, r:parseInt(p[2],10)||0, me:false, d:p[3] });
+    rows.push({ name:nm, m:parseInt(p[0],10)||0, b:parseInt(p[1],10)||0, r:parseInt(p[2],10)||0, st:parseInt(p[4],10)||0, me:false, d:p[3] });
   });
   rows.sort(function(a,b){ return b.m - a.m; });
   box.innerHTML = "";
   if(!rows.length){ box.innerHTML = '<p class="note">Nog geen scores. Deel die van jou en plak die van de anderen erbij. 📤</p>'; return; }
+  var top = rows[0].m;
   rows.forEach(function(r){
     var rank = RANKS[r.r] ? RANKS[r.r][1] : "";
-    var sub = r.me ? "jij · nu" : (r.d ? "bijgewerkt "+fmtDate(r.d) : "");
+    var crown = (r.m === top && r.m > 0) ? " 👑" : "";
+    var stx = r.st > 0 ? " · 🔥" + r.st : "";
+    var sub = r.me ? "jij · nu" : (r.d ? "bijgewerkt " + fmtDate(r.d) : "");
+    var pct = Math.round(r.m / MIDS.length * 100);
     var d = document.createElement("div");
     d.className = "fam";
-    d.innerHTML = '<div class="fnm'+(r.me?' me':'')+'">'+r.name+'<small>'+rank+' · 🏅'+r.b+(sub?' · '+sub:'')+'</small></div><div class="fsc">'+r.m+'/'+MIDS.length+'</div>';
+    d.innerHTML =
+      '<div class="famtop"><div class="fnm' + (r.me ? ' me' : '') + '">' + esc(r.name) + crown +
+        '<small>' + esc(rank) + ' · 🏅' + r.b + stx + (sub ? ' · ' + sub : '') + '</small></div>' +
+        '<div class="fsc">' + r.m + '/' + MIDS.length + '</div></div>' +
+      '<div class="fbar"><i style="width:' + pct + '%"></i></div>';
     box.appendChild(d);
   });
 }
@@ -2099,10 +2171,19 @@ document.getElementById("addScore").addEventListener("click", function(){
 
 /* ---------- reset ---------- */
 document.getElementById("resetme").addEventListener("click", function(){
-  if(!confirm("Al jouw vinkjes wissen?")) return;
-  ticks.forEach(function(inp){ del(key(inp.dataset.m || inp.dataset.p)); inp.checked = false; });
-  updateRank();
-  updateScoreboard();
+  var whoName = who && NAMES.indexOf(who) >= 0 ? who : "jou";
+  if(!confirm("Alles van " + whoName + " wissen?\n\nMissies, medailles, badges, bingo, koudste water, dagboek én foto's — alles gaat weg. Dit kan niet ongedaan gemaakt worden.")) return;
+  var p = "sl26:" + (who || "gast") + ":";
+  clearPrefix(p);
+  ticks.forEach(function(inp){ inp.checked = false; });
+  lastRankIdx = -1; badgeDone = {}; bingoLines = 0;
+  loadBingo(); loadPlates(); renderColdboard();
+  updateRank(); updateScoreboard();
+  if(typeof refreshExtras === "function") refreshExtras();   // klus + rota + prijzenkast (medailles)
+  /* foto's uit IndexedDB verwijderen, dan het dagboek verversen */
+  var dates = tripDates(), pending = dates.length;
+  if(!pending){ refreshDagboek(); }
+  else dates.forEach(function(d){ photoDel((who || "gast") + ":" + d, function(){ if(--pending === 0) refreshDagboek(); }); });
 });
 
 /* ---------- werkt de opslag hier écht? ---------- */
@@ -2279,6 +2360,7 @@ var MEDALS = {
   m01:"🥶", m02:"🛶", m03:"🪂", m04:"🌊", m05:"🔁", m06:"🐐", m07:"😈", m08:"🕯", m09:"🤸", m10:"💦",
   m11:"🔔", m12:"🍰", m13:"🛷", m14:"🚣", m15:"🐘", m16:"🏔", m17:"🌉", m18:"📸", m19:"⚒", m20:"🧀",
   m21:"😳", m22:"🐉", m23:"🚽", m24:"🐴", m25:"🧱", m26:"🧂", m27:"🏖", m28:"🏛", m29:"🗣", m30:"🎉",
+  m31:"⛺", m32:"🔥", m33:"🧽", m34:"🌅", m35:"🏊", m36:"📖",
   f01:"🐕", f02:"🤸", f03:"🌅", f04:"🐲", f05:"🍦", f06:"💧", f07:"⛰", f08:"🦎", f09:"🗿", f10:"👪"
 };
 var MONTHS = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
