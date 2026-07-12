@@ -208,5 +208,21 @@ console.log("\n12. Nieuwe spellen renderen zonder fouten");
   dom.window.close();
 }
 
+console.log("\n13. Inpak-trofee: 🎒 ontgrendelt als de rugzak vol is");
+{
+  const seed = { "sl26:who":"Loes" };
+  for(let i=1;i<=20;i++) seed["sl26:Loes:p"+String(i).padStart(2,"0")] = "2026-07-15";
+  const { dom, doc } = load(seed, "2026-07-15T09:00:00");
+  const trofee = [...doc.querySelectorAll("#badges .badge")].find(b => /Ingepakt/.test(b.textContent));
+  ok(!!trofee, "de Ingepakt!-trofee bestaat");
+  ok(trofee && trofee.classList.contains("on"), "trofee ontgrendeld met volle rugzak (20/20)");
+  ok(trofee && /20\/20/.test(trofee.textContent), "trofee toont 20/20");
+  // en niet ontgrendeld als er nog iets mist
+  const partial = load({ "sl26:who":"Willem", "sl26:Willem:p01":"1" }, "2026-07-15T09:00:00");
+  const t2 = [...partial.doc.querySelectorAll("#badges .badge")].find(b => /Ingepakt/.test(b.textContent));
+  ok(t2 && !t2.classList.contains("on") && /1\/20/.test(t2.textContent), "trofee nog niet ontgrendeld bij 1/20");
+  dom.window.close(); partial.dom.window.close();
+}
+
 console.log(failed ? `\n${failed} test(s) GEFAALD\n` : "\nAlles in orde.\n");
 process.exit(failed ? 1 : 0);
