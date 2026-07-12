@@ -50,7 +50,7 @@ header{
 .logo{font-weight:900;letter-spacing:-.5px;font-size:17px;text-transform:uppercase;line-height:1}
 .logo em{font-style:normal;color:var(--soca)}
 .hsub{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:#7ea8b3;text-transform:uppercase;margin-top:2px}
-.who{margin-left:auto;display:flex;gap:4px}
+.who{margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;row-gap:4px}
 .who button{
   font:700 11px/1 var(--dsp);color:#8fb6c0;background:rgba(255,255,255,.07);
   border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:7px 9px;cursor:pointer;
@@ -72,6 +72,8 @@ header{
   background:#fff;color:#07222b;font:800 19px/1 var(--dsp);cursor:pointer;
 }
 .namebtn:active{transform:scale(.98)}
+.namerow{display:flex;gap:9px;margin:9px 0}
+.namebtn.small{margin:0;flex:1;padding:14px;font-size:16px;background:#eafaf5;color:#0b4a4a}
 .skip{background:none;border:0;color:#9fd6cc;font:600 13px/1 var(--dsp);margin-top:16px;padding:12px;cursor:pointer;width:100%}
 
 /* ---------- aftellen ---------- */
@@ -299,6 +301,10 @@ body.night .tip small,body.night .note{color:var(--mist)}
   <button class="namebtn" data-name="Loes">Loes</button>
   <button class="namebtn" data-name="Willem">Willem</button>
   <button class="namebtn" data-name="Charlotte">Charlotte</button>
+  <div class="namerow">
+    <button class="namebtn small" data-name="Mama">Mama</button>
+    <button class="namebtn small" data-name="Papa">Papa</button>
+  </div>
   <button class="skip" data-name="Iedereen">Ik kijk gewoon even mee →</button>
 </div>
 
@@ -313,6 +319,8 @@ body.night .tip small,body.night .note{color:var(--mist)}
       <button data-name="Loes">Loes</button>
       <button data-name="Willem">Willem</button>
       <button data-name="Charlotte">Charlotte</button>
+      <button data-name="Mama">Mama</button>
+      <button data-name="Papa">Papa</button>
     </div>
   </div>
 </header>
@@ -1032,7 +1040,7 @@ function beep(freqs, dur){
   }catch(e){}
 }
 
-var NAMES = ["Loes","Willem","Charlotte"];
+var NAMES = ["Loes","Willem","Charlotte","Mama","Papa"];
 var who = get("sl26:who") || "";
 
 /* ---------- naamkeuze ---------- */
@@ -1051,7 +1059,7 @@ function setWho(n){
   updateRank();
   updateScoreboard();
 }
-var VALID = ["Loes","Willem","Charlotte","Iedereen"];
+var VALID = ["Loes","Willem","Charlotte","Mama","Papa","Iedereen"];
 document.querySelectorAll("[data-name]").forEach(function(b){
   b.addEventListener("click", function(){ setWho(b.dataset.name); });
 });

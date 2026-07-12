@@ -70,6 +70,8 @@ function scenario(label, seed, storageWorks = true) {
   ok(doc.querySelectorAll("#badges .badge").length === 6, "6 badges getoond");
   ok(doc.querySelectorAll("#routemap .mapnode").length === 6, "routekaart met 6 stops");
   ok(!!doc.getElementById("night"), "kampvuur-knop aanwezig");
+  ok(doc.querySelectorAll("#intro .namebtn").length === 5, "5 spelers kiesbaar (incl. Mama & Papa)");
+  ok(doc.querySelectorAll("#scoreboard > div").length === 5, "scorebord toont 5 spelers");
   ok(!/€|budget|prijs per/i.test(doc.body.textContent), "geen prijzen of budget in de kids-versie");
 
   const warned = doc.getElementById("nostore").style.display === "block";
@@ -128,6 +130,13 @@ const waterrat = [...night.doc.querySelectorAll("#badges .badge")].find((b) => /
 ok(!!waterrat && waterrat.classList.contains("on"), "Waterrat-badge ontgrendeld na 4 missies");
 ok(night.errors.length === 0, "geen JS-fouten tijdens badges + modus-wissel");
 night.dom.window.close();
+
+console.log("\n6. Ouder als speler (Papa)");
+const papa = load({ "sl26:who": "Papa", "sl26:Papa:m01": "1" });
+ok(papa.errors.length === 0, "geen JS-fouten voor een ouder-speler");
+ok(papa.doc.getElementById("intro").style.display === "none", "Papa slaat naamkeuze over bij terugkeer");
+ok(papa.doc.getElementById("rankcount").textContent === "1", "Papa's missie teruggeladen");
+papa.dom.window.close();
 
 console.log(failed ? `\n${failed} test(s) GEFAALD\n` : "\nAlles in orde.\n");
 process.exit(failed ? 1 : 0);
