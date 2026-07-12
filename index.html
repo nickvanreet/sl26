@@ -382,6 +382,41 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
 .quiz .opts button.good{background:#e6f7f3;border-color:var(--soca);color:#0b4a4a}
 .quiz .opts button.bad{background:#ffeee7;border-color:var(--flare);color:#a63a10}
 .quiz .qfoot{margin-top:10px;font-size:13px;color:var(--mist);min-height:18px}
+
+/* ---------- spellen: algemene besturing ---------- */
+.gamebtn{border:0;border-radius:11px;background:var(--soca);color:#03211c;font:800 15px var(--dsp);padding:12px 20px;cursor:pointer}
+.gamebtn.sec{background:var(--sea);color:#fff}
+.gamebtn.ghost{background:var(--paper);color:var(--ink);border:2px solid var(--line)}
+.gamebtn:disabled{opacity:.5}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chiprow button{border:2px solid var(--line);background:var(--paper);border-radius:9px;padding:8px 12px;font:700 13px var(--dsp);color:var(--ink);cursor:pointer}
+.chiprow button[aria-pressed=true]{background:var(--soca);border-color:var(--soca);color:#fff}
+/* woordraden (heads-up) */
+.wr-word{font-size:34px;font-weight:900;text-align:center;letter-spacing:-1px;padding:24px 8px;line-height:1.1}
+.wr-time{font-family:var(--mono);font-size:15px;text-align:center;color:var(--flare);font-weight:700}
+.wr-actions{display:flex;gap:8px;margin-top:10px}
+.wr-actions button{flex:1;padding:16px;border:0;border-radius:12px;font:800 16px var(--dsp);cursor:pointer}
+.wr-good{background:var(--soca);color:#03211c}
+.wr-pass{background:var(--stone);color:#fff}
+/* verhaal-estafette */
+.vh-last{background:var(--ice);border-left:4px solid var(--dragon);border-radius:10px;padding:10px 12px;font-size:15px;font-style:italic;min-height:20px;margin-bottom:8px}
+.vh-input{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);padding:10px;font:500 14px var(--dsp);resize:vertical;min-height:44px;margin-bottom:8px}
+.vh-full .s{font-size:14px;padding:5px 0;border-bottom:1px solid var(--line)}
+.vh-full .s:last-child{border-bottom:0}
+/* nummerplaat-zinnen */
+.np-hall .np{display:flex;gap:8px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line)}
+.np-hall .np:last-child{border-bottom:0}
+.np-hall .np b{font-family:var(--mono);color:var(--sea);flex:0 0 auto}
+.np-hall .np span{flex:1;font-size:14px}
+.np-hall .np button{border:0;background:none;color:var(--mist);font-size:15px;cursor:pointer;padding:0 2px}
+/* aankomsttijd */
+.eta-list .e{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.eta-list .e:last-child{border-bottom:0}
+.eta-list .en{flex:1;font-weight:800}
+.eta-list .et{font-family:var(--mono);font-weight:700}
+.eta-list .e.win .en,.eta-list .e.win .et{color:var(--soca)}
+/* kampvuurkaarten */
+.kv-card{background:linear-gradient(135deg,#c2410c,#ff6b2c);color:#fff;border-radius:16px;padding:26px 16px;text-align:center;font-size:19px;font-weight:800;line-height:1.3;min-height:110px;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
@@ -993,9 +1028,10 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   <div class="plates" id="plates"></div>
   <p class="note" style="margin-top:8px;font-weight:700;color:var(--ink)">Gespot: <span id="platecount" style="font-family:var(--mono)">0</span> / 18</p>
 
-  <h2 class="sec">Afwas-rad 🍽️</h2>
-  <p class="note">Wie doet vanavond de afwas? Draai aan het rad en het lot beslist. Geen discussie meer.</p>
+  <h2 class="sec">Het Rad 🎡</h2>
+  <p class="note">Wie doet de afwas, haalt water, of zit in het midden? Kies waarvoor, draai, en het lot beslist. Geen discussie meer.</p>
   <div class="card">
+    <div class="chiprow" id="wheeltasks"></div>
     <div class="wheelwrap">
       <div class="wheelstage"><svg id="wheel" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
       <button class="spinbtn" id="spinbtn">Draai!</button>
@@ -1015,21 +1051,38 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   </div>
 
   <h2 class="sec">Slovenië-quiz 🧠</h2>
-  <p class="note" style="margin-bottom:8px">Tien vragen over jullie reisland. Ken jij ze allemaal?</p>
+  <p class="note" style="margin-bottom:8px">Tien vragen over jullie reisland, elke keer anders. Ken jij ze allemaal?</p>
   <div class="card quiz" id="quiz"></div>
 
-  <h2 class="sec">Nog 3 spelletjes</h2>
+  <h2 class="sec">Woordraden ⏱️</h2>
+  <p class="note">Heads-up! Eén iemand houdt de telefoon omhoog met het scherm naar de rest. Zij roepen hints. Raad je het? Tik "Goed!". 60 seconden.</p>
+  <div class="card" id="woordraden"></div>
+
+  <h2 class="sec">Verhaal-estafette 📖</h2>
+  <p class="note">Je ziet alleen de láátste zin. Voeg er één bij en geef door. Bij het kampvuur lees je het hele verhaal voor.</p>
+  <div class="card" id="verhaal"></div>
+
+  <h2 class="sec">Nummerplaat-zinnen 🚗</h2>
+  <p class="note">Zie je een nummerplaat? Maak een zin met de letters. LJ-283-KM → "Leeuwen Jagen Katten Meedogenloos". De beste komen in de eregalerij.</p>
+  <div class="card" id="nummerplaat"></div>
+
+  <h2 class="sec">Raad de aankomsttijd 🕐</h2>
+  <p class="note">Vóór je vertrekt: iedereen gokt hoe laat je aankomt. De app verzegelt de gokken. Wie het dichtst zit, wint.</p>
+  <div class="card" id="aankomst"></div>
+
+  <h2 class="sec">Kampvuurkaarten 🔥</h2>
+  <p class="note">Lees de kaart. Op 3… 2… 1… wijst iedereen tegelijk iemand aan.</p>
+  <div class="card"><div class="kv-card" id="kvcard"></div><button class="gamebtn" id="kvnext" style="width:100%;margin-top:10px">Volgende kaart 🔀</button></div>
+
+  <h2 class="sec">Nog wat spelletjes</h2>
   <div class="card">
     <h3>20 vragen</h3>
     <div class="note">Eén iemand denkt aan iets. De rest mag 20 ja/nee-vragen stellen om te raden wat het is.</div>
   </div>
   <div class="card">
-    <h3>Verhaal-estafette</h3>
-    <div class="note">Om de beurt voeg je één zin toe aan hetzelfde verhaal. Het wordt gegarandeerd belachelijk.</div>
-  </div>
-  <div class="card">
-    <h3>Playlist</h3>
-    <div class="note">Ieder kiest 5 nummers voor de gezinsplaylist. <b>Download hem offline</b> — in de bergtunnels heb je geen bereik.</div>
+    <h3>🎵 Onze reisplaylist</h3>
+    <div class="note">De gezinsplaylist voor onderweg. <b>Download hem offline</b> in Spotify — in de bergtunnels heb je geen bereik.</div>
+    <div class="lnk" style="margin-top:8px"><a href="https://open.spotify.com/playlist/6Su6H0R9ytEyjgrj1n4ngR" target="_blank" rel="noopener">🎧 Open de playlist in Spotify</a></div>
   </div>
 
   <h2 class="sec">Sloveens voor beginners</h2>
@@ -1614,9 +1667,11 @@ function renderFotoReis(){
 }
 function refreshDagboek(){ renderDagboek(); renderFotoReis(); }
 
-/* ---------- afwas-rad ---------- */
-var WHEELNAMES = ["Loes","Willem","Charlotte"];
-var WHEELCOLORS = ["#0fa98e","#2b8fd4","#ff6b2c"];
+/* ---------- Het Rad: wie doet de klus? (5 namen, kiesbare klus) ---------- */
+var WHEELNAMES = ["Loes","Willem","Charlotte","Mama","Papa"];
+var WHEELCOLORS = ["#0fa98e","#2b8fd4","#ff6b2c","#6d5bd0","#ffc233"];
+var WHEELTASKS = ["de afwas","water halen","de middenstoel","het laatste ijsje kiezen"];
+var _wheelTask = 0;
 (function(){
   var svg = document.getElementById("wheel"); if(!svg) return;
   var n = WHEELNAMES.length, cx = 100, cy = 100, r = 96, parts = "";
@@ -1625,11 +1680,23 @@ var WHEELCOLORS = ["#0fa98e","#2b8fd4","#ff6b2c"];
     var x0 = (cx+r*Math.cos(a0)).toFixed(1), y0 = (cy+r*Math.sin(a0)).toFixed(1);
     var x1 = (cx+r*Math.cos(a1)).toFixed(1), y1 = (cy+r*Math.sin(a1)).toFixed(1);
     parts += '<path d="M100,100 L'+x0+','+y0+' A96,96 0 0 1 '+x1+','+y1+' Z" fill="'+WHEELCOLORS[i%WHEELCOLORS.length]+'"/>';
-    var am = (a0+a1)/2, tx = (cx+r*0.6*Math.cos(am)).toFixed(1), ty = (cy+r*0.6*Math.sin(am)).toFixed(1);
-    parts += '<text x="'+tx+'" y="'+ty+'" fill="#fff" font-size="13" font-weight="800" text-anchor="middle" dominant-baseline="middle" transform="rotate('+((am*180/Math.PI)+90).toFixed(1)+' '+tx+' '+ty+')">'+esc(WHEELNAMES[i])+'</text>';
+    var am = (a0+a1)/2, tx = (cx+r*0.62*Math.cos(am)).toFixed(1), ty = (cy+r*0.62*Math.sin(am)).toFixed(1);
+    var tc = WHEELNAMES[i]==="Papa" ? "#5a3d00" : "#fff";
+    parts += '<text x="'+tx+'" y="'+ty+'" fill="'+tc+'" font-size="12" font-weight="800" text-anchor="middle" dominant-baseline="middle" transform="rotate('+((am*180/Math.PI)+90).toFixed(1)+' '+tx+' '+ty+')">'+esc(WHEELNAMES[i])+'</text>';
   }
   parts += '<circle cx="100" cy="100" r="13" fill="#fff"/>';
   svg.innerHTML = parts;
+  var tw = document.getElementById("wheeltasks");
+  if(tw) WHEELTASKS.forEach(function(t, ti){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = t;
+    b.setAttribute("aria-pressed", ti === _wheelTask ? "true" : "false");
+    b.addEventListener("click", function(){
+      _wheelTask = ti;
+      tw.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+    });
+    tw.appendChild(b);
+  });
 })();
 var _wheelDeg = 0, _spinning = false;
 (function(){
@@ -1643,7 +1710,7 @@ var _wheelDeg = 0, _spinning = false;
     _wheelDeg += 360*5 + need;
     _spinning = true; btn.disabled = true; out.textContent = "";
     svg.style.transform = "rotate(" + _wheelDeg + "deg)";
-    setTimeout(function(){ _spinning = false; btn.disabled = false; out.textContent = "🍽️ " + WHEELNAMES[w] + " doet de afwas!"; confetti(); beep([392,523], 0.16); }, 4150);
+    setTimeout(function(){ _spinning = false; btn.disabled = false; out.textContent = "🎡 " + WHEELNAMES[w] + " doet " + WHEELTASKS[_wheelTask] + "!"; confetti(); beep([392,523], 0.16); }, 4150);
   });
 })();
 
@@ -1685,7 +1752,7 @@ function renderColdboard(){
   });
 })();
 
-/* ---------- Slovenië-quiz ---------- */
+/* ---------- Slovenië-quiz (25 vragen, elke ronde 10 willekeurige) ---------- */
 var QUIZ = [
   { q:"Hoe hoog is de Triglav, de hoogste berg van Slovenië?", o:["1.864 m","2.864 m","3.864 m"], a:1 },
   { q:"Wat staat er op de vlag van Slovenië?", o:["Een draak","De Triglav","Een steenbok"], a:1 },
@@ -1696,19 +1763,43 @@ var QUIZ = [
   { q:"Ongeveer hoeveel procent van Slovenië is bos?", o:["30%","60%","90%"], a:1 },
   { q:"De witte Lipizzaner-paarden worden geboren als…", o:["Sneeuwwit","Donkerbruin","Grijs gestreept"], a:1 },
   { q:"Hoeveel haarspeldbochten heeft de Vršič-bergpas?", o:["25","50","100"], a:1 },
-  { q:"Wat betekent het Sloveense woord 'Sladoled'?", o:["Water","IJsje","Dank je wel"], a:1 }
+  { q:"Wat betekent het Sloveense woord 'Sladoled'?", o:["Water","IJsje","Dank je wel"], a:1 },
+  { q:"Hoe hoog is de Boka, de hoogste waterval van Slovenië?", o:["52 m","106 m","206 m"], a:1 },
+  { q:"Bij welke waterval kun je er ACHTER langs lopen?", o:["Peričnik","Savica","Boka"], a:0 },
+  { q:"De brug in de Škocjan-grot hangt … boven de rivier.", o:["15 m","45 m","145 m"], a:1 },
+  { q:"Hoe ga je de Postojna-grot in?", o:["Met een bootje","Met een treintje","Met een lift"], a:1 },
+  { q:"Het Predjama-kasteel is gebouwd…", o:["Op een eiland","In een rotswand","Op een bergtop"], a:1 },
+  { q:"Kremna rezina, de taart van Bled, is een…", o:["Kaastaart","Slagroomtaart","Chocoladetaart"], a:1 },
+  { q:"Mohant is een kaas uit Bohinj die…", o:["Zoet is","Stinkt","Blauw is"], a:1 },
+  { q:"Wat is het warmste zwemwater van de reis?", o:["De Soča","Het Bohinj-meer","De Adriatische Zee"], a:2 },
+  { q:"De Zlatorog uit de Sloveense legende is een…", o:["Draak","Steenbok met gouden hoorns","Wit hert"], a:1 },
+  { q:"Slovenië is het enige land met … in zijn naam.", o:["star","love","gold"], a:1 },
+  { q:"Sinds welk jaar worden de Lipizzaner-paarden gefokt?", o:["1580","1780","1980"], a:0 },
+  { q:"Hoe zeg je 'hond' in het Sloveens?", o:["Pes","Voda","Hvala"], a:0 },
+  { q:"Hoe zeg je 'dank je' in het Sloveens?", o:["Živijo","Hvala","Prosim"], a:1 },
+  { q:"De Pula Arena, waar de gladiatoren vochten, staat in…", o:["Slovenië","Kroatië","Italië"], a:1 },
+  { q:"Hoe oud kan het mensvisje worden?", o:["10 jaar","50 jaar","Meer dan 100 jaar"], a:2 }
 ];
-var _qi = 0, _qscore = 0;
+var QROUND = 10;
+var _qorder = [], _qi = 0, _qscore = 0;
+function shuffleQuiz(){
+  _qorder = QUIZ.map(function(_,i){ return i; });
+  for(var i=_qorder.length-1;i>0;i--){ var j = Math.floor(Math.random()*(i+1)); var t=_qorder[i]; _qorder[i]=_qorder[j]; _qorder[j]=t; }
+  _qorder = _qorder.slice(0, Math.min(QROUND, QUIZ.length));
+  _qi = 0; _qscore = 0;
+}
 function renderQuiz(){
   var box = document.getElementById("quiz"); if(!box) return;
-  if(_qi >= QUIZ.length){
-    box.innerHTML = '<div class="q">Klaar! Je had '+_qscore+' van de '+QUIZ.length+' goed 🎉</div><div class="opts"><button type="button" id="quizreset">Nog een keer</button></div>';
-    document.getElementById("quizreset").addEventListener("click", function(){ _qi = 0; _qscore = 0; renderQuiz(); });
+  if(!_qorder.length) shuffleQuiz();
+  var total = _qorder.length;
+  if(_qi >= total){
+    box.innerHTML = '<div class="q">Klaar! Je had '+_qscore+' van de '+total+' goed 🎉</div><div class="opts"><button type="button" id="quizreset">Nog een keer (nieuwe vragen)</button></div>';
+    document.getElementById("quizreset").addEventListener("click", function(){ shuffleQuiz(); renderQuiz(); });
     if(_qscore >= 8){ confetti(); beep([523,659,784,1047], 0.22); }
     return;
   }
-  var item = QUIZ[_qi];
-  box.innerHTML = '<div class="q">Vraag '+(_qi+1)+'/'+QUIZ.length+': '+esc(item.q)+'</div><div class="opts"></div><div class="qfoot" id="qfoot"></div>';
+  var item = QUIZ[_qorder[_qi]];
+  box.innerHTML = '<div class="q">Vraag '+(_qi+1)+'/'+total+': '+esc(item.q)+'</div><div class="opts"></div><div class="qfoot" id="qfoot"></div>';
   var opts = box.querySelector(".opts");
   item.o.forEach(function(opt, i){
     var b = document.createElement("button"); b.type = "button"; b.textContent = opt;
@@ -1721,7 +1812,201 @@ function renderQuiz(){
     opts.appendChild(b);
   });
 }
+shuffleQuiz();
 renderQuiz();
+
+/* ================= NIEUWE SPELLETJES (v11) ================= */
+/* ---------- Woordraden (heads-up, 60 seconden) ---------- */
+var WORDPACKS = {
+  "Dieren": ["olifant","pinguïn","krokodil","vleermuis","egel","octopus","kameleon","luiaard","stokstaartje","zeepaardje","wasbeer","gordeldier","kwal","havik","otter"],
+  "Slovenië": ["draak","Triglav","mensvisje","Soča","rafting","zipline","grot","steenbok","kasteel","waterval","kremna rezina","Lipizzaner","zoutpannen","gletsjer","kabelbaan"],
+  "Films": ["Frozen","Minions","Harry Potter","Encanto","Spider-Man","Toy Story","Shrek","Jurassic Park","Paddington","Zootropolis","Ratatouille","Kung Fu Panda","Moana","Coco","Luca"],
+  "Onderweg": ["file","tankstation","tunnel","koptelefoon","tent","slaapzak","zaklamp","kampvuur","zwembroek","zonnebril","ijsje","pannenkoek","fiets","rugzak","landkaart"]
+};
+function renderWoordraden(){
+  var box = document.getElementById("woordraden"); if(!box) return;
+  box.innerHTML = '<p class="note" style="margin-bottom:8px">Kies een pakje:</p><div class="chiprow" id="wrpacks"></div>';
+  var pw = document.getElementById("wrpacks");
+  Object.keys(WORDPACKS).forEach(function(pk){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = pk;
+    b.addEventListener("click", function(){ startWoordraden(pk); });
+    pw.appendChild(b);
+  });
+}
+function startWoordraden(pack){
+  var box = document.getElementById("woordraden");
+  var words = WORDPACKS[pack].slice();
+  for(var i=words.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=words[i]; words[i]=words[j]; words[j]=t; }
+  var idx = 0, score = 0, timeLeft = 60, timer;
+  box.innerHTML = '<div class="wr-time" id="wrtime">60s</div><div class="wr-word" id="wrword"></div><div class="wr-actions"><button class="wr-pass" id="wrpass">Pas ↷</button><button class="wr-good" id="wrgood">Goed! ✓</button></div>';
+  var wordEl = document.getElementById("wrword"), timeEl = document.getElementById("wrtime");
+  function showWord(){ if(idx >= words.length){ finish(); return; } wordEl.textContent = words[idx]; }
+  function next(good){ if(good){ score++; beep([784],0.08); } else { beep([300],0.08); } idx++; showWord(); }
+  function finish(){
+    clearInterval(timer);
+    box.innerHTML = '<div class="wr-word" style="font-size:24px">⏱️ Tijd! Score: '+score+'</div><button class="gamebtn" id="wragain" style="width:100%">Nog een keer</button>';
+    document.getElementById("wragain").addEventListener("click", renderWoordraden);
+    if(score >= 8){ confetti(); }
+  }
+  showWord();
+  timer = setInterval(function(){ timeLeft--; timeEl.textContent = timeLeft + "s"; if(timeLeft <= 0) finish(); }, 1000);
+  document.getElementById("wrgood").addEventListener("click", function(){ next(true); });
+  document.getElementById("wrpass").addEventListener("click", function(){ next(false); });
+}
+renderWoordraden();
+
+/* ---------- Verhaal-estafette ---------- */
+function storyGet(){ try{ return JSON.parse(get("sl26:fam:story") || "[]"); }catch(e){ return []; } }
+function storySet(a){ put("sl26:fam:story", JSON.stringify(a)); }
+function renderVerhaal(){
+  var box = document.getElementById("verhaal"); if(!box) return;
+  var story = storyGet();
+  var last = story.length ? story[story.length-1] : "Er was eens…";
+  box.innerHTML =
+    '<div class="vh-last">'+esc(last)+'</div>' +
+    '<textarea class="vh-input" id="vhinput" rows="2" placeholder="…jouw zin erbij"></textarea>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+      '<button class="gamebtn" id="vhadd">Voeg toe & geef door</button>' +
+      '<button class="gamebtn ghost" id="vhread">Lees voor ('+story.length+')</button>' +
+      (story.length ? '<button class="gamebtn ghost" id="vhnew">Nieuw</button>' : '') +
+    '</div><div class="vh-full" id="vhfull"></div>';
+  document.getElementById("vhadd").addEventListener("click", function(){
+    var v = document.getElementById("vhinput").value.trim(); if(!v) return;
+    var s = storyGet(); s.push(v); storySet(s); beep([523,784],0.1); renderVerhaal();
+  });
+  document.getElementById("vhread").addEventListener("click", function(){
+    var s = storyGet(), full = document.getElementById("vhfull");
+    full.innerHTML = s.length ? s.map(function(x){ return '<div class="s">'+esc(x)+'</div>'; }).join("") : '<p class="note">Nog niks geschreven.</p>';
+  });
+  var nw = document.getElementById("vhnew");
+  if(nw) nw.addEventListener("click", function(){ if(confirm("Nieuw verhaal beginnen? Het oude wordt gewist.")){ storySet([]); renderVerhaal(); } });
+}
+renderVerhaal();
+
+/* ---------- Nummerplaat-zinnen ---------- */
+function plateGet(){ try{ return JSON.parse(get("sl26:fam:plates") || "[]"); }catch(e){ return []; } }
+function plateSet(a){ put("sl26:fam:plates", JSON.stringify(a)); }
+function renderNummerplaat(){
+  var box = document.getElementById("nummerplaat"); if(!box) return;
+  box.innerHTML =
+    '<div class="coldrow"><input id="npletters" maxlength="6" placeholder="LJK" autocapitalize="characters" autocomplete="off" style="width:100px;text-transform:uppercase"><span class="note">de letters van de plaat</span></div>' +
+    '<textarea class="vh-input" id="npsentence" rows="2" placeholder="Leeuwen Jagen Katten…"></textarea>' +
+    '<button class="gamebtn" id="npsave" style="margin-bottom:8px">Zet in de eregalerij 🏆</button>' +
+    '<div class="np-hall" id="nphall"></div>';
+  document.getElementById("npsave").addEventListener("click", function(){
+    var l = (document.getElementById("npletters").value || "").trim().toUpperCase().replace(/[^A-Z]/g,"");
+    var s = (document.getElementById("npsentence").value || "").trim();
+    if(!l || !s) return;
+    var arr = plateGet(); arr.unshift({ l:l, s:s }); if(arr.length > 30) arr = arr.slice(0,30); plateSet(arr);
+    document.getElementById("npletters").value = ""; document.getElementById("npsentence").value = "";
+    beep([523,784],0.1); confetti(); renderNphall();
+  });
+  renderNphall();
+}
+function renderNphall(){
+  var hall = document.getElementById("nphall"); if(!hall) return;
+  var arr = plateGet();
+  if(!arr.length){ hall.innerHTML = '<p class="note">Nog niks in de eregalerij. Verzin de eerste! 🚗</p>'; return; }
+  hall.innerHTML = "";
+  arr.forEach(function(item, i){
+    var d = document.createElement("div"); d.className = "np";
+    d.innerHTML = '<b>'+esc(item.l)+'</b><span>'+esc(item.s)+'</span>';
+    var rm = document.createElement("button"); rm.type = "button"; rm.textContent = "✕"; rm.title = "verwijder";
+    rm.addEventListener("click", function(){ var a = plateGet(); a.splice(i,1); plateSet(a); renderNphall(); });
+    d.appendChild(rm); hall.appendChild(d);
+  });
+}
+renderNummerplaat();
+
+/* ---------- Raad de aankomsttijd ---------- */
+function etaGet(){ try{ return JSON.parse(get("sl26:fam:eta") || "{}"); }catch(e){ return {}; } }
+function etaSet(o){ put("sl26:fam:eta", JSON.stringify(o)); }
+function etaMin(t){ var p = String(t).split(":"); return p.length === 2 ? (parseInt(p[0],10)*60 + parseInt(p[1],10)) : NaN; }
+var _etaPick = null;
+function renderAankomst(){
+  var box = document.getElementById("aankomst"); if(!box) return;
+  var guesses = (etaGet().guesses) || {};
+  var html = '<div class="chiprow" id="etanames"></div>' +
+    '<div class="coldrow"><input id="etatime" type="time"><button id="etaseal">Verzegel 🔒</button></div>' +
+    '<div class="eta-list" id="etalist"></div>';
+  if(Object.keys(guesses).length){
+    html += '<p class="note" style="margin-top:8px">Aangekomen? Vul de echte tijd in:</p>' +
+      '<div class="coldrow"><input id="etaactual" type="time"><button id="etareveal">Onthul 🏁</button></div>';
+  }
+  html += '<button class="gamebtn ghost" id="etareset" style="margin-top:8px">Wis alle gokken</button>';
+  box.innerHTML = html;
+  var nw = document.getElementById("etanames");
+  NAMES.forEach(function(nm){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = nm;
+    b.setAttribute("aria-pressed", nm === _etaPick ? "true" : "false");
+    b.addEventListener("click", function(){ _etaPick = nm; nw.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed","false"); }); b.setAttribute("aria-pressed","true"); });
+    nw.appendChild(b);
+  });
+  document.getElementById("etaseal").addEventListener("click", function(){
+    var t = document.getElementById("etatime").value; if(!_etaPick || !t) return;
+    var d = etaGet(); d.guesses = d.guesses || {}; d.guesses[_etaPick] = t; etaSet(d); beep([523],0.1); _etaPick = null; renderAankomst();
+  });
+  document.getElementById("etareset").addEventListener("click", function(){ if(confirm("Alle gokken wissen?")){ etaSet({}); renderAankomst(); } });
+  var rv = document.getElementById("etareveal");
+  if(rv) rv.addEventListener("click", function(){
+    var actual = document.getElementById("etaactual").value; if(!actual) return;
+    renderEtaList(true, actual); confetti(); beep([523,659,784],0.18);
+  });
+  renderEtaList(false);
+}
+function renderEtaList(reveal, actual){
+  var list = document.getElementById("etalist"); if(!list) return;
+  var g = (etaGet().guesses) || {}, names = Object.keys(g);
+  list.innerHTML = "";
+  if(!names.length){ list.innerHTML = '<p class="note">Nog geen gokken. Kies je naam, zet een tijd, verzegel.</p>'; return; }
+  var best = null, bestDiff = Infinity;
+  if(reveal) names.forEach(function(nm){ var diff = Math.abs(etaMin(g[nm]) - etaMin(actual)); if(diff < bestDiff){ bestDiff = diff; best = nm; } });
+  names.forEach(function(nm){
+    var d = document.createElement("div"); d.className = "e" + (reveal && nm === best ? " win" : "");
+    d.innerHTML = '<span class="en">'+esc(nm)+(reveal && nm === best ? " 🏁" : "")+'</span><span class="et">'+(reveal ? esc(g[nm]) : "🔒 verzegeld")+'</span>';
+    list.appendChild(d);
+  });
+}
+renderAankomst();
+
+/* ---------- Kampvuurkaarten ---------- */
+var KVCARDS = [
+  "Wie zou het langst overleven in het bos?",
+  "Wie eet als eerste de Mohant-stinkkaas op?",
+  "Wie durft het diepst de ijskoude Soča in?",
+  "Wie wordt later ontdekkingsreiziger?",
+  "Wie zou een draak temmen?",
+  "Wie verslaapt zich morgen als eerste?",
+  "Wie neemt de meeste foto's?",
+  "Wie zingt het hardst mee in de auto?",
+  "Wie wint de toboggan-race?",
+  "Wie is het minst bang op de zipline?",
+  "Wie zou een nacht alleen in een grot durven?",
+  "Wie vindt als eerste de olifantenrots?",
+  "Wie geeft Billie de meeste knuffels?",
+  "Wie eet de grootste kremna rezina?",
+  "Wie vraagt als eerste 'zijn we er al'?",
+  "Wie zet in het donker het snelst een tent op?",
+  "Wie durft van de hoogste rots te springen?",
+  "Wie kan het langst zijn adem inhouden onder water?",
+  "Wie bestelt het dapperst een ijsje in het Sloveens?",
+  "Wie is de grappigste van het gezin?",
+  "Wie zou verdwalen zonder telefoon?",
+  "Wie wordt de beste reisgids volgend jaar?",
+  "Wie heeft altijd als eerste honger?",
+  "Wie klimt het hoogst in een boom?",
+  "Wie blijft het langst wakker bij het kampvuur?"
+];
+var _kvSeen = [];
+function nextKvCard(){
+  var box = document.getElementById("kvcard"); if(!box) return;
+  if(_kvSeen.length >= KVCARDS.length) _kvSeen = [];
+  var i;
+  do { i = Math.floor(Math.random()*KVCARDS.length); } while(_kvSeen.indexOf(i) >= 0);
+  _kvSeen.push(i);
+  box.textContent = KVCARDS[i];
+}
+(function(){ var b = document.getElementById("kvnext"); if(b) b.addEventListener("click", nextKvCard); nextKvCard(); })();
 
 /* ---------- familie-scorebord: score delen & vergelijken (offline, via WhatsApp) ---------- */
 function countBadges(person){

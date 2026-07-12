@@ -1,5 +1,5 @@
 /* Slovenie 2026 - kids editie: alles offline beschikbaar na 1x laden */
-var CACHE = "sl26-v10";
+var CACHE = "sl26-v11";
 var FILES = ["./", "./index.html", "./manifest.webmanifest",
              "./icon-192.png", "./icon-512.png", "./icon-maskable.png"];
 
@@ -13,14 +13,32 @@ self.addEventListener("activate", function(e){
   }).then(function(){ return self.clients.claim(); }));
 });
 
-/* cache-first: op de camping is er geen bereik */
 self.addEventListener("fetch", function(e){
   if(e.request.method !== "GET") return;
-  e.respondWith(
-    caches.match(e.request).then(function(hit){
-      return hit || fetch(e.request).then(function(res){
+  var req = e.request;
+  var isPage = req.mode === "navigate" || (req.headers.get("accept") || "").indexOf("text/html") >= 0;
+
+  if(isPage){
+    /* network-first voor de pagina: thuis op wifi zie je meteen de nieuwste versie,
+       op de camping (geen bereik) valt hij terug op de opgeslagen kopie. */
+    e.respondWith(
+      fetch(req).then(function(res){
         var copy = res.clone();
-        caches.open(CACHE).then(function(c){ c.put(e.request, copy); }).catch(function(){});
+        caches.open(CACHE).then(function(c){ c.put("./index.html", copy); }).catch(function(){});
+        return res;
+      }).catch(function(){
+        return caches.match("./index.html").then(function(h){ return h || caches.match(req); });
+      })
+    );
+    return;
+  }
+
+  /* overige bestanden (icons, manifest): cache-first — snel en offline */
+  e.respondWith(
+    caches.match(req).then(function(hit){
+      return hit || fetch(req).then(function(res){
+        var copy = res.clone();
+        caches.open(CACHE).then(function(c){ c.put(req, copy); }).catch(function(){});
         return res;
       }).catch(function(){ return caches.match("./index.html"); });
     })

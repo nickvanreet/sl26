@@ -44,7 +44,8 @@ function scenario(label, seed, when, storageWorks = true){
   ok(doc.querySelectorAll("input[data-m]").length === 40, `40 missies (30 + 10 foto)`);
   ok(!!doc.getElementById("t-dagboek"), "dagboek-tab aanwezig");
   ok(doc.querySelectorAll("#dagboek .dbentry").length === 18, `dagboek heeft 18 dag-entries (${doc.querySelectorAll("#dagboek .dbentry").length})`);
-  ok(doc.querySelectorAll("#wheel path").length === 3, "afwas-rad met 3 vakken");
+  ok(doc.querySelectorAll("#wheel path").length === 5, "Het Rad met 5 vakken (incl. Mama & Papa)");
+  ok(doc.querySelectorAll("#wheeltasks button").length === 4, "rad heeft 4 kiesbare klussen");
   ok(/Vraag 1\/10/.test((doc.getElementById("quiz")||{}).textContent||""), "quiz toont vraag 1 van 10");
   ok(doc.querySelectorAll(".lnk a").length >= 40, `links aanwezig (${doc.querySelectorAll(".lnk a").length})`);
   ok([...doc.querySelectorAll(".lnk a")].every(a => /^https:\/\//.test(a.href)), "alle links zijn https");
@@ -167,13 +168,43 @@ console.log("\n10. Koudste-water-leaderboard (koudste eerst)");
   dom.window.close();
 }
 
-console.log("\n11. Slovenië-quiz: goed antwoord wordt groen");
+console.log("\n11. Slovenië-quiz: antwoord wordt gemarkeerd (shuffle-proof)");
 {
   const { dom, doc } = load({ "sl26:who":"Loes" }, "2026-07-20T09:00:00");
   const opts = doc.querySelectorAll("#quiz .opts button");
-  click(dom, opts[1]);   // vraag 1: 2.864 m is juist (index 1)
-  ok(opts[1].classList.contains("good"), "juist antwoord krijgt de groene markering");
-  ok(/Goed/.test(doc.getElementById("qfoot").textContent), "quiz geeft 'Goed!' terug");
+  ok(opts.length >= 3, `vraag heeft meerdere opties (${opts.length})`);
+  click(dom, opts[0]);
+  ok(opts[0].classList.contains("good") || opts[0].classList.contains("bad"), "gekozen antwoord wordt gemarkeerd (goed of fout)");
+  ok((doc.getElementById("qfoot").textContent || "").length > 0, "quiz geeft feedback terug");
+  dom.window.close();
+}
+
+console.log("\n12. Nieuwe spellen renderen zonder fouten");
+{
+  const { dom, doc, errors } = load({ "sl26:who":"Loes" }, "2026-07-20T09:00:00");
+  ok(doc.querySelectorAll("#wrpacks button").length === 4, `woordraden: 4 pakjes (${doc.querySelectorAll("#wrpacks button").length})`);
+  // start a heads-up round -> a word shows
+  click(dom, doc.querySelectorAll("#wrpacks button")[0]);
+  ok(!!doc.getElementById("wrword") && doc.getElementById("wrword").textContent.length > 0, "woordraden toont een woord na start");
+  // verhaal-estafette: add a sentence
+  ok(/Er was eens/.test(doc.getElementById("verhaal").textContent), "verhaal start met 'Er was eens…'");
+  doc.getElementById("vhinput").value = "De draak niesde.";
+  click(dom, doc.getElementById("vhadd"));
+  ok(/De draak niesde/.test(doc.getElementById("verhaal").querySelector(".vh-last").textContent), "toegevoegde zin wordt de laatste zin");
+  // nummerplaat hall of fame
+  doc.getElementById("npletters").value = "ljk";
+  doc.getElementById("npsentence").value = "Leeuwen Jagen Katten";
+  click(dom, doc.getElementById("npsave"));
+  ok(/Leeuwen Jagen Katten/.test(doc.getElementById("nphall").textContent) && /LJK/.test(doc.getElementById("nphall").textContent), "nummerplaat-zin in de eregalerij (letters upcased)");
+  // aankomsttijd: seal a guess
+  ok(doc.querySelectorAll("#etanames button").length === 5, "aankomsttijd: 5 naam-chips");
+  click(dom, [...doc.querySelectorAll("#etanames button")].find(b => b.textContent === "Willem"));
+  doc.getElementById("etatime").value = "14:30";
+  click(dom, doc.getElementById("etaseal"));
+  ok(/Willem/.test(doc.getElementById("etalist").textContent) && /verzegeld/.test(doc.getElementById("etalist").textContent), "gok wordt verzegeld getoond");
+  // kampvuurkaart shows a question
+  ok((doc.getElementById("kvcard").textContent || "").length > 5, "kampvuurkaart toont een vraag");
+  ok(errors.length === 0, `geen JS-fouten in de nieuwe spellen${errors.length ? " -> " + errors.join(" | ") : ""}`);
   dom.window.close();
 }
 
