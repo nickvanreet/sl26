@@ -291,6 +291,21 @@ body.night .tip small,body.night .note{color:var(--mist)}
 .badge .bnm{font-size:11px;font-weight:800;margin-top:4px;letter-spacing:-.2px}
 .badge .bpr{font-family:var(--mono);font-size:10px;color:var(--mist);margin-top:2px}
 .badge.on .bpr{color:var(--soca);font-weight:700}
+
+/* ---------- familie-scorebord (offline delen) ---------- */
+.sharebtn{width:100%;padding:12px;border:0;border-radius:11px;background:var(--soca);color:#03211c;font:800 15px var(--dsp);cursor:pointer}
+.sharebtn:active{transform:scale(.99)}
+.sharerow{display:flex;gap:6px;margin-top:8px}
+.sharerow input{flex:1;min-width:0;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);font:600 12.5px var(--mono)}
+.sharerow button{border:0;border-radius:9px;background:var(--sea);color:#fff;font:800 13px var(--dsp);padding:0 14px;cursor:pointer}
+#shareMsg{min-height:16px;margin-top:6px;font-weight:600}
+#family{margin-top:6px}
+#family .fam{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+#family .fam:last-child{border-bottom:0}
+#family .fnm{flex:1;font-weight:800;font-size:14.5px}
+#family .fnm.me{color:var(--soca)}
+#family .fnm small{display:block;font-weight:500;color:var(--mist);font-size:11px}
+#family .fsc{font-family:var(--mono);font-weight:700;font-size:16px}
 </style>
 </head>
 <body>
@@ -774,6 +789,16 @@ body.night .tip small,body.night .note{color:var(--mist)}
   <div class="score" id="scoreboard"></div>
   <p class="note" style="text-align:center;margin-top:6px;font-size:11px">Scorebord van dit toestel</p>
 
+  <h2 class="sec">Familie-scorebord</h2>
+  <p class="note" style="margin-bottom:8px">Deel jouw score met de familie en plak die van de anderen erbij. Werkt via WhatsApp — ook zonder internet.</p>
+  <button class="sharebtn" id="shareScore">📤 Deel mijn score</button>
+  <div class="sharerow">
+    <input id="pasteScore" placeholder="Plak hier een code van iemand" autocapitalize="off" autocomplete="off" spellcheck="false">
+    <button id="addScore">Toevoegen</button>
+  </div>
+  <p class="note" id="shareMsg"></p>
+  <div id="family"></div>
+
   <h2 class="sec">Badges</h2>
   <p class="note" style="margin-bottom:2px">Verzamel ze door bij elkaar horende missies af te ronden.</p>
   <div class="badges" id="badges"></div>
@@ -1220,6 +1245,7 @@ function updateScoreboard(){
     if(n === who) d.style.outline = "2px solid var(--soca)";
     el.appendChild(d);
   });
+  renderFamily();
 }
 
 /* ---------- bingo ---------- */
@@ -1363,6 +1389,94 @@ function renderJournal(){
   box.innerHTML = html || '<p class="note">Nog niets ingevuld. Schrijf onderweg bij elke dag je beste moment — hier lees je ze straks allemaal terug. 🌟</p>';
 }
 
+/* ---------- familie-scorebord: score delen & vergelijken (offline, via WhatsApp) ---------- */
+function countBadges(person){
+  var n = 0;
+  BADGES.forEach(function(bd){
+    var have = bd.ms.filter(function(m){ return get("sl26:"+(person||"gast")+":"+m) === "1"; }).length;
+    if(have === bd.ms.length) n++;
+  });
+  return n;
+}
+function pad2(x){ return String(x).padStart(2,"0"); }
+function today8(){ var d = new Date(); return "" + d.getFullYear() + pad2(d.getMonth()+1) + pad2(d.getDate()); }
+function fmtDate(d8){ return (d8 && d8.length === 8) ? d8.slice(6,8)+"/"+d8.slice(4,6) : ""; }
+function encodeScore(person){
+  var m = countM(person);
+  return ["v1", person, m, countBadges(person), rankIdxFor(m), today8()].join("~");
+}
+function parseScore(code){
+  if(!code) return null;
+  var p = String(code).trim().split("~");
+  if(p[0] !== "v1" || p.length < 6) return null;
+  if(NAMES.indexOf(p[1]) < 0) return null;
+  var m = parseInt(p[2],10), b = parseInt(p[3],10), r = parseInt(p[4],10);
+  if(isNaN(m) || m < 0 || m > 30 || isNaN(b) || isNaN(r)) return null;
+  return { name:p[1], m:m, b:b, r:r, d:p[5] };
+}
+function shareMsg(t, warn){
+  var el = document.getElementById("shareMsg"); if(!el) return;
+  el.textContent = t || ""; el.style.color = warn ? "var(--flare)" : "var(--soca)";
+}
+function importScore(code){
+  var s = parseScore(code);
+  if(!s){ shareMsg("Hmm, die code snap ik niet. 🤔", true); return false; }
+  if(s.name === who){ shareMsg("Dat ben jij zelf — jouw score staat al bovenaan. 🙂", true); return false; }
+  put("sl26:shared:"+s.name, s.m+"~"+s.b+"~"+s.r+"~"+s.d);
+  renderFamily();
+  shareMsg("Score van "+s.name+" toegevoegd! 🎉", false);
+  return true;
+}
+function renderFamily(){
+  var box = document.getElementById("family"); if(!box) return;
+  var rows = [];
+  if(who && NAMES.indexOf(who) >= 0){
+    var m = countM(who);
+    rows.push({ name:who, m:m, b:countBadges(who), r:rankIdxFor(m), me:true, d:null });
+  }
+  NAMES.forEach(function(nm){
+    if(nm === who) return;
+    var raw = get("sl26:shared:"+nm); if(!raw) return;
+    var p = raw.split("~");
+    rows.push({ name:nm, m:parseInt(p[0],10)||0, b:parseInt(p[1],10)||0, r:parseInt(p[2],10)||0, me:false, d:p[3] });
+  });
+  rows.sort(function(a,b){ return b.m - a.m; });
+  box.innerHTML = "";
+  if(!rows.length){ box.innerHTML = '<p class="note">Nog geen scores. Deel die van jou en plak die van de anderen erbij. 📤</p>'; return; }
+  rows.forEach(function(r){
+    var rank = RANKS[r.r] ? RANKS[r.r][1] : "";
+    var sub = r.me ? "jij · nu" : (r.d ? "bijgewerkt "+fmtDate(r.d) : "");
+    var d = document.createElement("div");
+    d.className = "fam";
+    d.innerHTML = '<div class="fnm'+(r.me?' me':'')+'">'+r.name+'<small>'+rank+' · 🏅'+r.b+(sub?' · '+sub:'')+'</small></div><div class="fsc">'+r.m+'/30</div>';
+    box.appendChild(d);
+  });
+}
+function showCode(code){
+  var inp = document.getElementById("pasteScore");
+  inp.value = code; try{ inp.select(); }catch(e){}
+  shareMsg("Kopieer deze code en stuur 'm door. 📋", false);
+}
+document.getElementById("shareScore").addEventListener("click", function(){
+  if(!(who && NAMES.indexOf(who) >= 0)){ shareMsg("Kies eerst je naam bovenaan. 🙂", true); return; }
+  var code = encodeScore(who);
+  var link = location.origin + location.pathname + "#s=" + encodeURIComponent(code);
+  var text = who + " heeft " + countM(who) + "/30 missies! Bekijk & vergelijk: " + link;
+  if(navigator.share){
+    navigator.share({ title:"Mijn Slovenië-score", text:text, url:link }).catch(function(){});
+  } else if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){ shareMsg("Link gekopieerd — plak 'm in WhatsApp! 📋", false); }).catch(function(){ showCode(code); });
+  } else {
+    showCode(code);
+  }
+});
+document.getElementById("addScore").addEventListener("click", function(){
+  var v = document.getElementById("pasteScore").value.trim();
+  var m = v.match(/#s=([^\s]+)/);
+  if(m) v = decodeURIComponent(m[1]);
+  if(importScore(v)) document.getElementById("pasteScore").value = "";
+});
+
 /* ---------- reset ---------- */
 document.getElementById("resetme").addEventListener("click", function(){
   if(!confirm("Al jouw vinkjes wissen?")) return;
@@ -1413,6 +1527,16 @@ if(who && VALID.indexOf(who) >= 0){
   intro.style.display = "flex";      // eerst je naam kiezen
   loadTicks(); loadBingo(); loadPlates(); loadNotes(); updateRank(); updateScoreboard();
 }
+
+/* ---------- gedeelde-score-link openen (#s=...) ---------- */
+function importFromHash(){
+  var shared = location.hash.match(/^#s=(.+)$/);
+  if(!shared) return;
+  importScore(decodeURIComponent(shared[1]));
+  if(history.replaceState) history.replaceState(null, "", location.pathname + location.search);
+}
+importFromHash();                                   // verse opening via een link
+window.addEventListener("hashchange", importFromHash); // of als de app al open stond
 
 })();
 </script>

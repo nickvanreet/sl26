@@ -72,6 +72,7 @@ function scenario(label, seed, storageWorks = true) {
   ok(!!doc.getElementById("night"), "kampvuur-knop aanwezig");
   ok(doc.querySelectorAll("#intro .namebtn").length === 5, "5 spelers kiesbaar (incl. Mama & Papa)");
   ok(doc.querySelectorAll("#scoreboard > div").length === 5, "scorebord toont 5 spelers");
+  ok(!!doc.getElementById("shareScore") && !!doc.getElementById("family"), "familie-scorebord aanwezig");
   ok(!/€|budget|prijs per/i.test(doc.body.textContent), "geen prijzen of budget in de kids-versie");
 
   const warned = doc.getElementById("nostore").style.display === "block";
@@ -137,6 +138,25 @@ ok(papa.errors.length === 0, "geen JS-fouten voor een ouder-speler");
 ok(papa.doc.getElementById("intro").style.display === "none", "Papa slaat naamkeuze over bij terugkeer");
 ok(papa.doc.getElementById("rankcount").textContent === "1", "Papa's missie teruggeladen");
 papa.dom.window.close();
+
+console.log("\n7. Score delen & vergelijken");
+const fam = load({ "sl26:who": "Loes", "sl26:Loes:m01": "1", "sl26:Loes:m02": "1" });
+const famTxt = () => fam.doc.getElementById("family").textContent;
+ok(/Loes/.test(famTxt()), "eigen score staat in het familie-scorebord");
+// een geldige code van Willem plakken en toevoegen
+fam.doc.getElementById("pasteScore").value = "v1~Willem~15~2~2~20260721";
+click(fam.dom, fam.doc.getElementById("addScore"));
+ok(/Willem/.test(famTxt()) && /15\/30/.test(famTxt()), "geplakte score van Willem verschijnt");
+// een gedeelde link (met #s=) wordt ook herkend
+fam.doc.getElementById("pasteScore").value = "https://x.test/#s=" + encodeURIComponent("v1~Charlotte~7~1~1~20260722");
+click(fam.dom, fam.doc.getElementById("addScore"));
+ok(/Charlotte/.test(famTxt()), "score uit een gedeelde link wordt herkend");
+// onzin wordt netjes geweigerd
+fam.doc.getElementById("pasteScore").value = "rommel";
+click(fam.dom, fam.doc.getElementById("addScore"));
+ok(/snap ik niet/.test(fam.doc.getElementById("shareMsg").textContent), "onzin-code wordt geweigerd");
+ok(fam.errors.length === 0, "geen JS-fouten bij delen/vergelijken");
+fam.dom.window.close();
 
 console.log(failed ? `\n${failed} test(s) GEFAALD\n` : "\nAlles in orde.\n");
 process.exit(failed ? 1 : 0);
