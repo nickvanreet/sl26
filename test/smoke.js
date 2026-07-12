@@ -5,6 +5,11 @@ const TABS = ["dagen","avontuur","missies","spellen","dagboek","logboek","billie
 let failed = 0;
 const ok = (c,l) => { console.log(`  ${c?"OK  ":"FOUT"}  ${l}`); if(!c) failed++; };
 
+/* FNV-1a — zelfde als _seed/pinHash in de app, om een geldige config met pincode te zaaien */
+const _seed = str => { let h = 2166136261; for(let i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h,16777619); } return h>>>0; };
+const pinHash = p => String(_seed("pin:" + p));
+const CFG = pin => JSON.stringify(Object.assign({ url:"https://x.supabase.co", key:"anon_key_0123456789_abcdef", fam:"SMOKEFAM1" }, pin ? { pinh: pinHash(pin) } : {}));
+
 function load(seed, when, storageWorks = true){
   const errors = [];
   const dom = new JSDOM(fs.readFileSync("index.html","utf8"), {
@@ -19,6 +24,8 @@ function load(seed, when, storageWorks = true){
         key:i=>{ const ks=Object.keys(store); return i<ks.length?ks[i]:null; },
         get length(){ return Object.keys(store).length; },
         clear:()=>{ for(const k of Object.keys(store)) delete store[k]; }}});
+      /* de cloud-calls (sync/wissen) inert maken: altijd 'ok', lege body */
+      w.fetch = () => Promise.resolve({ ok:true, status:200, text:()=>Promise.resolve("[]"), json:()=>Promise.resolve([]) });
       if(when){
         const T = new w.Date(when).getTime();
         const Real = w.Date;
@@ -56,6 +63,8 @@ function scenario(label, seed, when, storageWorks = true){
   ok(doc.querySelectorAll("#kast button").length === 46, `prijzenkast heeft 46 medailles (${doc.querySelectorAll("#kast button").length})`);
   ok(doc.querySelectorAll("#badges .badge").length === 12, `12 badges (${doc.querySelectorAll("#badges .badge").length})`);
   ok(!!doc.getElementById("t-logboek") && !!doc.getElementById("hsync"), "logboek-tab + header sync-knop aanwezig");
+  ok(!!doc.getElementById("lbsync"), "logboek heeft een eigen 'Haal het logboek op'-knop");
+  ok(/Papa/.test((doc.getElementById("resetme")||{}).textContent||""), "wisknop is voorbehouden aan Papa");
   ok(!/€|budget/i.test(doc.body.textContent), "nog steeds geen prijzen");
   return { dom, doc };
 }
@@ -263,25 +272,81 @@ console.log("\n16. Verhaal-estafette: voorlees-knop (TTS)");
   ok(/draak/.test(doc.getElementById("vhfull").textContent), "verhaal wordt ook getoond bij voorlezen");
 }
 
-console.log("\n17. Volledige reset per speler (incl. medailles, badges, bingo)");
+console.log("\n17a. Zonder ingestelde wis-pincode is wissen uitgeschakeld");
 {
-  const seed = { "sl26:who":"Loes" };
-  for(let i=1;i<=36;i++) seed["sl26:Loes:m"+String(i).padStart(2,"0")] = "2026-07-20";
-  seed["sl26:Loes:p01"] = "1";
-  seed["sl26:Loes:bingo0"] = "1"; seed["sl26:Loes:bingo1"] = "1";
-  seed["sl26:Loes:cold"] = "8";
-  seed["sl26:Loes:note:2026-07-18"] = "Test-notitie";
+  const seed = { "sl26:who":"Papa", "sl26:fam:sb": CFG(null) };   // verbonden, maar géén pincode
+  for(let i=1;i<=36;i++) seed["sl26:Papa:m"+String(i).padStart(2,"0")] = "2026-07-20";
   const { dom, doc } = load(seed, "2026-07-20T09:00:00");
-  ok(doc.getElementById("rankcount").textContent === "36", `36 missies vóór reset (${doc.getElementById("rankcount").textContent})`);
-  ok([...doc.querySelectorAll("#kast button.won")].length > 0, "medailles gewonnen vóór reset");
-  ok([...doc.querySelectorAll("#badges .badge.on")].length > 0, "badges verdiend vóór reset");
-  dom.window.confirm = () => true;
+  ok(doc.getElementById("rankcount").textContent === "36", "36 missies vóór");
+  dom.window.confirm = () => true;               // zelfs als alles wordt bevestigd…
+  dom.window.prompt = () => "9999";              // …en een pincode wordt geprobeerd…
+  dom.window.alert = () => {};
   click(dom, doc.getElementById("resetme"));
-  ok(doc.getElementById("rankcount").textContent === "0", `0 missies na reset (${doc.getElementById("rankcount").textContent})`);
-  ok([...doc.querySelectorAll("#kast button.won")].length === 0, "geen medailles meer na reset (trofeeën resetten óók)");
-  ok([...doc.querySelectorAll("#badges .badge.on")].length === 0, "geen badges meer na reset");
-  ok(doc.querySelectorAll('#bingo button[aria-pressed="true"]').length === 0, "bingo leeg na reset");
-  ok(!/8°/.test(doc.getElementById("coldboard").textContent), "koudste-record weg na reset");
+  ok(doc.getElementById("rankcount").textContent === "36", "…blijft alles staan: geen ingestelde pincode = niets wissen");
+  dom.window.close();
+}
+
+console.log("\n17b. Een kind zonder de pincode kan niet wissen");
+{
+  const seed = { "sl26:who":"Loes", "sl26:fam:sb": CFG("1234") };  // pincode ingesteld door Papa
+  for(let i=1;i<=36;i++) seed["sl26:Loes:m"+String(i).padStart(2,"0")] = "2026-07-20";
+  const { dom, doc } = load(seed, "2026-07-20T09:00:00");
+  dom.window.confirm = () => true;
+  dom.window.alert = () => {};
+  dom.window.prompt = (msg) => /wis-pincode/.test(msg) ? "0000" : (/Wiens/.test(msg) ? "Loes" : null);  // kind gokt fout
+  click(dom, doc.getElementById("resetme"));
+  ok(doc.getElementById("rankcount").textContent === "36", "kind met verkeerde pincode wist niets");
+  dom.window.close();
+}
+
+console.log("\n17c. Papa wist met de juiste pincode een speler volledig (missies, medailles, badges, bingo)");
+{
+  const seed = { "sl26:who":"Papa", "sl26:fam:sb": CFG("1234") };
+  for(let i=1;i<=36;i++) seed["sl26:Papa:m"+String(i).padStart(2,"0")] = "2026-07-20";
+  seed["sl26:Papa:p01"] = "1";
+  seed["sl26:Papa:bingo0"] = "1"; seed["sl26:Papa:bingo1"] = "1";
+  seed["sl26:Papa:cold"] = "8";
+  seed["sl26:Papa:note:2026-07-18"] = "Test-notitie";
+  const { dom, doc } = load(seed, "2026-07-20T09:00:00");
+  ok(doc.getElementById("rankcount").textContent === "36", `36 missies vóór wissen (${doc.getElementById("rankcount").textContent})`);
+  ok([...doc.querySelectorAll("#kast button.won")].length > 0, "medailles gewonnen vóór wissen");
+  ok([...doc.querySelectorAll("#badges .badge.on")].length > 0, "badges verdiend vóór wissen");
+  dom.window.confirm = () => true;
+  dom.window.alert = () => {};
+  dom.window.prompt = (msg) => /wis-pincode/.test(msg) ? "1234" : (/Wiens/.test(msg) ? "Papa" : null);
+  click(dom, doc.getElementById("resetme"));
+  ok(doc.getElementById("rankcount").textContent === "0", `0 missies na wissen (${doc.getElementById("rankcount").textContent})`);
+  ok([...doc.querySelectorAll("#kast button.won")].length === 0, "geen medailles meer na wissen (trofeeën resetten óók)");
+  ok([...doc.querySelectorAll("#badges .badge.on")].length === 0, "geen badges meer na wissen");
+  ok(doc.querySelectorAll('#bingo button[aria-pressed="true"]').length === 0, "bingo leeg na wissen");
+  ok(!/8°/.test(doc.getElementById("coldboard").textContent), "koudste-record weg na wissen");
+  dom.window.close();
+}
+
+console.log("\n17d. Verkeerde pincode wist niets");
+{
+  const seed = { "sl26:who":"Papa", "sl26:fam:sb": CFG("1234") };
+  for(let i=1;i<=36;i++) seed["sl26:Papa:m"+String(i).padStart(2,"0")] = "2026-07-20";
+  const { dom, doc } = load(seed, "2026-07-20T09:00:00");
+  dom.window.confirm = () => true;
+  dom.window.alert = () => {};
+  dom.window.prompt = (msg) => /wis-pincode/.test(msg) ? "0000" : (/Wiens/.test(msg) ? "Papa" : null);
+  click(dom, doc.getElementById("resetme"));
+  ok(doc.getElementById("rankcount").textContent === "36", `verkeerde pincode → niets gewist (${doc.getElementById("rankcount").textContent})`);
+  dom.window.close();
+}
+
+console.log("\n18. Papa stelt de wis-pincode in via de familie-cloud (control in sync-tab)");
+{
+  const seed = { "sl26:who":"Papa", "sl26:fam:sb": CFG(null) };
+  const { dom, doc } = load(seed, "2026-07-20T09:00:00");
+  const setpin = doc.getElementById("setpin");
+  ok(!!setpin && /instellen/.test(setpin.textContent), "'instellen'-knop verschijnt als er nog geen pincode is");
+  dom.window.prompt = (msg) => /Nieuwe wis-pincode/.test(msg) ? "4321" : null;
+  click(dom, setpin);
+  const cfg = JSON.parse(dom.window.localStorage.getItem("sl26:fam:sb"));
+  ok(cfg.pinh === pinHash("4321"), "pincode-hash staat nu in de familie-config (reist mee in de sync-link)");
+  ok(/ingesteld ✅/.test(doc.getElementById("syncbox").textContent), "sync-tab toont nu 'ingesteld ✅'");
   dom.window.close();
 }
 
