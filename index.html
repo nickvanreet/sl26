@@ -424,6 +424,18 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
 .eta-list .e.win .en,.eta-list .e.win .et{color:var(--soca)}
 /* kampvuurkaarten */
 .kv-card{background:linear-gradient(135deg,#c2410c,#ff6b2c);color:#fff;border-radius:16px;padding:26px 16px;text-align:center;font-size:19px;font-weight:800;line-height:1.3;min-height:110px;display:flex;align-items:center;justify-content:center}
+
+/* ---------- familie-sync ---------- */
+#syncbox .synrow{display:flex;gap:6px;margin:6px 0}
+#syncbox input{flex:1;min-width:0;padding:9px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);font:600 12px var(--mono)}
+#syncmsg{min-height:16px;margin-top:6px;font-weight:600;font-size:13px}
+#famjournal .fj{padding:10px 0;border-bottom:1px solid var(--line)}
+#famjournal .fj:last-child{border-bottom:0}
+#famjournal .fjd{font-family:var(--mono);font-size:10px;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+#famjournal .fjrow{display:flex;gap:8px;align-items:flex-start;margin:3px 0}
+#famjournal .fjn{flex:0 0 72px;font-weight:800;font-size:13px;color:var(--soca)}
+#famjournal .fjt{flex:1;font-size:13.5px;white-space:pre-wrap}
+#famjournal img{width:100%;max-width:230px;max-height:190px;object-fit:cover;border-radius:9px;margin:4px 0 2px;display:block}
 </style>
 </head>
 <body>
@@ -910,8 +922,11 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   <div class="score" id="scoreboard"></div>
   <p class="note" style="text-align:center;margin-top:6px;font-size:11px">Scorebord van dit toestel</p>
 
+  <h2 class="sec">☁️ Familie-sync</h2>
+  <div class="card" id="syncbox"></div>
+
   <h2 class="sec">Familie-scorebord</h2>
-  <p class="note" style="margin-bottom:8px">Deel jouw score met de familie en plak die van de anderen erbij. Werkt via WhatsApp — ook zonder internet.</p>
+  <p class="note" style="margin-bottom:8px">Met sync zie je elkaars voortgang live. Zonder internet? Deel je code via WhatsApp en plak die van de anderen.</p>
   <button class="sharebtn" id="shareScore">📤 Deel mijn score</button>
   <div class="sharerow">
     <input id="pasteScore" placeholder="Plak hier een code van iemand" autocapitalize="off" autocomplete="off" spellcheck="false">
@@ -1144,6 +1159,9 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   </div>
   <div class="foto-reis" id="fotoreis"></div>
   <div id="dagboek"></div>
+
+  <h2 class="sec" style="margin-top:22px">📖 Wat de familie schreef &amp; zag</h2>
+  <div class="card" id="famjournal"></div>
 </section>
 
 <!-- ================= BILLIE ================= -->
@@ -2400,6 +2418,119 @@ function refreshExtras(){ renderKlus(); renderRota(); renderKast(); }
 refreshExtras();
 setInterval(renderKlus, 60000);   // rond middernacht rolt de klus door
 
+/* ================= FAMILIE-SYNC (Supabase, online) ================= */
+var famJournal = [], famPhotos = [];
+function sbCfg(){ try{ var c = JSON.parse(get("sl26:fam:sb") || "null"); if(c && c.url && c.key && c.fam) return c; }catch(e){} return null; }
+function sbHead(c){ return { "apikey": c.key, "Authorization": "Bearer " + c.key, "content-type": "application/json" }; }
+function syncMsg(t, warn){ var el = document.getElementById("syncmsg"); if(el){ el.textContent = t || ""; el.style.color = warn ? "var(--flare)" : "var(--soca)"; } }
+function _fetchJSON(url, opts){ return fetch(url, opts).then(function(r){ if(!r.ok) throw new Error("http " + r.status); return r.text(); }).then(function(t){ return t ? JSON.parse(t) : null; }); }
+function blobToDataURL(blob){ return new Promise(function(res){ var r = new FileReader(); r.onload = function(){ res(r.result); }; r.onerror = function(){ res(null); }; r.readAsDataURL(blob); }); }
+function dagLabel(day){ var d = document.querySelector('details.day[data-date="' + day + '"]'); return d ? d.querySelector(".ddate").textContent : day; }
+
+function renderSync(){
+  var box = document.getElementById("syncbox"); if(!box) return;
+  var c = sbCfg();
+  if(!c){
+    box.innerHTML =
+      '<p class="note" style="margin-bottom:8px">Verbind met jullie familie-cloud. Eén iemand vult dit in en deelt de link — de rest tikt gewoon op die link.</p>' +
+      '<div class="synrow"><input id="sburl" placeholder="Project URL (https://...supabase.co)" autocapitalize="off" spellcheck="false"></div>' +
+      '<div class="synrow"><input id="sbkey" placeholder="anon / publishable key" autocapitalize="off" spellcheck="false"></div>' +
+      '<div class="synrow"><input id="sbfam" placeholder="geheime familiecode (min. 8 tekens)" autocapitalize="off" spellcheck="false"></div>' +
+      '<button class="sharebtn" id="sbsave">Verbinden ☁️</button><p class="note" id="syncmsg"></p>';
+    document.getElementById("sbsave").addEventListener("click", function(){
+      var u = document.getElementById("sburl").value.trim().replace(/\/+$/, "");
+      var k = document.getElementById("sbkey").value.trim();
+      var f = document.getElementById("sbfam").value.trim();
+      if(!/^https:\/\/.+\.supabase\.co$/.test(u)){ syncMsg("URL klopt niet (https://…supabase.co).", true); return; }
+      if(k.length < 20){ syncMsg("Sleutel lijkt te kort.", true); return; }
+      if(!/^[\w-]{8,64}$/.test(f)){ syncMsg("Familiecode: 8–64 letters/cijfers.", true); return; }
+      put("sl26:fam:sb", JSON.stringify({ url:u, key:k, fam:f }));
+      renderSync(); syncNow();
+    });
+    return;
+  }
+  box.innerHTML =
+    '<p class="note" style="margin-bottom:8px">Verbonden ☁️ · code <b>' + esc(c.fam) + '</b>. Sync haalt ieders voortgang, dagboek én foto\'s op.</p>' +
+    '<button class="sharebtn" id="syncnow">☁️ Sync nu</button>' +
+    '<div class="sharerow" style="margin-top:8px"><button class="gamebtn ghost" id="synclink" style="flex:1">📤 Deel de sync-link</button><button class="gamebtn ghost" id="syncoff">Loskoppelen</button></div>' +
+    '<p class="note" id="syncmsg"></p>';
+  document.getElementById("syncnow").addEventListener("click", syncNow);
+  document.getElementById("syncoff").addEventListener("click", function(){ if(confirm("Loskoppelen van de familie-cloud? Je data blijft op dit toestel.")){ del("sl26:fam:sb"); renderSync(); } });
+  document.getElementById("synclink").addEventListener("click", function(){
+    var link = location.origin + location.pathname + "#sync=" + encodeURIComponent(btoa(JSON.stringify(c)));
+    var text = "Doe mee met ons familie-reisboek! Tik hier: " + link;
+    if(navigator.share) navigator.share({ title:"Familie-sync", text:text, url:link }).catch(function(){});
+    else if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function(){ syncMsg("Link gekopieerd — deel via WhatsApp. 📋"); }).catch(function(){ syncMsg("Deel deze link: " + link); });
+    else syncMsg("Deel deze link: " + link);
+  });
+}
+
+function syncNow(){
+  var c = sbCfg(); if(!c){ renderSync(); return; }
+  if(!(who && NAMES.indexOf(who) >= 0)){ syncMsg("Kies eerst je naam bovenaan. 🙂", true); return; }
+  syncMsg("Bezig met synchroniseren… ☁️");
+  var base = c.url, H = sbHead(c), Hm = Object.assign({ Prefer:"resolution=merge-duplicates" }, H);
+  var m = countM(who), pushes = [];
+  pushes.push(_fetchJSON(base + "/rest/v1/scores", { method:"POST", headers:Hm, body:JSON.stringify({ family:c.fam, name:who, missions:m, badges:countBadges(who), rank:rankIdxFor(m), streak:streakOf(who) }) }));
+  tripDates().forEach(function(d){
+    var note = (get(key("note:" + d)) || "").trim();
+    if(note) pushes.push(_fetchJSON(base + "/rest/v1/journal", { method:"POST", headers:Hm, body:JSON.stringify({ family:c.fam, name:who, day:d, note:note.slice(0,500) }) }));
+  });
+  var photoPushes = tripDates().map(function(d){
+    return new Promise(function(res){
+      photoGet(who + ":" + d, function(blob){
+        if(!blob){ res(); return; }
+        blobToDataURL(blob).then(function(data){
+          if(!data || data.length > 400000){ res(); return; }
+          _fetchJSON(base + "/rest/v1/photos", { method:"POST", headers:Hm, body:JSON.stringify({ family:c.fam, name:who, day:d, data:data }) }).then(res).catch(res);
+        });
+      });
+    });
+  });
+  Promise.all(pushes.concat(photoPushes)).then(function(){
+    var f = encodeURIComponent(c.fam);
+    return Promise.all([
+      _fetchJSON(base + "/rest/v1/scores?family=eq." + f + "&select=name,missions,badges,rank,streak,updated", { headers:H }),
+      _fetchJSON(base + "/rest/v1/journal?family=eq." + f + "&select=name,day,note", { headers:H }),
+      _fetchJSON(base + "/rest/v1/photos?family=eq." + f + "&select=name,day,data", { headers:H })
+    ]);
+  }).then(function(r){
+    var scores = r[0] || [];
+    scores.forEach(function(s){
+      if(s.name === who) return;
+      var d = (s.updated || "").slice(0,10).replace(/-/g, "");
+      put("sl26:shared:" + s.name, (s.missions|0) + "~" + (s.badges|0) + "~" + (s.rank|0) + "~" + d + "~" + (s.streak|0));
+    });
+    famJournal = r[1] || []; famPhotos = r[2] || [];
+    updateScoreboard(); renderFamJournal();
+    syncMsg("Klaar! Iedereen is bijgewerkt. 🎉");
+  }).catch(function(e){ syncMsg("Sync mislukte — check internet & instellingen.", true); });
+}
+
+function renderFamJournal(){
+  var box = document.getElementById("famjournal"); if(!box) return;
+  if(!sbCfg()){ box.innerHTML = '<p class="note">Verbind met de familie-cloud (tabblad 🏅 Missies) en tik op ☁️ Sync om te zien wat de anderen schreven en welke foto\'s ze maakten.</p>'; return; }
+  if(!famJournal.length && !famPhotos.length){ box.innerHTML = '<p class="note">Nog niks opgehaald. Tik op ☁️ Sync nu (bij Missies) — dan verschijnt hier het dagboek van de hele familie.</p>'; return; }
+  var byDay = {};
+  famJournal.forEach(function(j){ (byDay[j.day] = byDay[j.day] || { notes:[], photos:[] }).notes.push(j); });
+  famPhotos.forEach(function(p){ (byDay[p.day] = byDay[p.day] || { notes:[], photos:[] }).photos.push(p); });
+  var days = Object.keys(byDay).sort();
+  box.innerHTML = "";
+  days.forEach(function(day){
+    var el = byDay[day], wrap = document.createElement("div"); wrap.className = "fj";
+    var html = '<div class="fjd">' + esc(dagLabel(day)) + '</div>';
+    el.notes.forEach(function(j){ html += '<div class="fjrow"><div class="fjn">' + esc(j.name) + '</div><div class="fjt">' + esc(j.note) + '</div></div>'; });
+    wrap.innerHTML = html;
+    el.photos.forEach(function(p){
+      var cap = document.createElement("div"); cap.className = "fjn"; cap.textContent = "📷 " + p.name;
+      var im = document.createElement("img"); im.src = p.data; im.alt = "foto van " + p.name;
+      wrap.appendChild(cap); wrap.appendChild(im);
+    });
+    box.appendChild(wrap);
+  });
+}
+renderSync(); renderFamJournal();
+
 /* ---------- start (pas hier bestaat alles) ---------- */
 if(who && VALID.indexOf(who) >= 0){
   setWho(who);                       // vult ook alle lijsten in
@@ -2408,17 +2539,25 @@ if(who && VALID.indexOf(who) >= 0){
   loadTicks(); loadBingo(); loadPlates(); refreshDagboek(); renderColdboard(); updateRank(); updateScoreboard();
 }
 
-/* ---------- gedeelde-score-link openen (#s=...) ---------- */
+/* ---------- links openen: #s= (score) of #sync= (familie-cloud) ---------- */
 function importFromHash(){
-  var shared = location.hash.match(/^#s=(.+)$/);
-  if(!shared) return;
-  importScore(decodeURIComponent(shared[1]));
-  if(history.replaceState) history.replaceState(null, "", location.pathname + location.search);
+  var h = location.hash || "";
+  var sc = h.match(/^#s=(.+)$/);
+  if(sc){ importScore(decodeURIComponent(sc[1])); if(history.replaceState) history.replaceState(null, "", location.pathname + location.search); return; }
+  var sy = h.match(/^#sync=(.+)$/);
+  if(sy){
+    try{
+      var cfg = JSON.parse(atob(decodeURIComponent(sy[1])));
+      if(cfg && cfg.url && cfg.key && cfg.fam){ put("sl26:fam:sb", JSON.stringify(cfg)); renderSync(); syncMsg("Verbonden met de familie-cloud! ☁️"); syncNow(); }
+    }catch(e){}
+    if(history.replaceState) history.replaceState(null, "", location.pathname + location.search);
+  }
 }
 importFromHash();                                   // verse opening via een link
-
-
 window.addEventListener("hashchange", importFromHash); // of als de app al open stond
+
+/* ---------- automatisch synchroniseren bij openen (als verbonden + online) ---------- */
+if(sbCfg() && navigator.onLine !== false && who && NAMES.indexOf(who) >= 0){ setTimeout(syncNow, 900); }
 
 })();
 </script>
