@@ -239,18 +239,6 @@ nav.tabs button[aria-selected=true] .i{filter:none}
 footer{text-align:center;color:var(--mist);font-size:11px;padding:24px 0 10px;line-height:1.7}
 @media print{nav.tabs,#intro,.reset{display:none}.tabpane{display:block!important}}
 
-/* ---------- reisdagboek ---------- */
-.notewrap{display:block;margin-top:10px;background:#f6fbfa;border:1px dashed var(--soca);border-radius:10px;padding:8px 10px;cursor:text}
-.notewrap span{display:block;font-size:11.5px;font-weight:700;color:var(--soca);letter-spacing:.3px;margin-bottom:3px}
-.daynote{width:100%;border:0;background:transparent;font:500 14px var(--dsp);color:var(--ink);resize:vertical;min-height:36px;line-height:1.4}
-.daynote:focus{outline:none}
-.daynote::placeholder{color:var(--stone)}
-#journal .jrow{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
-#journal .jrow:last-child{border-bottom:0}
-#journal .jd{flex:0 0 78px;font-family:var(--mono);font-size:10px;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;padding-top:3px}
-#journal .jt{flex:1;font-size:14px;white-space:pre-wrap}
-#journal .jt b{display:block;font-size:12px;color:var(--mist);font-weight:700;margin-bottom:2px}
-
 /* ---------- kampvuur-modus (donker & warm) ---------- */
 .nightbtn{font-size:14px!important;line-height:1!important;padding:6px 8px!important}
 body.night{
@@ -263,7 +251,6 @@ body.night .cool{background:#10271f}
 body.night .billie{background:#221d33;color:#c9bff2}
 body.night .chip{background:#2c2116;color:#dcc9b0}
 body.night .chip.hot{background:#3b2318;color:#ffb48f}
-body.night .notewrap{background:#211810;border-color:var(--soca)}
 body.night .card{box-shadow:0 1px 3px rgba(0,0,0,.35)}
 body.night .tip small,body.night .note{color:var(--mist)}
 
@@ -345,6 +332,56 @@ body.night .tip small,body.night .note{color:var(--mist)}
 #kastinfo em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--soca);letter-spacing:.5px}
 #kastinfo .locked{color:var(--mist)}
 .score .s{font-size:10px;font-weight:800;color:var(--flare);margin-top:1px;height:13px}
+
+/* ---------- reisdagboek (eigen tab, met foto's) ---------- */
+.dbentry{background:var(--paper);border-radius:14px;padding:12px;margin:10px 0;box-shadow:0 1px 3px rgba(8,34,44,.07)}
+.dbentry.today{outline:2px solid var(--flare)}
+.dbh{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.dbh .dbd{font-family:var(--mono);font-size:10px;color:var(--mist);text-transform:uppercase;letter-spacing:.5px}
+.dbh .dbt{font-weight:800;font-size:14.5px;letter-spacing:-.2px}
+.dbnote{width:100%;border:1px dashed var(--line);background:var(--ice);border-radius:10px;padding:8px 10px;font:500 14px var(--dsp);color:var(--ink);resize:vertical;min-height:38px;line-height:1.4}
+.dbnote:focus{outline:none;border-color:var(--soca)}
+.dbnote::placeholder{color:var(--stone)}
+.dbphoto{margin-top:8px;position:relative}
+.dbphoto img{width:100%;max-height:240px;object-fit:cover;border-radius:10px;display:block}
+.dbphoto .rm{position:absolute;top:6px;right:6px;border:0;border-radius:8px;background:rgba(8,34,44,.72);color:#fff;font:700 11px var(--dsp);padding:5px 8px;cursor:pointer}
+.dbphoto .fav{position:absolute;top:6px;left:6px;border:0;border-radius:8px;background:rgba(8,34,44,.5);color:#fff;font-size:15px;line-height:1;padding:5px 7px;cursor:pointer}
+.dbphoto .fav.on{background:var(--sun);color:#5a3d00}
+.addphoto{display:inline-flex;align-items:center;gap:6px;margin-top:8px;border:1px dashed var(--soca);background:#eafaf5;color:#0b4a4a;border-radius:10px;padding:9px 12px;font:700 13px var(--dsp);cursor:pointer}
+body.night .dbnote{background:#20180f;border-color:var(--line)}
+body.night .addphoto{background:#122a25;color:#8fe6d3}
+.foto-reis{background:linear-gradient(135deg,#0b3440,#0fa98e);color:#fff;border-radius:16px;padding:14px;margin:12px 0}
+.foto-reis h3{color:#fff;font-size:15px;margin-bottom:4px}
+.foto-reis img{width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin-top:8px;display:block}
+
+/* ---------- afwas-rad ---------- */
+.wheelwrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin:12px 0}
+.wheelstage{position:relative;width:230px;height:230px}
+.wheelstage::after{content:"▼";position:absolute;top:-6px;left:50%;transform:translateX(-50%);color:var(--flare);font-size:24px;z-index:2}
+#wheel{width:230px;height:230px;transition:transform 4s cubic-bezier(.17,.67,.28,1)}
+.spinbtn{border:0;border-radius:12px;background:var(--flare);color:#fff;font:800 16px var(--dsp);padding:13px 26px;cursor:pointer}
+.spinbtn:disabled{opacity:.5}
+.wheelout{font-size:17px;font-weight:800;min-height:24px;text-align:center}
+
+/* ---------- koudste water ---------- */
+.coldpresets{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.coldpresets button{border:2px solid var(--line);background:var(--paper);border-radius:9px;padding:7px 10px;font:700 12.5px var(--dsp);color:var(--ink);cursor:pointer}
+.coldrow{display:flex;gap:8px;align-items:center;margin:8px 0}
+.coldrow input{width:88px;padding:9px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);font:700 15px var(--mono)}
+.coldrow button{border:0;border-radius:9px;background:var(--sea);color:#fff;font:800 13px var(--dsp);padding:0 14px;cursor:pointer}
+#coldboard .cb{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+#coldboard .cb:last-child{border-bottom:0}
+#coldboard .cbn{flex:1;font-weight:800;font-size:14.5px}
+#coldboard .cbn.me{color:var(--soca)}
+#coldboard .cbt{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--sea)}
+
+/* ---------- quiz ---------- */
+.quiz .q{font-weight:800;font-size:15px;margin-bottom:8px}
+.quiz .opts{display:flex;flex-direction:column;gap:6px}
+.quiz .opts button{border:2px solid var(--line);background:var(--paper);border-radius:10px;padding:11px;font:600 14px var(--dsp);color:var(--ink);cursor:pointer;text-align:left}
+.quiz .opts button.good{background:#e6f7f3;border-color:var(--soca);color:#0b4a4a}
+.quiz .opts button.bad{background:#ffeee7;border-color:var(--flare);color:#a63a10}
+.quiz .qfoot{margin-top:10px;font-size:13px;color:var(--mist);min-height:18px}
 </style>
 </head>
 <body>
@@ -385,6 +422,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
     <button role="tab" aria-selected="false" data-tab="avontuur"><span class="i">⚡</span>Avontuur</button>
     <button role="tab" aria-selected="false" data-tab="missies"><span class="i">🏅</span>Missies</button>
     <button role="tab" aria-selected="false" data-tab="spellen"><span class="i">🎲</span>Spellen</button>
+    <button role="tab" aria-selected="false" data-tab="dagboek"><span class="i">📔</span>Dagboek</button>
     <button role="tab" aria-selected="false" data-tab="billie"><span class="i">🐾</span>Billie</button>
   </div>
 </nav>
@@ -939,10 +977,6 @@ body.night .tip small,body.night .note{color:var(--mist)}
     <label class="check"><input type="checkbox" data-p="p19"><span class="box"></span><span class="ctxt">Slaapzak + kussen + matje<small>De pop-uptenten in Piran hebben géén matras.</small></span></label>
     <label class="check"><input type="checkbox" data-p="p20"><span class="box"></span><span class="ctxt">Iets voor onderweg (8 uur auto!)</span></label>
   </div>
-  <h2 class="sec">Reisdagboek</h2>
-  <p class="note" style="margin-bottom:8px">Jouw beste momenten, dag per dag. Vul ze in bij elke dag (tabblad 🗺️) — hier verschijnen ze vanzelf.</p>
-  <div class="card" id="journal"></div>
-
   <button class="reset" id="resetme">Alles van mij wissen</button>
 </section>
 
@@ -958,6 +992,31 @@ body.night .tip small,body.night .note{color:var(--mist)}
   <p class="note">Tik een land aan als je die nummerplaat spot. Wie heeft er op het einde het meest?</p>
   <div class="plates" id="plates"></div>
   <p class="note" style="margin-top:8px;font-weight:700;color:var(--ink)">Gespot: <span id="platecount" style="font-family:var(--mono)">0</span> / 18</p>
+
+  <h2 class="sec">Afwas-rad 🍽️</h2>
+  <p class="note">Wie doet vanavond de afwas? Draai aan het rad en het lot beslist. Geen discussie meer.</p>
+  <div class="card">
+    <div class="wheelwrap">
+      <div class="wheelstage"><svg id="wheel" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
+      <button class="spinbtn" id="spinbtn">Draai!</button>
+      <div class="wheelout" id="wheelout"></div>
+    </div>
+  </div>
+
+  <h2 class="sec">Koudste water ❄️</h2>
+  <p class="note">Wat is het koudste water waar je écht in bent geweest? Hoe kouder, hoe stoerder. Tik een plek of typ je record.</p>
+  <div class="card">
+    <div class="coldpresets" id="coldpresets"></div>
+    <div class="coldrow">
+      <input id="coldinput" type="number" inputmode="numeric" min="-2" max="40" step="1" placeholder="°C">
+      <button id="coldsave">Log record</button>
+    </div>
+    <div id="coldboard"></div>
+  </div>
+
+  <h2 class="sec">Slovenië-quiz 🧠</h2>
+  <p class="note" style="margin-bottom:8px">Tien vragen over jullie reisland. Ken jij ze allemaal?</p>
+  <div class="card quiz" id="quiz"></div>
 
   <h2 class="sec">Nog 3 spelletjes</h2>
   <div class="card">
@@ -1003,6 +1062,17 @@ body.night .tip small,body.night .note{color:var(--mist)}
       <li>De witte Lipizzaner-paarden worden <b>donkerbruin geboren</b>.</li>
     </ul></div>
   </div>
+</section>
+
+<!-- ================= DAGBOEK ================= -->
+<section class="tabpane" id="t-dagboek">
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,#e6f7f3,#fff)">
+    <div style="font-size:40px">📔</div>
+    <h3 style="font-size:19px">Jouw reisdagboek</h3>
+    <div class="note">Schrijf bij elke dag je mooiste moment en plak er een foto bij. Alles blijft op deze telefoon — niemand anders ziet het.</div>
+  </div>
+  <div class="foto-reis" id="fotoreis"></div>
+  <div id="dagboek"></div>
 </section>
 
 <!-- ================= BILLIE ================= -->
@@ -1148,7 +1218,8 @@ function setWho(n){
   loadTicks();
   loadBingo();
   loadPlates();
-  loadNotes();
+  refreshDagboek();
+  renderColdboard();
   updateRank();
   updateScoreboard();
   if(typeof refreshExtras === "function") refreshExtras();
@@ -1436,37 +1507,221 @@ document.querySelectorAll("#counters button").forEach(function(b){
   sync();
 });
 
-/* ---------- reisdagboek: beste moment per dag (per kind) ---------- */
 function esc(s){ return s.replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
-document.querySelectorAll("details.day").forEach(function(d){
-  var body = d.querySelector(".dbody"); if(!body) return;
-  var wrap = document.createElement("label");
-  wrap.className = "notewrap";
-  var lab = document.createElement("span"); lab.textContent = "✏️ Mijn beste moment van vandaag";
-  var ta = document.createElement("textarea");
-  ta.className = "daynote"; ta.rows = 2; ta.dataset.date = d.dataset.date;
-  ta.placeholder = "Wat wil je onthouden?";
-  ta.addEventListener("input", function(){ put(key("note:"+d.dataset.date), ta.value); renderJournal(); });
-  wrap.appendChild(lab); wrap.appendChild(ta); body.appendChild(wrap);
-});
-function loadNotes(){
-  document.querySelectorAll("textarea.daynote").forEach(function(t){
-    t.value = get(key("note:"+t.dataset.date)) || "";
-  });
-  renderJournal();
+
+/* ================= REISDAGBOEK (eigen tab): notities + foto's ================= */
+/* Foto's staan in IndexedDB: ze blijven op dit toestel, gaan nooit online en
+   komen nooit in de (publieke) repo. localStorage kan geen foto's aan. */
+var _photoOk = false; try{ _photoOk = !!window.indexedDB; }catch(e){ _photoOk = false; }
+var _db = null, _dbTried = false;
+function photoDB(cb){
+  if(_db){ cb(_db); return; }
+  if(_dbTried){ cb(null); return; }
+  try{
+    var req = indexedDB.open("sl26photos", 1);
+    req.onupgradeneeded = function(){ req.result.createObjectStore("pics"); };
+    req.onsuccess = function(){ _db = req.result; _dbTried = true; cb(_db); };
+    req.onerror = function(){ _dbTried = true; cb(null); };
+  }catch(e){ _dbTried = true; cb(null); }
 }
-function renderJournal(){
-  var box = document.getElementById("journal"); if(!box) return;
-  var html = "";
+function photoPut(id, blob, cb){ photoDB(function(db){ if(!db){ cb(false); return; } try{ var tx = db.transaction("pics","readwrite"); tx.objectStore("pics").put(blob, id); tx.oncomplete = function(){ cb(true); }; tx.onerror = function(){ cb(false); }; }catch(e){ cb(false); } }); }
+function photoGet(id, cb){ photoDB(function(db){ if(!db){ cb(null); return; } try{ var r = db.transaction("pics","readonly").objectStore("pics").get(id); r.onsuccess = function(){ cb(r.result || null); }; r.onerror = function(){ cb(null); }; }catch(e){ cb(null); } }); }
+function photoDel(id, cb){ photoDB(function(db){ if(!db){ cb(); return; } try{ var tx = db.transaction("pics","readwrite"); tx.objectStore("pics").delete(id); tx.oncomplete = function(){ cb(); }; tx.onerror = function(){ cb(); }; }catch(e){ cb(); } }); }
+function resizePhoto(file, cb){
+  try{
+    var img = new Image(), url = URL.createObjectURL(file);
+    img.onload = function(){
+      URL.revokeObjectURL(url);
+      var max = 1200, w = img.width, h = img.height;
+      if(w >= h && w > max){ h = Math.round(h*max/w); w = max; }
+      else if(h > w && h > max){ w = Math.round(w*max/h); h = max; }
+      var c = document.createElement("canvas"); c.width = w; c.height = h;
+      c.getContext("2d").drawImage(img, 0, 0, w, h);
+      if(c.toBlob){ c.toBlob(function(b){ cb(b); }, "image/jpeg", 0.78); } else cb(null);
+    };
+    img.onerror = function(){ try{ URL.revokeObjectURL(url); }catch(e){} cb(null); };
+    img.src = url;
+  }catch(e){ cb(null); }
+}
+function photoId(date){ return (who||"gast") + ":" + date; }
+function renderDagboek(){
+  var box = document.getElementById("dagboek"); if(!box) return;
+  box.innerHTML = "";
+  var today = ymd(new Date());
   document.querySelectorAll("details.day").forEach(function(d){
-    var v = (get(key("note:"+d.dataset.date)) || "").trim();
-    if(!v) return;
-    var dd = d.querySelector(".ddate").textContent;
-    var ti = d.querySelector(".dtitle").textContent;
-    html += '<div class="jrow"><div class="jd">'+esc(dd)+'</div><div class="jt"><b>'+esc(ti)+'</b>'+esc(v)+'</div></div>';
+    var date = d.dataset.date;
+    var entry = document.createElement("div");
+    entry.className = "dbentry" + (date === today ? " today" : "");
+    var head = document.createElement("div"); head.className = "dbh";
+    head.innerHTML = '<span class="dbd">'+esc(d.querySelector(".ddate").textContent)+'</span>';
+    var tit = document.createElement("div"); tit.className = "dbt"; tit.style.marginBottom = "6px";
+    tit.textContent = d.querySelector(".dtitle").textContent;
+    var ta = document.createElement("textarea");
+    ta.className = "dbnote"; ta.rows = 2; ta.dataset.date = date;
+    ta.placeholder = "Mijn mooiste moment van vandaag…";
+    ta.value = get(key("note:"+date)) || "";
+    ta.addEventListener("input", function(){ put(key("note:"+date), ta.value); });
+    var pa = document.createElement("div"); pa.className = "dbphoto";
+    entry.appendChild(head); entry.appendChild(tit); entry.appendChild(ta); entry.appendChild(pa);
+    box.appendChild(entry);
+    renderPhotoArea(pa, date);
   });
-  box.innerHTML = html || '<p class="note">Nog niets ingevuld. Schrijf onderweg bij elke dag je beste moment — hier lees je ze straks allemaal terug. 🌟</p>';
 }
+function renderPhotoArea(pa, date){
+  var id = photoId(date);
+  photoGet(id, function(blob){
+    pa.innerHTML = "";
+    if(blob){
+      var url = URL.createObjectURL(blob);
+      var img = document.createElement("img"); img.src = url; img.alt = "reisfoto";
+      var rm = document.createElement("button"); rm.className = "rm"; rm.type = "button"; rm.textContent = "✕ weg";
+      rm.addEventListener("click", function(){
+        if(get("sl26:fam:favphoto") === id) del("sl26:fam:favphoto");
+        photoDel(id, function(){ try{ URL.revokeObjectURL(url); }catch(e){} renderPhotoArea(pa, date); renderFotoReis(); });
+      });
+      var fav = document.createElement("button"); fav.className = "fav" + (get("sl26:fam:favphoto") === id ? " on" : "");
+      fav.type = "button"; fav.textContent = "★"; fav.title = "Kies als foto van de reis";
+      fav.addEventListener("click", function(){
+        if(get("sl26:fam:favphoto") === id) del("sl26:fam:favphoto"); else put("sl26:fam:favphoto", id);
+        fav.classList.toggle("on"); renderFotoReis();
+      });
+      pa.appendChild(img); pa.appendChild(rm); pa.appendChild(fav);
+    } else if(_photoOk){
+      var btn = document.createElement("button"); btn.className = "addphoto"; btn.type = "button"; btn.textContent = "📷 Foto toevoegen";
+      var inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.style.display = "none";
+      inp.addEventListener("change", function(){
+        var f = inp.files && inp.files[0]; if(!f) return;
+        btn.textContent = "⏳ bezig…";
+        resizePhoto(f, function(b){
+          if(!b){ btn.textContent = "📷 mislukt — probeer opnieuw"; return; }
+          photoPut(id, b, function(okv){ if(okv) renderPhotoArea(pa, date); else btn.textContent = "📷 opslaan lukte niet (vol?)"; });
+        });
+      });
+      btn.addEventListener("click", function(){ inp.click(); });
+      pa.appendChild(btn); pa.appendChild(inp);
+    }
+  });
+}
+function renderFotoReis(){
+  var box = document.getElementById("fotoreis"); if(!box) return;
+  var favId = get("sl26:fam:favphoto");
+  if(!favId){ box.innerHTML = '<h3>⭐ Foto van de reis</h3><p class="note">Nog niet gekozen. Voeg hieronder foto\'s toe en tik op de ster ★ bij je favoriet.</p>'; return; }
+  photoGet(favId, function(blob){
+    box.innerHTML = '<h3>⭐ Foto van de reis</h3>';
+    if(blob){ var img = document.createElement("img"); img.src = URL.createObjectURL(blob); img.alt = "foto van de reis"; box.appendChild(img); }
+    else box.insertAdjacentHTML("beforeend", '<p class="note">Nog niet gekozen. Tik op de ster ★ bij je favoriet.</p>');
+  });
+}
+function refreshDagboek(){ renderDagboek(); renderFotoReis(); }
+
+/* ---------- afwas-rad ---------- */
+var WHEELNAMES = ["Loes","Willem","Charlotte"];
+var WHEELCOLORS = ["#0fa98e","#2b8fd4","#ff6b2c"];
+(function(){
+  var svg = document.getElementById("wheel"); if(!svg) return;
+  var n = WHEELNAMES.length, cx = 100, cy = 100, r = 96, parts = "";
+  for(var i=0;i<n;i++){
+    var a0 = (i/n)*2*Math.PI - Math.PI/2, a1 = ((i+1)/n)*2*Math.PI - Math.PI/2;
+    var x0 = (cx+r*Math.cos(a0)).toFixed(1), y0 = (cy+r*Math.sin(a0)).toFixed(1);
+    var x1 = (cx+r*Math.cos(a1)).toFixed(1), y1 = (cy+r*Math.sin(a1)).toFixed(1);
+    parts += '<path d="M100,100 L'+x0+','+y0+' A96,96 0 0 1 '+x1+','+y1+' Z" fill="'+WHEELCOLORS[i%WHEELCOLORS.length]+'"/>';
+    var am = (a0+a1)/2, tx = (cx+r*0.6*Math.cos(am)).toFixed(1), ty = (cy+r*0.6*Math.sin(am)).toFixed(1);
+    parts += '<text x="'+tx+'" y="'+ty+'" fill="#fff" font-size="13" font-weight="800" text-anchor="middle" dominant-baseline="middle" transform="rotate('+((am*180/Math.PI)+90).toFixed(1)+' '+tx+' '+ty+')">'+esc(WHEELNAMES[i])+'</text>';
+  }
+  parts += '<circle cx="100" cy="100" r="13" fill="#fff"/>';
+  svg.innerHTML = parts;
+})();
+var _wheelDeg = 0, _spinning = false;
+(function(){
+  var btn = document.getElementById("spinbtn"); if(!btn) return;
+  btn.addEventListener("click", function(){
+    if(_spinning) return;
+    var svg = document.getElementById("wheel"), out = document.getElementById("wheelout");
+    var n = WHEELNAMES.length, w = Math.floor(Math.random()*n);
+    var center = (w + 0.5)/n*360, jitter = (Math.random()-0.5)*(360/n)*0.5;
+    var need = ((-(center + jitter) - _wheelDeg) % 360 + 360) % 360;
+    _wheelDeg += 360*5 + need;
+    _spinning = true; btn.disabled = true; out.textContent = "";
+    svg.style.transform = "rotate(" + _wheelDeg + "deg)";
+    setTimeout(function(){ _spinning = false; btn.disabled = false; out.textContent = "🍽️ " + WHEELNAMES[w] + " doet de afwas!"; confetti(); beep([392,523], 0.16); }, 4150);
+  });
+})();
+
+/* ---------- koudste water (leaderboard, koudste = stoerste) ---------- */
+var COLDPRESETS = [["Mostnica",12],["Soča",14],["Napoleonbrug",16],["Sava",19],["Bohinj",21],["Adria",25]];
+function coldKey(person){ return "sl26:"+(person||"gast")+":cold"; }
+function logCold(v){
+  if(!(who && NAMES.indexOf(who) >= 0)) return false;
+  v = Math.round(v); if(v < -2 || v > 40) return false;
+  var cur = get(coldKey(who));
+  if(cur === null || v < parseFloat(cur)) put(coldKey(who), String(v));
+  renderColdboard(); return true;
+}
+function renderColdboard(){
+  var box = document.getElementById("coldboard"); if(!box) return;
+  var rows = [];
+  NAMES.forEach(function(nm){ var v = get(coldKey(nm)); if(v !== null) rows.push({ name:nm, t:parseFloat(v) }); });
+  rows.sort(function(a,b){ return a.t - b.t; });
+  box.innerHTML = "";
+  if(!rows.length){ box.innerHTML = '<p class="note">Nog geen records. Wie durft het koudste water in? ❄️</p>'; return; }
+  rows.forEach(function(r, i){
+    var medal = i===0 ? "🥇" : i===1 ? "🥈" : i===2 ? "🥉" : "❄️";
+    var d = document.createElement("div"); d.className = "cb";
+    d.innerHTML = '<span style="font-size:16px">'+medal+'</span><span class="cbn'+(r.name===who?' me':'')+'">'+esc(r.name)+'</span><span class="cbt">'+r.t+'°</span>';
+    box.appendChild(d);
+  });
+}
+(function(){
+  var pw = document.getElementById("coldpresets");
+  if(pw) COLDPRESETS.forEach(function(p){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = p[0]+" "+p[1]+"°";
+    b.addEventListener("click", function(){ if(logCold(p[1])){ confetti(); beep([440,660], 0.12); } });
+    pw.appendChild(b);
+  });
+  var cs = document.getElementById("coldsave");
+  if(cs) cs.addEventListener("click", function(){
+    var v = parseFloat(document.getElementById("coldinput").value); if(isNaN(v)) return;
+    if(logCold(v)){ document.getElementById("coldinput").value = ""; confetti(); beep([440,660], 0.12); }
+  });
+})();
+
+/* ---------- Slovenië-quiz ---------- */
+var QUIZ = [
+  { q:"Hoe hoog is de Triglav, de hoogste berg van Slovenië?", o:["1.864 m","2.864 m","3.864 m"], a:1 },
+  { q:"Wat staat er op de vlag van Slovenië?", o:["Een draak","De Triglav","Een steenbok"], a:1 },
+  { q:"Hoeveel trappen heeft het kerkje op het eiland van Bled?", o:["49","99","199"], a:1 },
+  { q:"Het symbool van hoofdstad Ljubljana is een…", o:["Draak","Beer","Adelaar"], a:0 },
+  { q:"Het 'mensvisje' in de Postojna-grot is eigenlijk een…", o:["Vis","Blinde grotsalamander","Waterslang"], a:1 },
+  { q:"Waarom is het water van de Soča zo groen?", o:["Door algen","Door kalksteenpoeder","Door de lucht"], a:1 },
+  { q:"Ongeveer hoeveel procent van Slovenië is bos?", o:["30%","60%","90%"], a:1 },
+  { q:"De witte Lipizzaner-paarden worden geboren als…", o:["Sneeuwwit","Donkerbruin","Grijs gestreept"], a:1 },
+  { q:"Hoeveel haarspeldbochten heeft de Vršič-bergpas?", o:["25","50","100"], a:1 },
+  { q:"Wat betekent het Sloveense woord 'Sladoled'?", o:["Water","IJsje","Dank je wel"], a:1 }
+];
+var _qi = 0, _qscore = 0;
+function renderQuiz(){
+  var box = document.getElementById("quiz"); if(!box) return;
+  if(_qi >= QUIZ.length){
+    box.innerHTML = '<div class="q">Klaar! Je had '+_qscore+' van de '+QUIZ.length+' goed 🎉</div><div class="opts"><button type="button" id="quizreset">Nog een keer</button></div>';
+    document.getElementById("quizreset").addEventListener("click", function(){ _qi = 0; _qscore = 0; renderQuiz(); });
+    if(_qscore >= 8){ confetti(); beep([523,659,784,1047], 0.22); }
+    return;
+  }
+  var item = QUIZ[_qi];
+  box.innerHTML = '<div class="q">Vraag '+(_qi+1)+'/'+QUIZ.length+': '+esc(item.q)+'</div><div class="opts"></div><div class="qfoot" id="qfoot"></div>';
+  var opts = box.querySelector(".opts");
+  item.o.forEach(function(opt, i){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = opt;
+    b.addEventListener("click", function(){
+      opts.querySelectorAll("button").forEach(function(x){ x.disabled = true; });
+      if(i === item.a){ b.classList.add("good"); _qscore++; document.getElementById("qfoot").textContent = "Goed! 🎉"; beep([659,880], 0.12); }
+      else { b.classList.add("bad"); opts.querySelectorAll("button")[item.a].classList.add("good"); document.getElementById("qfoot").textContent = "Bijna — het juiste antwoord staat nu groen."; beep([300,220], 0.14); }
+      setTimeout(function(){ _qi++; renderQuiz(); }, 1150);
+    });
+    opts.appendChild(b);
+  });
+}
+renderQuiz();
 
 /* ---------- familie-scorebord: score delen & vergelijken (offline, via WhatsApp) ---------- */
 function countBadges(person){
@@ -1782,7 +2037,7 @@ if(who && VALID.indexOf(who) >= 0){
   setWho(who);                       // vult ook alle lijsten in
 } else {
   intro.style.display = "flex";      // eerst je naam kiezen
-  loadTicks(); loadBingo(); loadPlates(); loadNotes(); updateRank(); updateScoreboard();
+  loadTicks(); loadBingo(); loadPlates(); refreshDagboek(); renderColdboard(); updateRank(); updateScoreboard();
 }
 
 /* ---------- gedeelde-score-link openen (#s=...) ---------- */

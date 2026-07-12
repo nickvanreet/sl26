@@ -1,7 +1,7 @@
 /* Rookproef v8 — draai voor elke deploy: npm install jsdom && node smoke.js */
 const { JSDOM } = require("jsdom");
 const fs = require("fs");
-const TABS = ["dagen","avontuur","missies","spellen","billie"];
+const TABS = ["dagen","avontuur","missies","spellen","dagboek","billie"];
 let failed = 0;
 const ok = (c,l) => { console.log(`  ${c?"OK  ":"FOUT"}  ${l}`); if(!c) failed++; };
 
@@ -38,10 +38,14 @@ function scenario(label, seed, when, storageWorks = true){
   const tabs = doc.querySelectorAll("nav.tabs button");
   let switched = 0;
   tabs.forEach((b,i) => { click(dom,b); const a = doc.querySelector(".tabpane.active"); if(a && a.id === "t-"+TABS[i]) switched++; });
-  ok(switched === 5, `alle 5 tabbladen wisselen (${switched}/5)`);
+  ok(switched === 6, `alle 6 tabbladen wisselen (${switched}/6)`);
 
   ok(doc.querySelectorAll("details.day").length === 18, "18 dagkaarten");
   ok(doc.querySelectorAll("input[data-m]").length === 40, `40 missies (30 + 10 foto)`);
+  ok(!!doc.getElementById("t-dagboek"), "dagboek-tab aanwezig");
+  ok(doc.querySelectorAll("#dagboek .dbentry").length === 18, `dagboek heeft 18 dag-entries (${doc.querySelectorAll("#dagboek .dbentry").length})`);
+  ok(doc.querySelectorAll("#wheel path").length === 3, "afwas-rad met 3 vakken");
+  ok(/Vraag 1\/10/.test((doc.getElementById("quiz")||{}).textContent||""), "quiz toont vraag 1 van 10");
   ok(doc.querySelectorAll(".lnk a").length >= 40, `links aanwezig (${doc.querySelectorAll(".lnk a").length})`);
   ok([...doc.querySelectorAll(".lnk a")].every(a => /^https:\/\//.test(a.href)), "alle links zijn https");
   ok(doc.querySelectorAll("#kast button").length === 40, "prijzenkast heeft 40 medailles");
@@ -135,6 +139,41 @@ console.log("\n8. Geen privé-GPS-pin op de Besigheim-overnachting");
   const { dom, doc } = load({}, "2026-07-12T09:00:00");
   const link = [...doc.querySelectorAll("details.day")][0].querySelector(".lnk a");
   ok(!!link && !/48\.99/.test(link.href) && /query=Besigheim/i.test(link.href), "Besigheim-link is een naam-zoekopdracht, geen privé-pin");
+  dom.window.close();
+}
+
+console.log("\n9. Dagboek in eigen tab: notitie teruggeladen");
+{
+  const { dom, doc } = load({ "sl26:who":"Loes", "sl26:Loes:note:2026-07-18":"Rafting was episch!" }, "2026-07-20T09:00:00");
+  const notes = [...doc.querySelectorAll("#dagboek .dbentry .dbnote")];
+  const day2 = notes.find(t => t.dataset.date === "2026-07-18");
+  ok(notes.length === 18, `18 dagboek-notitievelden (${notes.length})`);
+  ok(!!day2 && day2.value === "Rafting was episch!", "notitie teruggeladen in de eigen dagboek-tab");
+  dom.window.close();
+}
+
+console.log("\n10. Koudste-water-leaderboard (koudste eerst)");
+{
+  const { dom, doc } = load({
+    "sl26:who":"Willem",
+    "sl26:Loes:cold":"14", "sl26:Willem:cold":"12", "sl26:Charlotte:cold":"19"
+  }, "2026-07-20T09:00:00");
+  const rows = [...doc.querySelectorAll("#coldboard .cb")].map(r => r.querySelector(".cbn").textContent + " " + r.querySelector(".cbt").textContent);
+  ok(rows.length === 3, `3 records op het bord (${rows.length})`);
+  ok(/Willem/.test(rows[0]) && /12/.test(rows[0]), `koudste record staat bovenaan ("${rows[0]}")`);
+  doc.getElementById("coldinput").value = "8";
+  click(dom, doc.getElementById("coldsave"));
+  ok(doc.querySelector("#coldboard .cb .cbt").textContent === "8°", "kouder record (8°) wordt het nieuwe record");
+  dom.window.close();
+}
+
+console.log("\n11. Slovenië-quiz: goed antwoord wordt groen");
+{
+  const { dom, doc } = load({ "sl26:who":"Loes" }, "2026-07-20T09:00:00");
+  const opts = doc.querySelectorAll("#quiz .opts button");
+  click(dom, opts[1]);   // vraag 1: 2.864 m is juist (index 1)
+  ok(opts[1].classList.contains("good"), "juist antwoord krijgt de groene markering");
+  ok(/Goed/.test(doc.getElementById("qfoot").textContent), "quiz geeft 'Goed!' terug");
   dom.window.close();
 }
 
