@@ -94,6 +94,32 @@ Draait de pagina headless in twee scenario's: **eerste opening** (nog geen naam 
 dat er geen JS-fouten zijn, dat alle vijf tabbladen bestaan en wisselen, en dat de vinkjes
 worden teruggeladen. Draai dit vóór elke deploy.
 
+## v8 — dagklussen, prijzenkast, foto-missies, links
+
+- **Dagklussen.** Drie Billie-klussen (water & eten / tekencheck / wandeling & zakje) rouleren
+  dagelijks over Loes, Willem en Charlotte: `JOBS[(kidIndex + dagnummer - 1) % 3]`. De rotatie is
+  **deterministisch** — elke telefoon rekent hetzelfde uit, er is geen server nodig. Afvinken slaat
+  `sl26:<naam>:klus:<datum>` op, dus het reset elke ochtend vanzelf. Daaruit volgen de streak
+  (dagen op rij) en het klussentotaal.
+- **Missies zijn nu 40** (30 + 10 foto-missies, `data-m="f01".."f10"`). De lijst zit in `MIDS` —
+  voeg je een missie toe, breid dan `MIDS`, `MEDALS` en zo nodig `RANKS` uit.
+- **Vinkjes slaan de datum op** (`"2026-07-21"`) in plaats van `"1"`. Oude `"1"`-waarden blijven
+  geldig: test altijd met `done()` / `!== null`, nooit met `=== "1"`.
+- **Links** komen allemaal uit het ouder-reisboek v13 en zijn geverifieerd. Verzin nooit een URL.
+
+## Regel 5 nog eens, want ik ben er twee keer ingetrapt
+
+`var`-toekenningen hoisten niet. Alles wat `setWho()` of `updateScoreboard()` aanroept, moet
+**boven het opstartblok** staan — anders is de variabele `undefined` op het moment dat een
+terugkerende gebruiker de pagina opent, gooit het script, en worden de tab-handlers nooit
+gekoppeld. Symptoom: de app ziet er goed uit maar de tabs doen niets.
+
+Twee veilige patronen, allebei in gebruik:
+- lui laden achter een functie (`tripDates()`), want functiedeclaraties hoisten wél;
+- nieuwe code **vóór** `/* ---------- start ---------- */` plaatsen, nooit erna.
+
+`test/smoke.js` vangt precies dit af (scenario 2). Draai het.
+
 ## Bekende beperkingen
 
 - Safari wist lokaal opgeslagen data na ~7 dagen zonder bezoek aan de site. Web-apps op het

@@ -306,6 +306,45 @@ body.night .tip small,body.night .note{color:var(--mist)}
 #family .fnm.me{color:var(--soca)}
 #family .fnm small{display:block;font-weight:500;color:var(--mist);font-size:11px}
 #family .fsc{font-family:var(--mono);font-weight:700;font-size:16px}
+
+/* ---------- links (allemaal uit het boek van papa) ---------- */
+.lnk{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;padding-top:10px;border-top:1px dashed var(--line)}
+.lnk a{display:inline-flex;align-items:center;gap:4px;background:var(--ice);color:#2b5d6b;border-radius:8px;padding:7px 10px;font-size:12px;font-weight:700;text-decoration:none;min-height:32px}
+.lnk a:active{background:var(--soca);color:#fff}
+
+/* ---------- dagklus ---------- */
+.klus{background:linear-gradient(135deg,#6d5bd0,#8b7bec);color:#fff;border-radius:16px;padding:15px;margin:12px 0}
+.klus .k1{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#d9d2ff}
+.klus .k2{font-size:21px;font-weight:900;letter-spacing:-.4px;margin:3px 0 3px}
+.klus .k3{font-size:13.5px;color:#e6e1ff;line-height:1.45}
+.klusbtn{display:flex;align-items:center;gap:10px;width:100%;margin-top:12px;padding:13px;border:0;border-radius:12px;background:rgba(255,255,255,.18);color:#fff;font:800 14.5px var(--dsp);cursor:pointer;text-align:left}
+.klusbtn[aria-pressed=true]{background:#fff;color:#3f327f}
+.klusbtn .kb{width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,.65);display:flex;align-items:center;justify-content:center;flex:0 0 22px;font-size:13px}
+.klusbtn[aria-pressed=true] .kb{background:var(--soca);border-color:var(--soca);color:#fff}
+.klusbtn[aria-pressed=true] .kb::after{content:"\2713"}
+.streak{display:flex;gap:6px;margin-top:11px}
+.streak div{flex:1;background:rgba(255,255,255,.18);border-radius:10px;padding:8px 2px;text-align:center}
+.streak .v{font-family:var(--mono);font-weight:700;font-size:18px}
+.streak .k{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#e6e1ff}
+
+/* ---------- rota ---------- */
+.rota{display:flex;gap:6px}
+.rota .r{flex:1;text-align:center;background:var(--ice);border-radius:11px;padding:10px 4px}
+.rota .r.me{outline:2px solid var(--soca);background:#e6f7f3}
+.rota .em{font-size:21px;line-height:1}
+.rota .nm{font-size:11.5px;font-weight:800;margin-top:3px}
+.rota .jb{font-size:10px;color:var(--mist);line-height:1.25;margin-top:1px}
+
+/* ---------- prijzenkast ---------- */
+.kast{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.kast button{aspect-ratio:1;border:0;border-radius:9px;background:var(--ice);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;filter:grayscale(1);opacity:.4;padding:0}
+.kast button.won{background:linear-gradient(135deg,#ffd76a,#ffb020);filter:none;opacity:1;box-shadow:0 2px 7px rgba(255,176,32,.45)}
+.kast button.sel{outline:3px solid var(--soca);outline-offset:1px}
+#kastinfo{margin-top:11px;font-size:13.5px;min-height:40px;line-height:1.4}
+#kastinfo b{display:block;font-size:14px}
+#kastinfo em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--soca);letter-spacing:.5px}
+#kastinfo .locked{color:var(--mist)}
+.score .s{font-size:10px;font-weight:800;color:var(--flare);margin-top:1px;height:13px}
 </style>
 </head>
 <body>
@@ -376,6 +415,8 @@ body.night .tip small,body.night .note{color:var(--mist)}
     </div>
   </div>
 
+  <div class="klus" id="dagklus"></div>
+
   <h2 class="sec">Onze route</h2>
   <div class="card">
     <svg id="routemap" viewBox="0 0 300 208" role="img" aria-label="Onze route door Slovenië">
@@ -423,7 +464,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li>We vertrekken om <b>06:00</b> — dus: gisteravond alles in de auto, en je koptelefoon binnen handbereik.</li>
         <li>Ongeveer 8 uur rijden door Duitsland. Perfect voor de <b>reisbingo</b> en het landenspel (tabblad 🎲).</li>
         <li>We slapen in een huisje in Besigheim. Eén nacht, dan door naar de bergen.</li>
-      </ul><div class="billie">🐾 Billie: elke 2–3 uur stoppen om te plassen en te drinken. Nooit alleen in de auto.</div></div>
+      </ul><div class="billie">🐾 Billie: elke 2–3 uur stoppen om te plassen en te drinken. Nooit alleen in de auto.</div><div class="lnk"><a href="https://www.google.com/maps/search/?api=1&query=Besigheim" target="_blank" rel="noopener">📍 Besigheim</a></div></div>
     </details>
 
     <details class="day d-soca" data-date="2026-07-18">
@@ -437,7 +478,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li>Tent opzetten (iedereen helpt = klaar in 30 min), dan verkennen.</li>
         <li><b>Eerste duik in de Soča.</b> Het water is smaragdgroen én ijskoud: 12–16°C. Je kan de bodem zien op 5 meter diep.</li>
       </ul><div class="billie">🐾 Billie: de Soča bij de camping is ondiep en koel — setterparadijs.</div>
-      <div class="tip">🎯 Missie: 10 seconden in de Soča blijven staan zonder te gillen. (Niemand haalt het.)</div></div>
+      <div class="tip">🎯 Missie: 10 seconden in de Soča blijven staan zonder te gillen. (Niemand haalt het.)</div><div class="lnk"><a href="https://www.camp-vodenca.com" target="_blank" rel="noopener">🏕 Camp Vodenca</a><a href="https://maps.google.com/?q=Camp+Vodenca+Bovec" target="_blank" rel="noopener">📍 Kaart</a></div></div>
     </details>
 
     <details class="day d-soca" data-date="2026-07-19">
@@ -451,7 +492,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li>Klasse II–III stroomversnellingen: spannend, maar de gids weet precies wat hij doet. Peddelen op commando!</li>
         <li><b>Middag — Boka-waterval</b>: 106 meter, de hoogste van Slovenië. Een uurtje wandelen heen en terug.</li>
         <li>Daarna weer zwemmen bij de camping.</li>
-      </ul><div class="billie">🐾 Billie gaat niet mee raften. Ze blijft bij één ouder op de camping.</div></div>
+      </ul><div class="billie">🐾 Billie gaat niet mee raften. Ze blijft bij één ouder op de camping.</div><div class="lnk"><a href="https://socastsplash.si" target="_blank" rel="noopener">🛶 Soča Splash</a><a href="https://www.google.com/maps/search/?api=1&query=Soca%20Rafting%20Bovec" target="_blank" rel="noopener">📍 Rafting Bovec</a><a href="https://maps.google.com/?q=46.3070,13.5625" target="_blank" rel="noopener">💦 Boka</a></div></div>
     </details>
 
     <details class="day d-soca" data-date="2026-07-20">
@@ -465,7 +506,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li><b>Canyoning (12+):</b> abseilen langs watervallen en springen in turquoise poelen.</li>
         <li><b>De jongste</b> doet ondertussen <b>kajak</b> met papa of mama — ook nat, ook top.</li>
         <li>Namiddag: lange wandeling over de <b>Soča Trail</b>, langs de rivier.</li>
-      </ul><div class="billie">🐾 Billie loopt de Soča Trail mee — ze heeft die lange wandeling écht nodig.</div></div>
+      </ul><div class="billie">🐾 Billie loopt de Soča Trail mee — ze heeft die lange wandeling écht nodig.</div><div class="lnk"><a href="https://zipline-bovec.si" target="_blank" rel="noopener">🪂 Zipline Bovec</a><a href="https://aquatours.si" target="_blank" rel="noopener">🌊 Canyoning</a><a href="https://www.google.com/maps/search/?api=1&query=Soca%20Trail%20Bovec" target="_blank" rel="noopener">📍 Soča Trail</a></div></div>
     </details>
 
     <details class="day d-soca" data-date="2026-07-21">
@@ -479,7 +520,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li><b>Vršič-pas (1.611 m):</b> de hoogste bergweg van Slovenië, met <b>50 haarspeldbochten</b> — allemaal genummerd. Tel ze mee. Bij bocht 8 staat een houten Russische kapel.</li>
         <li><b>Lake Jasna:</b> groen meertje, picknick. Zoek het bronzen beeld van de <b>Zlatorog</b> — de steenbok met gouden hoorns uit de Sloveense legende.</li>
         <li><b>Zelenci:</b> houten paden over een bron die uit de grond omhoog borrelt. Superstil, superhelder.</li>
-      </ul><div class="billie">🐾 Billie mag overal mee, aan de lijn. Jasna en Zelenci zijn perfect voor haar.</div></div>
+      </ul><div class="billie">🐾 Billie mag overal mee, aan de lijn. Jasna en Zelenci zijn perfect voor haar.</div><div class="lnk"><a href="https://maps.google.com/?q=46.4375,13.8960" target="_blank" rel="noopener">📍 Peričnik</a><a href="https://maps.google.com/?q=46.4355,13.7440" target="_blank" rel="noopener">📍 Vršič</a><a href="https://maps.google.com/?q=46.4777,13.7710" target="_blank" rel="noopener">📍 Jasna</a><a href="https://maps.google.com/?q=46.4900,13.7405" target="_blank" rel="noopener">📍 Zelenci</a></div></div>
     </details>
 
     <details class="day d-soca" data-date="2026-07-22">
@@ -492,7 +533,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li><b>Tolmin-kloof:</b> turquoise water tussen steile rotswanden. Zoek de <b>duivelsbrug</b>, hoog boven de rivier.</li>
         <li><b>Kozjak-waterval:</b> 20 minuten door het bos → een verborgen grot met een waterval erin. Het licht is er blauw. Eén van de mooiste plekken van de hele reis.</li>
         <li>De oudsten kunnen het <b>WO I-museum</b> in; wie liever zwemt gaat naar de <b>Napoleonbrug</b> — diepe turquoise poelen waar je van de rotsen kan springen.</li>
-      </ul><div class="billie">🐾 Billie: korte lijn in de kloof (smal pad), maar zwemmen mag bij de Napoleonbrug.</div></div>
+      </ul><div class="billie">🐾 Billie: korte lijn in de kloof (smal pad), maar zwemmen mag bij de Napoleonbrug.</div><div class="lnk"><a href="https://www.soca-valley.com/en/outdoor/hiking/tolmin-gorges/" target="_blank" rel="noopener">🏞 Tolmin-kloof</a><a href="https://maps.google.com/?q=46.2470,13.5860" target="_blank" rel="noopener">📍 Kozjak</a><a href="https://www.google.com/maps/search/?api=1&query=Napoleon%20Bridge%20Kobarid" target="_blank" rel="noopener">📍 Napoleonbrug</a></div></div>
     </details>
 
     <details class="day d-bled" data-date="2026-07-23">
@@ -505,7 +546,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li>Tent afbreken, ~2 uur rijden, tent weer opzetten. Sobec is groot: rivier, minigolf, klimmuur.</li>
         <li><b>Rondje meer van Bled</b> (6 km, vlak). In het midden: een eiland met een kerk.</li>
         <li><b>Kremna rezina</b> proeven — de beroemde slagroomtaart van Bled. Blokje bladerdeeg, vanillecrème, slagroom. Eén stuk = bijna te veel. Bijna.</li>
-      </ul><div class="billie">🐾 Billie: aan de lijn rond het meer (druk pad), maar de rivier bij Sobec is helemaal van haar.</div></div>
+      </ul><div class="billie">🐾 Billie: aan de lijn rond het meer (druk pad), maar de rivier bij Sobec is helemaal van haar.</div><div class="lnk"><a href="https://www.sobec.si" target="_blank" rel="noopener">🏕 Camping Sobec</a><a href="https://www.google.com/maps/search/?api=1&query=Lake%20Bled" target="_blank" rel="noopener">📍 Meer van Bled</a></div></div>
     </details>
 
     <details class="day d-bled" data-date="2026-07-24">
@@ -519,7 +560,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li>Neem een trui mee: boven is het veel kouder dan beneden.</li>
         <li><b>Bohinj-meer:</b> 20–22°C — het warmste water tot nu toe. Zwemmen en SUP.</li>
         <li><b>Savica-waterval:</b> een flinke trappenklim, maar dan zie je hem.</li>
-      </ul><div class="billie">🐾 Billie mag zwemmen aan de oostkant van het Bohinj-meer.</div></div>
+      </ul><div class="billie">🐾 Billie mag zwemmen aan de oostkant van het Bohinj-meer.</div><div class="lnk"><a href="https://www.vogel.si/en/" target="_blank" rel="noopener">🚡 Vogel</a><a href="https://www.bohinj.si/en/" target="_blank" rel="noopener">🏊 Bohinj</a><a href="https://www.google.com/maps/search/?api=1&query=Savica%20Waterfall" target="_blank" rel="noopener">📍 Savica</a></div></div>
     </details>
 
     <details class="day d-bled" data-date="2026-07-25">
@@ -532,7 +573,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li><b>Mostnica-kloof:</b> 3 km langs een kloof met glashelder water. Ergens onderweg staat een rots die er precies uitziet als een <b>olifant</b>. Wie ziet hem eerst?</li>
         <li>Lunch in Stara Fužina. Daar maken ze <b>Mohant</b>: een kaas die officieel stinkt. Durf je één hapje?</li>
         <li><b>Kanoën op het meer</b> — en Billie mag mee in de kano. Niet omslaan.</li>
-      </ul><div class="billie">🐾 Billie duikt na de wandeling in de Mostnica-rivier. IJskoud. Zij vindt dat prima.</div></div>
+      </ul><div class="billie">🐾 Billie duikt na de wandeling in de Mostnica-rivier. IJskoud. Zij vindt dat prima.</div><div class="lnk"><a href="https://www.google.com/maps/search/?api=1&query=Mostnica%20Gorge" target="_blank" rel="noopener">📍 Mostnica</a><a href="https://www.google.com/maps/search/?api=1&query=Stara%20Fuzina" target="_blank" rel="noopener">🧀 Stara Fužina</a></div></div>
     </details>
 
     <details class="day d-bled" data-date="2026-07-26">
@@ -546,7 +587,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li><b>Ojstrica:</b> 20 minuten stevig klimmen → het uitzicht waar iedereen die foto van Bled maakt.</li>
         <li><b>Kasteel van Bled:</b> hoog op een rots. Beneden in de smederij slaan ze nog altijd munten.</li>
         <li><b>Straža-toboggan:</b> met de stoeltjeslift omhoog, met de rodelbaan naar beneden. Je stuurt zelf hoe snel je gaat. 🏆 Wie is de snelste van het gezin?</li>
-      </ul><div class="billie">🐾 Vintgar is smal en druk: één ouder gaat met Billie langs de Sava wandelen.</div></div>
+      </ul><div class="billie">🐾 Vintgar is smal en druk: één ouder gaat met Billie langs de Sava wandelen.</div><div class="lnk"><a href="https://www.vintgar.si/en/" target="_blank" rel="noopener">🌉 Vintgar</a><a href="https://www.blejski-grad.si/en/" target="_blank" rel="noopener">🏰 Kasteel</a><a href="https://www.straza-bled.si/en/" target="_blank" rel="noopener">🛷 Straža</a><a href="https://www.google.com/maps/search/?api=1&query=Ojstrica%20Bled" target="_blank" rel="noopener">📍 Ojstrica</a></div></div>
     </details>
 
     <details class="day d-bled" data-date="2026-07-27">
@@ -560,7 +601,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li>Het symbool van Ljubljana is een <b>draak</b>. Op de Drakenbrug staan er vier — ga ze fotograferen.</li>
         <li><b>Metelkova</b>: een hele wijk vol streetart en rare beelden.</li>
         <li>Langs de rivier lunchen. Burgers bestaan hier ook, geen paniek.</li>
-      </ul><div class="billie">🐾 Ljubljana is superhondvriendelijk: bij veel terrassen staat een waterbakje klaar.</div></div>
+      </ul><div class="billie">🐾 Ljubljana is superhondvriendelijk: bij veel terrassen staat een waterbakje klaar.</div><div class="lnk"><a href="https://www.visitljubljana.com/en/" target="_blank" rel="noopener">🐉 Ljubljana</a><a href="https://www.google.com/maps/search/?api=1&query=Ljubljana%20Castle" target="_blank" rel="noopener">📍 Burcht</a><a href="https://www.google.com/maps/search/?api=1&query=Metelkova%20Ljubljana" target="_blank" rel="noopener">🎨 Metelkova</a></div></div>
     </details>
 
     <details class="day d-bled" data-date="2026-07-28">
@@ -573,7 +614,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li><b>Škocjan:</b> een gigantische grot met een <b>rivier</b> erin. Je loopt over een brug die <b>45 meter</b> boven het water hangt. Naar beneden kijken = kippenvel.</li>
         <li>Het is er maar <b>12°C</b>: trui mee! En: foto's maken mag niet, dus goed kijken.</li>
         <li><b>Lipica:</b> hier komen de witte <b>Lipizzaner-paarden</b> vandaan, al sinds 1580. Grappig detail: de veulens worden <b>donkerbruin</b> geboren en worden pas na jaren wit.</li>
-      </ul><div class="billie">🐾 Billie mag de grot niet in. Zij wacht in de schaduw bij één ouder.</div></div>
+      </ul><div class="billie">🐾 Billie mag de grot niet in. Zij wacht in de schaduw bij één ouder.</div><div class="lnk"><a href="https://www.park-skocjanske-jame.si/en" target="_blank" rel="noopener">🕳 Škocjan</a><a href="https://www.lipica.org/en/" target="_blank" rel="noopener">🐴 Lipica</a></div></div>
     </details>
 
     <details class="day d-piran" data-date="2026-07-29">
@@ -587,7 +628,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li>10°C onder de grond. Trui. Echt.</li>
         <li><b>Predjama-kasteel:</b> gebouwd ín een rotswand van 123 meter. Volgens de legende woonde hier roverridder Erasmus — hij werd verraden en geraakt door een kanonskogel… terwijl hij op het toilet zat.</li>
         <li>Daarna: <b>Kaki Plac</b> bij Piran. Pop-uptenten opzetten = zo gepiept.</li>
-      </ul><div class="billie">🐾 Billie mag niet in de grot, maar Postojna heeft een bewaakte hondenparkeerplaats in de schaduw.</div></div>
+      </ul><div class="billie">🐾 Billie mag niet in de grot, maar Postojna heeft een bewaakte hondenparkeerplaats in de schaduw.</div><div class="lnk"><a href="https://www.postojnska-jama.eu/en/" target="_blank" rel="noopener">🚂 Postojna</a><a href="https://www.postojnska-jama.eu/en/predjama-castle/" target="_blank" rel="noopener">🏰 Predjama</a><a href="https://kaki-plac.si" target="_blank" rel="noopener">🏕 Kaki Plac</a></div></div>
     </details>
 
     <details class="day d-piran" data-date="2026-07-30">
@@ -601,7 +642,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li><b>Sečovlje-zoutpannen:</b> al 700 jaar halen ze hier zout uit zeewater, met de hand. Proef een korreltje.</li>
         <li><b>Strand Fiesa:</b> een beschut baaitje. Zwemmen in de Adriatische Zee.</li>
         <li>'s Avonds: <b>kampvuur</b> op Kaki Plac. Marshmallows.</li>
-      </ul><div class="billie">🐾 Billie: aan de lijn bij de zoutpannen (vogels broeden er). 's Ochtends vroeg mag ze op het strand.</div></div>
+      </ul><div class="billie">🐾 Billie: aan de lijn bij de zoutpannen (vogels broeden er). 's Ochtends vroeg mag ze op het strand.</div><div class="lnk"><a href="https://www.kpss.si/en/" target="_blank" rel="noopener">🧂 Zoutpannen</a><a href="https://www.google.com/maps/search/?api=1&query=Fiesa%20Beach%20Piran" target="_blank" rel="noopener">🏖 Fiesa</a></div></div>
     </details>
 
     <details class="day d-piran" data-date="2026-07-31">
@@ -614,7 +655,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li>Vroeg vertrekken (vóór de hitte), 1,5 uur rijden naar Kroatië. Geen grenscontrole.</li>
         <li><b>Pula Arena:</b> bijna 2000 jaar oud, één van de grootste van de wereld. Je kan de <b>ondergrondse tunnels</b> in — daar wachtten de gladiatoren.</li>
         <li>Daarna nog het Forum en de markthal, en terug voor een luie namiddag.</li>
-      </ul><div class="billie">🐾 Billie blijft thuis op Kaki Plac (dog park!). 30–35°C is veel te warm voor haar in de stad.</div></div>
+      </ul><div class="billie">🐾 Billie blijft thuis op Kaki Plac (dog park!). 30–35°C is veel te warm voor haar in de stad.</div><div class="lnk"><a href="https://www.google.com/maps/search/?api=1&query=Pula%20Arena" target="_blank" rel="noopener">🏛 Pula Arena</a></div></div>
     </details>
 
     <details class="day d-piran" data-date="2026-08-01">
@@ -628,7 +669,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li>Strand, fietsen of gewoon niksen.</li>
         <li><b>Stadsmuren van Piran beklimmen</b> — vanaf boven zie je het hele schiereiland in zee steken. Beste zonsondergang van de reis.</li>
         <li>Gelato. En dan het <b>laatste kampvuur</b>, met sterren erbij.</li>
-      </ul><div class="billie">🐾 Billie krijgt een lange ochtendwandeling langs de kust, om 7 uur — voor de hitte.</div></div>
+      </ul><div class="billie">🐾 Billie krijgt een lange ochtendwandeling langs de kust, om 7 uur — voor de hitte.</div><div class="lnk"><a href="https://www.google.com/maps/search/?api=1&query=Piran%20Town%20Walls" target="_blank" rel="noopener">🧱 Stadsmuren</a><a href="https://www.portoroz.si/en/piran" target="_blank" rel="noopener">🏖 Piran</a></div></div>
     </details>
 
     <details class="day d-road" data-date="2026-08-02">
@@ -641,7 +682,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
         <li>Tent voor de laatste keer afbreken. ~5 uur rijden.</li>
         <li>Hotel in München — matras, douche, geen slaapzak. Geniet ervan.</li>
         <li>'s Avonds nog even de stad in.</li>
-      </ul><div class="billie">🐾 Billie mag mee het hotel in, maar het is een stad: korte avondwandeling in plaats van een rivier.</div></div>
+      </ul><div class="billie">🐾 Billie mag mee het hotel in, maar het is een stad: korte avondwandeling in plaats van een rivier.</div><div class="lnk"><a href="https://www.google.com/maps/search/?api=1&query=B%26B%20Hotel%20Munchen%20City-Ost" target="_blank" rel="noopener">🏨 München</a></div></div>
     </details>
 
     <details class="day d-road" data-date="2026-08-03">
@@ -681,35 +722,35 @@ body.night .tip small,body.night .note{color:var(--mist)}
     <h3>Rafting op de Soča</h3>
     <div class="note">Echte stroomversnellingen door een smaragdgroene kloof. Je krijgt wetsuit, zwemvest en helm. Peddelen op commando — en ja, je wordt kletsnat.</div>
     <div class="bolts">⚡⚡⚡⚡<span class="off">⚡</span></div>
-    <div class="meta"><span class="chip">Vanaf 6 jaar</span><span class="chip">±3 uur</span><span class="chip">Dag 3</span></div>
+    <div class="meta"><span class="chip">Vanaf 6 jaar</span><span class="chip">±3 uur</span><span class="chip">Dag 3</span></div><div class="lnk"><a href="https://socastsplash.si" target="_blank" rel="noopener">🔗 Soča Splash</a></div>
   </div></div></div>
 
   <div class="card"><div class="adv"><span class="em">🪂</span><div>
     <h3>Zipline Bovec</h3>
     <div class="note">1,2 kilometer aan een kabel dwars over de vallei, tot 60 km/u, met bergen aan alle kanten. Iedereen mag. De eerste seconde is de ergste.</div>
     <div class="bolts">⚡⚡⚡⚡⚡</div>
-    <div class="meta"><span class="chip">Iedereen</span><span class="chip">±1 uur</span><span class="chip">Dag 4</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip">±1 uur</span><span class="chip">Dag 4</span></div><div class="lnk"><a href="https://zipline-bovec.si" target="_blank" rel="noopener">🔗 zipline-bovec.si</a></div>
   </div></div></div>
 
   <div class="card"><div class="adv"><span class="em">💦</span><div>
     <h3>Canyoning</h3>
     <div class="note">Aan een touw langs watervallen naar beneden, en springen in poelen. Alleen voor 12+. De jongste doet kajak met een ouder — ook nat, ook goed.</div>
     <div class="bolts">⚡⚡⚡⚡⚡</div>
-    <div class="meta"><span class="chip hot">12+</span><span class="chip">±3 uur</span><span class="chip">Dag 4</span></div>
+    <div class="meta"><span class="chip hot">12+</span><span class="chip">±3 uur</span><span class="chip">Dag 4</span></div><div class="lnk"><a href="https://aquatours.si" target="_blank" rel="noopener">🔗 aquatours.si</a></div>
   </div></div></div>
 
   <div class="card"><div class="adv"><span class="em">🛷</span><div>
     <h3>Straža-toboggan (Bled)</h3>
     <div class="note">Stoeltjeslift omhoog, rodelbaan naar beneden. Jij bepaalt met de hendel hoe hard je gaat. Familierecord verbreken = jouw taak.</div>
     <div class="bolts">⚡⚡⚡⚡<span class="off">⚡</span></div>
-    <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 10</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 10</span></div><div class="lnk"><a href="https://www.straza-bled.si/en/" target="_blank" rel="noopener">🔗 straza-bled.si</a></div>
   </div></div></div>
 
   <div class="card"><div class="adv"><span class="em">🚂</span><div>
     <h3>Postojna: treintje in de grot</h3>
     <div class="note">Een échte trein die de grot in rijdt. Binnen woont het <b>mensvisje</b>: een blinde, bleke salamander die "babydraak" heet, 100+ jaar oud wordt en jaren zonder eten kan.</div>
     <div class="bolts">⚡⚡<span class="off">⚡⚡⚡</span></div>
-    <div class="meta"><span class="chip">Iedereen</span><span class="chip hot">10°C — trui!</span><span class="chip">Dag 13</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip hot">10°C — trui!</span><span class="chip">Dag 13</span></div><div class="lnk"><a href="https://www.postojnska-jama.eu/en/" target="_blank" rel="noopener">🔗 postojnska-jama.eu</a></div>
   </div></div></div>
 
   <div class="card"><div class="adv"><span class="em">🌊</span><div>
@@ -723,14 +764,14 @@ body.night .tip small,body.night .note{color:var(--mist)}
     <h3>Škocjan: de brug in de grot</h3>
     <div class="note">Een ondergrondse canyon met een rivier, en een brug die 45 meter boven het water hangt. Foto's mogen niet — dus onthouden.</div>
     <div class="bolts">⚡⚡⚡⚡<span class="off">⚡</span></div>
-    <div class="meta"><span class="chip hot">12°C — trui!</span><span class="chip">Dag 12</span></div>
+    <div class="meta"><span class="chip hot">12°C — trui!</span><span class="chip">Dag 12</span></div><div class="lnk"><a href="https://www.park-skocjanske-jame.si/en" target="_blank" rel="noopener">🔗 park-skocjanske-jame.si</a></div>
   </div></div></div>
 
   <div class="card"><div class="adv"><span class="em">🛶</span><div>
     <h3>Kano op het Bohinj-meer</h3>
     <div class="note">Je eigen kano, bergen rondom, en een setter die probeert mee te varen. Het meer is 20–22°C: het warmste zoete water van de reis.</div>
     <div class="bolts">⚡⚡<span class="off">⚡⚡⚡</span></div>
-    <div class="meta"><span class="chip">Iedereen</span><span class="chip">🐾 Billie mag mee</span><span class="chip">Dag 9</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip">🐾 Billie mag mee</span><span class="chip">Dag 9</span></div><div class="lnk"><a href="https://www.bohinj.si/en/" target="_blank" rel="noopener">🔗 bohinj.si</a></div>
   </div></div></div>
 
   <div class="card"><div class="adv"><span class="em">🏛</span><div>
@@ -744,7 +785,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
     <h3>Lipizzaners aaien in Lipica</h3>
     <div class="note">Beroemde witte paarden, gefokt sinds 1580. De veulens worden donkerbruin geboren en worden pas na jaren wit. Aaien mag.</div>
     <div class="bolts">⚡<span class="off">⚡⚡⚡⚡</span></div>
-    <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 12</span></div>
+    <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 12</span></div><div class="lnk"><a href="https://www.lipica.org/en/" target="_blank" rel="noopener">🔗 lipica.org</a></div>
   </div></div></div>
 
   <h2 class="sec">Waar kan je zwemmen?</h2>
@@ -783,7 +824,7 @@ body.night .tip small,body.night .note{color:var(--mist)}
     <div class="r1">Jouw rang</div>
     <div class="r2" id="rankname">Kampeerder in opleiding</div>
     <div class="bar"><i id="rankbar" style="width:0%"></i></div>
-    <div class="r3"><span id="rankcount">0</span> van de 30 missies volbracht</div>
+    <div class="r3"><span id="rankcount">0</span> van de 40 missies volbracht</div>
   </div>
 
   <div class="score" id="scoreboard"></div>
@@ -802,6 +843,13 @@ body.night .tip small,body.night .note{color:var(--mist)}
   <h2 class="sec">Badges</h2>
   <p class="note" style="margin-bottom:2px">Verzamel ze door bij elkaar horende missies af te ronden.</p>
   <div class="badges" id="badges"></div>
+
+  <h2 class="sec">Prijzenkast</h2>
+  <p class="note" style="margin-bottom:8px">Alles wat je al volbracht hebt, in goud. Tik op een medaille om te zien wanneer je hem verdiende.</p>
+  <div class="card">
+    <div class="kast" id="kast"></div>
+    <div id="kastinfo" class="note">Tik op een medaille.</div>
+  </div>
 
   <h2 class="sec">Missies · Soča-vallei</h2>
   <div class="card" data-mission-group>
@@ -843,6 +891,21 @@ body.night .tip small,body.night .note{color:var(--mist)}
     <label class="check"><input type="checkbox" data-m="m28"><span class="box"></span><span class="ctxt">Loop door de gladiatorentunnels van Pula</span></label>
     <label class="check"><input type="checkbox" data-m="m29"><span class="box"></span><span class="ctxt">Bestel iets in het Sloveens<small>"Sladoled, prosim!" telt.</small></span></label>
     <label class="check"><input type="checkbox" data-m="m30"><span class="box"></span><span class="ctxt">Roep BINGO in de auto</span></label>
+  </div>
+
+  <h2 class="sec">Foto-missies</h2>
+  <p class="note" style="margin-bottom:8px">Tien foto's om te maken. Op de laatste dag stemt iedereen: welke is de beste van de reis?</p>
+  <div class="card" data-mission-group>
+    <label class="check"><input type="checkbox" data-m="f01"><span class="box"></span><span class="ctxt">🐕 Billie in de Soča<small>Zwemmend. Liefst met haar oren omhoog.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="f02"><span class="box"></span><span class="ctxt">🤼 De gekste sprong<small>Iemand in de lucht, precies op het juiste moment.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="f03"><span class="box"></span><span class="ctxt">🌅 De mooiste zonsondergang<small>Van de stadsmuren van Piran.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="f04"><span class="box"></span><span class="ctxt">🐉 Jij en een draak<small>Ljubljana. Er staan er vier op de brug.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="f05"><span class="box"></span><span class="ctxt">🍦 Jouw ijsje<small>Voor het smelt. Dat is de uitdaging.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="f06"><span class="box"></span><span class="ctxt">💦 Kletsnat<small>Waterval, kloof of rivier — maakt niet uit.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="f07"><span class="box"></span><span class="ctxt">🏔 Een berg die groter is dan je dacht<small>Vanaf Vogel lukt dat vanzelf.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="f08"><span class="box"></span><span class="ctxt">🦎 Een dier dat je niet verwachtte<small>Mensvisje, steenbok, hagedis, gek insect.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="f09"><span class="box"></span><span class="ctxt">🗿 Het raarste ding onderweg<small>Elke reis heeft er één.</small></span></label>
+    <label class="check"><input type="checkbox" data-m="f10"><span class="box"></span><span class="ctxt">👪 Iedereen lacht<small>Ook papa. Vooral papa.</small></span></label>
   </div>
 
   <h2 class="sec">Jouw rugzak</h2>
@@ -950,7 +1013,12 @@ body.night .tip small,body.night .note{color:var(--mist)}
     <div class="note">18 dagen, 5 rivieren, 1 zee. Ze rekent op jullie.</div>
   </div>
 
-  <h2 class="sec">Jullie taken</h2>
+  <h2 class="sec">Wie doet wat vandaag?</h2>
+  <p class="note" style="margin-bottom:8px">De klussen rouleren elke dag. Iedereen doet dus alles — niemand zit 18 dagen aan de poepzakjes vast.</p>
+  <div class="card"><div class="rota" id="rota"></div></div>
+  <div class="card" id="klusbord"></div>
+
+  <h2 class="sec">Altijd, elke dag</h2>
   <div class="card">
     <label class="check"><input type="checkbox" data-p="b01"><span class="box"></span><span class="ctxt">Waterbak bijvullen<small>Elke ochtend en avond, ook onderweg.</small></span></label>
     <label class="check"><input type="checkbox" data-p="b02"><span class="box"></span><span class="ctxt">Tekencheck<small>Elke avond: oren, nek, buik, poten, tussen de tenen.</small></span></label>
@@ -1083,6 +1151,7 @@ function setWho(n){
   loadNotes();
   updateRank();
   updateScoreboard();
+  if(typeof refreshExtras === "function") refreshExtras();
 }
 var VALID = ["Loes","Willem","Charlotte","Mama","Papa","Iedereen"];
 document.querySelectorAll("[data-name]").forEach(function(b){
@@ -1166,32 +1235,40 @@ function loadTicks(){
   if(!ticks) return;
   ticks.forEach(function(inp){
     var id = inp.dataset.m || inp.dataset.p;
-    inp.checked = get(key(id)) === "1";
+    inp.checked = get(key(id)) !== null;
   });
 }
 ticks.forEach(function(inp){
   inp.addEventListener("change", function(){
     var id = inp.dataset.m || inp.dataset.p;
-    if(inp.checked) put(key(id),"1"); else del(key(id));
+    if(inp.checked) put(key(id), ymd(new Date())); else del(key(id));
     updateRank(true);
     updateScoreboard();
+    renderKast();
   });
 });
 
 /* ---------- rang ---------- */
 var RANKS = [
   [0,  "Kampeerder in opleiding"],
-  [8,  "Bergwandelaar"],
-  [15, "Kloofduiker"],
-  [22, "Soča-held"],
-  [29, "Zlatorog 🏆"]
+  [10, "Bergwandelaar"],
+  [19, "Kloofduiker"],
+  [28, "Soča-held"],
+  [38, "Zlatorog 🏆"]
 ];
+var MIDS = [];
+for(var _i=1;_i<=30;_i++) MIDS.push("m"+String(_i).padStart(2,"0"));
+for(var _i=1;_i<=10;_i++) MIDS.push("f"+String(_i).padStart(2,"0"));
+
+/* Sinds v8 slaan we de datum op i.p.v. "1". Oude "1"-waarden blijven gewoon geldig. */
+function done(person, id){ return get("sl26:"+(person||"gast")+":"+id) !== null; }
+function doneOn(person, id){
+  var v = get("sl26:"+(person||"gast")+":"+id);
+  return (v && v !== "1") ? v : null;
+}
 function countM(person){
   var n = 0;
-  for(var i=1;i<=30;i++){
-    var id = "m"+String(i).padStart(2,"0");
-    if(get("sl26:"+(person||"gast")+":"+id) === "1") n++;
-  }
+  MIDS.forEach(function(id){ if(done(person, id)) n++; });
   return n;
 }
 var lastRankIdx = -1;
@@ -1204,7 +1281,7 @@ function celebrateRank(idx){
 function updateRank(animate){
   var n = countM(who);
   document.getElementById("rankcount").textContent = n;
-  document.getElementById("rankbar").style.width = Math.round(n/30*100)+"%";
+  document.getElementById("rankbar").style.width = Math.round(n/MIDS.length*100)+"%";
   var idx = rankIdxFor(n);
   document.getElementById("rankname").textContent = RANKS[idx][1];
   if(animate && lastRankIdx >= 0 && idx > lastRankIdx){ celebrateRank(idx); }
@@ -1226,14 +1303,14 @@ function renderBadges(animate){
   var box = document.getElementById("badges"); if(!box) return;
   box.innerHTML = "";
   BADGES.forEach(function(bd){
-    var have = bd.ms.filter(function(m){ return get(key(m)) === "1"; }).length;
-    var done = have === bd.ms.length;
+    var have = bd.ms.filter(function(m){ return done(who, m); }).length;
+    var full = have === bd.ms.length;
     var el = document.createElement("div");
-    el.className = "badge" + (done ? " on" : "");
+    el.className = "badge" + (full ? " on" : "");
     el.innerHTML = '<div class="bem">'+bd.em+'</div><div class="bnm">'+bd.name+'</div><div class="bpr">'+have+'/'+bd.ms.length+'</div>';
     box.appendChild(el);
-    if(done && animate && !badgeDone[bd.k]){ confetti(); beep([784,1047,1319], 0.24); }
-    badgeDone[bd.k] = done;
+    if(full && animate && !badgeDone[bd.k]){ confetti(); beep([784,1047,1319], 0.24); }
+    badgeDone[bd.k] = full;
   });
 }
 function updateScoreboard(){
@@ -1241,7 +1318,9 @@ function updateScoreboard(){
   el.innerHTML = "";
   NAMES.forEach(function(n){
     var d = document.createElement("div");
-    d.innerHTML = '<div class="p">'+countM(n)+'</div><div class="n">'+n+'</div>';
+    var st = streakOf(n);
+    d.innerHTML = '<div class="p">'+countM(n)+'</div><div class="n">'+n+'</div>'+
+                  '<div class="s">'+(st > 0 ? "🔥"+st : "")+'</div>';
     if(n === who) d.style.outline = "2px solid var(--soca)";
     el.appendChild(d);
   });
@@ -1393,7 +1472,7 @@ function renderJournal(){
 function countBadges(person){
   var n = 0;
   BADGES.forEach(function(bd){
-    var have = bd.ms.filter(function(m){ return get("sl26:"+(person||"gast")+":"+m) === "1"; }).length;
+    var have = bd.ms.filter(function(m){ return done(person, m); }).length;
     if(have === bd.ms.length) n++;
   });
   return n;
@@ -1403,7 +1482,7 @@ function today8(){ var d = new Date(); return "" + d.getFullYear() + pad2(d.getM
 function fmtDate(d8){ return (d8 && d8.length === 8) ? d8.slice(6,8)+"/"+d8.slice(4,6) : ""; }
 function encodeScore(person){
   var m = countM(person);
-  return ["v1", person, m, countBadges(person), rankIdxFor(m), today8()].join("~");
+  return ["v1", person, m, countBadges(person), rankIdxFor(m), today8(), klusTotal(person), streakOf(person)].join("~");
 }
 function parseScore(code){
   if(!code) return null;
@@ -1411,7 +1490,7 @@ function parseScore(code){
   if(p[0] !== "v1" || p.length < 6) return null;
   if(NAMES.indexOf(p[1]) < 0) return null;
   var m = parseInt(p[2],10), b = parseInt(p[3],10), r = parseInt(p[4],10);
-  if(isNaN(m) || m < 0 || m > 30 || isNaN(b) || isNaN(r)) return null;
+  if(isNaN(m) || m < 0 || m > 60 || isNaN(b) || isNaN(r)) return null;
   return { name:p[1], m:m, b:b, r:r, d:p[5] };
 }
 function shareMsg(t, warn){
@@ -1448,7 +1527,7 @@ function renderFamily(){
     var sub = r.me ? "jij · nu" : (r.d ? "bijgewerkt "+fmtDate(r.d) : "");
     var d = document.createElement("div");
     d.className = "fam";
-    d.innerHTML = '<div class="fnm'+(r.me?' me':'')+'">'+r.name+'<small>'+rank+' · 🏅'+r.b+(sub?' · '+sub:'')+'</small></div><div class="fsc">'+r.m+'/30</div>';
+    d.innerHTML = '<div class="fnm'+(r.me?' me':'')+'">'+r.name+'<small>'+rank+' · 🏅'+r.b+(sub?' · '+sub:'')+'</small></div><div class="fsc">'+r.m+'/'+MIDS.length+'</div>';
     box.appendChild(d);
   });
 }
@@ -1461,7 +1540,7 @@ document.getElementById("shareScore").addEventListener("click", function(){
   if(!(who && NAMES.indexOf(who) >= 0)){ shareMsg("Kies eerst je naam bovenaan. 🙂", true); return; }
   var code = encodeScore(who);
   var link = location.origin + location.pathname + "#s=" + encodeURIComponent(code);
-  var text = who + " heeft " + countM(who) + "/30 missies! Bekijk & vergelijk: " + link;
+  var text = who + " heeft " + countM(who) + "/" + MIDS.length + " missies! Bekijk & vergelijk: " + link;
   if(navigator.share){
     navigator.share({ title:"Mijn Slovenië-score", text:text, url:link }).catch(function(){});
   } else if(navigator.clipboard && navigator.clipboard.writeText){
@@ -1520,6 +1599,184 @@ if("serviceWorker" in navigator && location.protocol === "https:"){
   });
 }
 
+/* ================= DAGKLUSSEN, STREAK EN PRIJZENKAST (v8) ================= */
+
+var KIDS = ["Loes","Willem","Charlotte"];
+var JOBS = [
+  {em:"💧", t:"Water & eten",       d:"Vul haar bak 's ochtends en 's avonds. Ook onderweg, bij elke stop."},
+  {em:"🔍", t:"Tekencheck",          d:"Vanavond: oren, nek, buik, poten, tussen de tenen. Elke teek eruit."},
+  {em:"🚶", t:"Wandeling & zakje",   d:"Het avondrondje is van jou. Poepzakje mee. Altijd. Ja, ook in het bos."}
+];
+
+var TRIPDATES = null;
+function tripDates(){
+  if(!TRIPDATES){
+    TRIPDATES = [];
+    document.querySelectorAll("details.day").forEach(function(d){ TRIPDATES.push(d.dataset.date); });
+  }
+  return TRIPDATES;
+}
+
+function tripDayNum(){ var i = tripDates().indexOf(ymd(new Date())); return i < 0 ? 0 : i + 1; }
+function jobFor(kid, dayN){
+  var ki = KIDS.indexOf(kid);
+  if(ki < 0) return null;
+  return JOBS[(ki + dayN - 1) % JOBS.length];
+}
+function klusKey(person, date){ return "sl26:" + (person||"gast") + ":klus:" + date; }
+function klusTotal(person){
+  var n = 0;
+  tripDates().forEach(function(d){ if(get(klusKey(person, d)) === "1") n++; });
+  return n;
+}
+/* streak = aantal dagen op rij, terug vanaf vandaag, dat je je klus deed */
+function streakOf(person){
+  var TD = tripDates(), today = ymd(new Date()), n = 0;
+  for(var i = TD.length - 1; i >= 0; i--){
+    if(TD[i] > today) continue;                      // toekomst telt niet mee
+    if(get(klusKey(person, TD[i])) === "1") n++;
+    else break;
+  }
+  return n;
+}
+
+function renderKlus(){
+  var box = document.getElementById("dagklus");
+  if(!box) return;
+  var n = tripDayNum();
+  var isKid = KIDS.indexOf(who) >= 0;
+
+  if(n === 0){
+    var TD = tripDates();
+    if(TD.length && ymd(new Date()) > TD[TD.length - 1]){   // reis voorbij
+      box.innerHTML = '<div class="k1">De reis zit erop</div>' +
+        '<div class="k2">Alle klussen gedaan 🐾</div>' +
+        '<div class="k3">Billie is weer thuis en superblij. Je totaal staat op het klussenbord (tabblad 🐾).</div>';
+      return;
+    }
+    var preview = KIDS.map(function(k){
+      var j = jobFor(k, 1);
+      return j.em + " " + k;
+    }).join(" · ");
+    box.innerHTML = '<div class="k1">Vanaf dag 1</div>' +
+      '<div class="k2">Elke dag een Billie-klus 🐾</div>' +
+      '<div class="k3">Vanaf 17 juli krijgt iedereen elke ochtend een andere klus. Ze rouleren, dus niemand zit de hele reis aan de poepzakjes.<br><br>Dag 1: ' + esc(preview) + '</div>';
+    return;
+  }
+
+  if(!isKid){
+    var rows = KIDS.map(function(k){
+      var j = jobFor(k, n);
+      var ok = get(klusKey(k, tripDates()[n-1])) === "1";
+      return j.em + " " + k + " — " + j.t + (ok ? " ✅" : "");
+    }).join("<br>");
+    box.innerHTML = '<div class="k1">Dag ' + n + ' · klussenrooster</div>' +
+      '<div class="k2">Wie doet wat vandaag 🐾</div><div class="k3">' + rows + '</div>';
+    return;
+  }
+
+  var job = jobFor(who, n);
+  var date = tripDates()[n-1];
+  var ok = get(klusKey(who, date)) === "1";
+  box.innerHTML =
+    '<div class="k1">Jouw klus vandaag · dag ' + n + '</div>' +
+    '<div class="k2">' + job.em + " " + esc(job.t) + '</div>' +
+    '<div class="k3">' + esc(job.d) + '</div>' +
+    '<button class="klusbtn" id="klusbtn" aria-pressed="' + (ok ? "true" : "false") + '">' +
+      '<span class="kb"></span><span>' + (ok ? "Gedaan. Billie is blij." : "Tik hier als het gedaan is") + '</span>' +
+    '</button>' +
+    '<div class="streak">' +
+      '<div><div class="v">' + streakOf(who) + '</div><div class="k">🔥 dagen op rij</div></div>' +
+      '<div><div class="v">' + klusTotal(who) + '</div><div class="k">klussen totaal</div></div>' +
+    '</div>';
+
+  document.getElementById("klusbtn").addEventListener("click", function(){
+    var nowOk = get(klusKey(who, date)) === "1";
+    if(nowOk){ del(klusKey(who, date)); }
+    else { put(klusKey(who, date), "1"); confetti(); beep([523,784], 0.14); }
+    renderKlus(); renderRota(); updateScoreboard();
+  });
+}
+
+function renderRota(){
+  var box = document.getElementById("rota");
+  if(!box) return;
+  var n = tripDayNum() || 1;
+  box.innerHTML = "";
+  KIDS.forEach(function(k){
+    var j = jobFor(k, n);
+    var ok = tripDayNum() && get(klusKey(k, tripDates()[n-1])) === "1";
+    var d = document.createElement("div");
+    d.className = "r" + (k === who ? " me" : "");
+    d.innerHTML = '<div class="em">' + j.em + '</div><div class="nm">' + k + (ok ? " ✅" : "") + '</div>' +
+                  '<div class="jb">' + esc(j.t) + '</div>';
+    box.appendChild(d);
+  });
+
+  var bord = document.getElementById("klusbord");
+  if(bord){
+    var rows = KIDS.map(function(k){
+      var st = streakOf(k);
+      return '<div class="cnt"><span class="lab">' + k + '</span>' +
+             '<span class="num" style="color:var(--flare);font-size:14px">' + (st ? "🔥" + st : "—") + '</span>' +
+             '<span class="num">' + klusTotal(k) + '</span></div>';
+    }).join("");
+    bord.innerHTML = '<h3 style="margin-bottom:6px">Klussenbord</h3>' +
+      '<p class="note" style="margin-bottom:4px">Dagen op rij · klussen totaal</p>' + rows;
+  }
+}
+
+/* ---------- prijzenkast ---------- */
+var KAST = {};
+document.querySelectorAll("input[data-m]").forEach(function(inp){
+  var lab = inp.closest("label");
+  var txt = lab ? lab.querySelector(".ctxt") : null;
+  var name = txt ? (txt.childNodes[0].textContent || "").trim() : inp.dataset.m;
+  KAST[inp.dataset.m] = name;
+});
+var MEDALS = {
+  m01:"🥶", m02:"🛶", m03:"🪂", m04:"🌊", m05:"🔁", m06:"🐐", m07:"😈", m08:"🕯", m09:"🤸", m10:"💦",
+  m11:"🔔", m12:"🍰", m13:"🛷", m14:"🚣", m15:"🐘", m16:"🏔", m17:"🌉", m18:"📸", m19:"⚒", m20:"🧀",
+  m21:"😳", m22:"🐉", m23:"🚽", m24:"🐴", m25:"🧱", m26:"🧂", m27:"🏖", m28:"🏛", m29:"🗣", m30:"🎉",
+  f01:"🐕", f02:"🤸", f03:"🌅", f04:"🐲", f05:"🍦", f06:"💧", f07:"⛰", f08:"🦎", f09:"🗿", f10:"👪"
+};
+var MONTHS = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
+function nlDate(iso){
+  var p = String(iso).split("-");
+  if(p.length !== 3) return "";
+  return parseInt(p[2],10) + " " + MONTHS[parseInt(p[1],10) - 1];
+}
+function renderKast(){
+  var box = document.getElementById("kast");
+  if(!box) return;
+  box.innerHTML = "";
+  MIDS.forEach(function(id){
+    var b = document.createElement("button");
+    b.type = "button";
+    var won = done(who, id);
+    b.className = won ? "won" : "";
+    b.textContent = won ? (MEDALS[id] || "🏅") : "🔒";
+    b.setAttribute("aria-label", KAST[id] || id);
+    b.addEventListener("click", function(){
+      box.querySelectorAll("button").forEach(function(x){ x.classList.remove("sel"); });
+      b.classList.add("sel");
+      var when = doneOn(who, id);
+      document.getElementById("kastinfo").innerHTML = won
+        ? '<b>' + esc(KAST[id] || id) + '</b><em>' + (when ? "behaald op " + nlDate(when) : "behaald") + '</em>'
+        : '<b class="locked">' + esc(KAST[id] || id) + '</b><em class="locked">nog te doen</em>';
+    });
+    box.appendChild(b);
+  });
+  var n = countM(who);
+  document.getElementById("kastinfo").innerHTML =
+    n ? '<b>' + n + ' van de ' + MIDS.length + ' medailles</b><em>tik op een medaille voor de datum</em>'
+      : '<b class="locked">Nog geen medailles</b><em class="locked">de eerste ligt in de Soča</em>';
+}
+
+function refreshExtras(){ renderKlus(); renderRota(); renderKast(); }
+refreshExtras();
+setInterval(renderKlus, 60000);   // rond middernacht rolt de klus door
+
 /* ---------- start (pas hier bestaat alles) ---------- */
 if(who && VALID.indexOf(who) >= 0){
   setWho(who);                       // vult ook alle lijsten in
@@ -1536,6 +1793,8 @@ function importFromHash(){
   if(history.replaceState) history.replaceState(null, "", location.pathname + location.search);
 }
 importFromHash();                                   // verse opening via een link
+
+
 window.addEventListener("hashchange", importFromHash); // of als de app al open stond
 
 })();
