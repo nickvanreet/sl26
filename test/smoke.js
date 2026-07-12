@@ -64,6 +64,9 @@ function scenario(label, seed, storageWorks = true) {
 
   ok(doc.querySelectorAll("details.day").length === 18, "18 dagkaarten");
   ok(doc.querySelectorAll("input[data-m]").length === 30, "30 missies");
+  ok(doc.querySelectorAll("textarea.daynote").length === 18, "18 dagboek-velden (1 per dag)");
+  ok(!!doc.getElementById("journal"), "reisdagboek-vak aanwezig");
+  ok(doc.querySelectorAll("#bingo button").length === 16, "16 bingotegels");
   ok(!/€|budget|prijs per/i.test(doc.body.textContent), "geen prijzen of budget in de kids-versie");
 
   const warned = doc.getElementById("nostore").style.display === "block";
@@ -85,6 +88,25 @@ scenario("2. Terugkerende gebruiker  <- dit scenario crashte ooit", {
   "sl26:Willem:m02": "1",
 });
 scenario("3. Als bestand geopend, opslag geblokkeerd", {}, false);
+
+console.log("\n4. Nieuwe features (dagboek + eigen bingokaart)");
+const order = (d) => [...d.querySelectorAll("#bingo button")].map((x) => x.textContent).join("|");
+const loes = load({ "sl26:who": "Loes" });
+const willem = load({ "sl26:who": "Willem" });
+const loes2 = load({ "sl26:who": "Loes" });
+ok(order(loes.doc) !== order(willem.doc), "Loes en Willem krijgen een andere bingokaart");
+ok(order(loes.doc) === order(loes2.doc), "zelfde kind = zelfde kaart bij herladen");
+[loes, willem, loes2].forEach((x) => x.dom.window.close());
+
+const jrnl = load({
+  "sl26:who": "Willem",
+  "sl26:Willem:note:2026-07-18": "Rafting was gek!",
+});
+const ta = [...jrnl.doc.querySelectorAll("textarea.daynote")].find((t) => t.dataset.date === "2026-07-18");
+ok(jrnl.errors.length === 0, "geen JS-fouten met een opgeslagen notitie");
+ok(!!ta && ta.value === "Rafting was gek!", "dagboek-notitie teruggeladen in het juiste dagveld");
+ok(/Rafting was gek!/.test(jrnl.doc.getElementById("journal").textContent), "notitie verschijnt in het reisdagboek-overzicht");
+jrnl.dom.window.close();
 
 console.log(failed ? `\n${failed} test(s) GEFAALD\n` : "\nAlles in orde.\n");
 process.exit(failed ? 1 : 0);

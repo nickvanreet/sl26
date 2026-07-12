@@ -236,6 +236,18 @@ nav.tabs button[aria-selected=true] .i{filter:none}
 .reset{background:none;border:0;color:var(--mist);font:600 12px var(--dsp);padding:10px 0;cursor:pointer;text-decoration:underline}
 footer{text-align:center;color:var(--mist);font-size:11px;padding:24px 0 10px;line-height:1.7}
 @media print{nav.tabs,#intro,.reset{display:none}.tabpane{display:block!important}}
+
+/* ---------- reisdagboek ---------- */
+.notewrap{display:block;margin-top:10px;background:#f6fbfa;border:1px dashed var(--soca);border-radius:10px;padding:8px 10px;cursor:text}
+.notewrap span{display:block;font-size:11.5px;font-weight:700;color:var(--soca);letter-spacing:.3px;margin-bottom:3px}
+.daynote{width:100%;border:0;background:transparent;font:500 14px var(--dsp);color:var(--ink);resize:vertical;min-height:36px;line-height:1.4}
+.daynote:focus{outline:none}
+.daynote::placeholder{color:var(--stone)}
+#journal .jrow{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+#journal .jrow:last-child{border-bottom:0}
+#journal .jd{flex:0 0 78px;font-family:var(--mono);font-size:10px;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;padding-top:3px}
+#journal .jt{flex:1;font-size:14px;white-space:pre-wrap}
+#journal .jt b{display:block;font-size:12px;color:var(--mist);font-weight:700;margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -753,6 +765,10 @@ footer{text-align:center;color:var(--mist);font-size:11px;padding:24px 0 10px;li
     <label class="check"><input type="checkbox" data-p="p19"><span class="box"></span><span class="ctxt">Slaapzak + kussen + matje<small>De pop-uptenten in Piran hebben géén matras.</small></span></label>
     <label class="check"><input type="checkbox" data-p="p20"><span class="box"></span><span class="ctxt">Iets voor onderweg (8 uur auto!)</span></label>
   </div>
+  <h2 class="sec">Reisdagboek</h2>
+  <p class="note" style="margin-bottom:8px">Jouw beste momenten, dag per dag. Vul ze in bij elke dag (tabblad 🗺️) — hier verschijnen ze vanzelf.</p>
+  <div class="card" id="journal"></div>
+
   <button class="reset" id="resetme">Alles van mij wissen</button>
 </section>
 
@@ -883,6 +899,61 @@ function put(k,v){ try{ localStorage.setItem(k,v); }catch(e){} mem[k]=v; }
 function get(k){ try{ var v=localStorage.getItem(k); if(v!==null) return v; }catch(e){} return (k in mem)?mem[k]:null; }
 function del(k){ try{ localStorage.removeItem(k); }catch(e){} delete mem[k]; }
 
+/* ---------- feestjes: confetti + geluid (geen bestanden, alles gegenereerd) ---------- */
+var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+var _cvs, _ctx, _parts = [], _raf;
+function confetti(){
+  if(reduced) return;
+  try{
+    if(!_cvs){
+      _cvs = document.createElement("canvas");
+      _cvs.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:200";
+      document.body.appendChild(_cvs);
+      _ctx = _cvs.getContext("2d");
+    }
+    if(!_ctx) return;
+    _cvs.width = window.innerWidth; _cvs.height = window.innerHeight;
+    var cols = ["#0fa98e","#ffc233","#ff6b2c","#2b8fd4","#6d5bd0"];
+    for(var i=0;i<90;i++){
+      _parts.push({ x:Math.random()*_cvs.width, y:-20-Math.random()*_cvs.height*0.4,
+        vx:(Math.random()-0.5)*3.2, vy:2+Math.random()*4.5, s:5+Math.random()*7,
+        rot:Math.random()*6.28, vr:(Math.random()-0.5)*0.35, c:cols[i%cols.length], life:0 });
+    }
+    if(!_raf) _raf = requestAnimationFrame(_confStep);
+  }catch(e){}
+}
+function _confStep(){
+  _ctx.clearRect(0,0,_cvs.width,_cvs.height);
+  _parts.forEach(function(p){
+    p.x += p.vx; p.y += p.vy; p.vy += 0.07; p.rot += p.vr; p.life++;
+    _ctx.save(); _ctx.translate(p.x,p.y); _ctx.rotate(p.rot); _ctx.fillStyle = p.c;
+    _ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); _ctx.restore();
+  });
+  _parts = _parts.filter(function(p){ return p.y < _cvs.height+40 && p.life < 260; });
+  if(_parts.length){ _raf = requestAnimationFrame(_confStep); }
+  else { _raf = null; _ctx.clearRect(0,0,_cvs.width,_cvs.height); }
+}
+var _actx;
+function beep(freqs, dur){
+  try{
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+    _actx = _actx || new AC();
+    if(_actx.state === "suspended") _actx.resume();
+    var t0 = _actx.currentTime, d = dur || 0.25;
+    freqs.forEach(function(f,i){
+      var o = _actx.createOscillator(), g = _actx.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      var s = t0 + i*0.1;
+      g.gain.setValueAtTime(0.0001, s);
+      g.gain.exponentialRampToValueAtTime(0.22, s+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, s+d);
+      o.connect(g); g.connect(_actx.destination);
+      o.start(s); o.stop(s+d+0.03);
+    });
+  }catch(e){}
+}
+
 var NAMES = ["Loes","Willem","Charlotte"];
 var who = get("sl26:who") || "";
 
@@ -898,6 +969,7 @@ function setWho(n){
   loadTicks();
   loadBingo();
   loadPlates();
+  loadNotes();
   updateRank();
   updateScoreboard();
 }
@@ -983,7 +1055,7 @@ ticks.forEach(function(inp){
   inp.addEventListener("change", function(){
     var id = inp.dataset.m || inp.dataset.p;
     if(inp.checked) put(key(id),"1"); else del(key(id));
-    updateRank();
+    updateRank(true);
     updateScoreboard();
   });
 });
@@ -1004,13 +1076,21 @@ function countM(person){
   }
   return n;
 }
-function updateRank(){
+var lastRankIdx = -1;
+function rankIdxFor(n){ var idx = 0; RANKS.forEach(function(r,i){ if(n >= r[0]) idx = i; }); return idx; }
+function celebrateRank(idx){
+  confetti();
+  if(idx >= RANKS.length-1) beep([523,659,784,1047,1319], 0.32);   // Zlatorog: grote fanfare
+  else beep([523,659,784], 0.22);                                   // gewone rang-up
+}
+function updateRank(animate){
   var n = countM(who);
   document.getElementById("rankcount").textContent = n;
   document.getElementById("rankbar").style.width = Math.round(n/30*100)+"%";
-  var name = RANKS[0][1];
-  RANKS.forEach(function(r){ if(n >= r[0]) name = r[1]; });
-  document.getElementById("rankname").textContent = name;
+  var idx = rankIdxFor(n);
+  document.getElementById("rankname").textContent = RANKS[idx][1];
+  if(animate && lastRankIdx >= 0 && idx > lastRankIdx){ celebrateRank(idx); }
+  lastRankIdx = idx;
 }
 function updateScoreboard(){
   var el = document.getElementById("scoreboard");
@@ -1029,27 +1109,39 @@ var BINGO = ["Tunnel","Kasteel op een berg","Koe in de wei","Sneeuw op een bergt
              "Geit of steenbok","Bord \"Slovenija\"","Fietser","Kerktoren",
              "Auto met kano","Bord met waterval","Zonnepanelen","Regenboog of bui"];
 var bg = document.getElementById("bingo");
-BINGO.forEach(function(t,i){
-  var b = document.createElement("button");
-  b.type = "button";
-  b.textContent = t;
-  b.setAttribute("aria-pressed","false");
-  b.addEventListener("click", function(){
-    var on = b.getAttribute("aria-pressed") === "true";
-    b.setAttribute("aria-pressed", on ? "false" : "true");
-    if(on) del(key("bingo"+i)); else put(key("bingo"+i),"1");
-    checkBingo();
-  });
-  bg.appendChild(b);
-});
-function loadBingo(){
-  if(!bg) return;
-  bg.querySelectorAll("button").forEach(function(b,i){
-    b.setAttribute("aria-pressed", get(key("bingo"+i)) === "1" ? "true" : "false");
-  });
-  checkBingo();
+var bingoWon = false;
+/* Elk kind krijgt zijn eigen kaartvolgorde (vast per naam), zodat broer & zus
+   niet dezelfde kaart hebben — maar wél altijd dezelfde bij elke keer openen.
+   De vinkjes staan opgeslagen per tegel-id, niet per positie, dus ze blijven
+   kloppen ook al staat de tegel ergens anders. */
+function _seed(str){ var h = 2166136261; for(var i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h,16777619); } return h>>>0; }
+function _prng(a){ return function(){ a |= 0; a = a+0x6D2B79F5|0; var t = Math.imul(a^a>>>15, 1|a); t = t+Math.imul(t^t>>>7, 61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function bingoOrder(){
+  var idx = BINGO.map(function(_,i){ return i; });
+  var rnd = _prng(_seed("bingo:"+(who||"gast")));
+  for(var i=idx.length-1;i>0;i--){ var j = Math.floor(rnd()*(i+1)); var t = idx[i]; idx[i] = idx[j]; idx[j] = t; }
+  return idx;
 }
-function checkBingo(){
+function renderBingo(){
+  if(!bg) return;
+  bg.innerHTML = "";
+  bingoOrder().forEach(function(baseIdx){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = BINGO[baseIdx];
+    b.dataset.id = baseIdx;
+    b.setAttribute("aria-pressed", get(key("bingo"+baseIdx)) === "1" ? "true" : "false");
+    b.addEventListener("click", function(){
+      var on = b.getAttribute("aria-pressed") === "true";
+      b.setAttribute("aria-pressed", on ? "false" : "true");
+      if(on) del(key("bingo"+baseIdx)); else put(key("bingo"+baseIdx),"1");
+      checkBingo(true);
+    });
+    bg.appendChild(b);
+  });
+}
+function loadBingo(){ if(!bg) return; bingoWon = false; renderBingo(); checkBingo(false); }
+function checkBingo(animate){
   var c = [];
   bg.querySelectorAll("button").forEach(function(b){ c.push(b.getAttribute("aria-pressed")==="true"); });
   var lines = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],
@@ -1057,6 +1149,8 @@ function checkBingo(){
                [0,5,10,15],[3,6,9,12]];
   var win = lines.some(function(l){ return l.every(function(i){ return c[i]; }); });
   document.getElementById("bingoshout").classList.toggle("on", win);
+  if(win && !bingoWon && animate){ confetti(); beep([659,784,988,1319], 0.28); }
+  bingoWon = win;
 }
 document.getElementById("resetbingo").addEventListener("click", function(){
   for(var i=0;i<16;i++) del(key("bingo"+i));
@@ -1118,6 +1212,38 @@ document.querySelectorAll("#counters button").forEach(function(b){
   sync();
 });
 
+/* ---------- reisdagboek: beste moment per dag (per kind) ---------- */
+function esc(s){ return s.replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+document.querySelectorAll("details.day").forEach(function(d){
+  var body = d.querySelector(".dbody"); if(!body) return;
+  var wrap = document.createElement("label");
+  wrap.className = "notewrap";
+  var lab = document.createElement("span"); lab.textContent = "✏️ Mijn beste moment van vandaag";
+  var ta = document.createElement("textarea");
+  ta.className = "daynote"; ta.rows = 2; ta.dataset.date = d.dataset.date;
+  ta.placeholder = "Wat wil je onthouden?";
+  ta.addEventListener("input", function(){ put(key("note:"+d.dataset.date), ta.value); renderJournal(); });
+  wrap.appendChild(lab); wrap.appendChild(ta); body.appendChild(wrap);
+});
+function loadNotes(){
+  document.querySelectorAll("textarea.daynote").forEach(function(t){
+    t.value = get(key("note:"+t.dataset.date)) || "";
+  });
+  renderJournal();
+}
+function renderJournal(){
+  var box = document.getElementById("journal"); if(!box) return;
+  var html = "";
+  document.querySelectorAll("details.day").forEach(function(d){
+    var v = (get(key("note:"+d.dataset.date)) || "").trim();
+    if(!v) return;
+    var dd = d.querySelector(".ddate").textContent;
+    var ti = d.querySelector(".dtitle").textContent;
+    html += '<div class="jrow"><div class="jd">'+esc(dd)+'</div><div class="jt"><b>'+esc(ti)+'</b>'+esc(v)+'</div></div>';
+  });
+  box.innerHTML = html || '<p class="note">Nog niets ingevuld. Schrijf onderweg bij elke dag je beste moment — hier lees je ze straks allemaal terug. 🌟</p>';
+}
+
 /* ---------- reset ---------- */
 document.getElementById("resetme").addEventListener("click", function(){
   if(!confirm("Al jouw vinkjes wissen?")) return;
@@ -1153,7 +1279,7 @@ if(who && VALID.indexOf(who) >= 0){
   setWho(who);                       // vult ook alle lijsten in
 } else {
   intro.style.display = "flex";      // eerst je naam kiezen
-  loadTicks(); loadBingo(); loadPlates(); updateRank(); updateScoreboard();
+  loadTicks(); loadBingo(); loadPlates(); loadNotes(); updateRank(); updateScoreboard();
 }
 
 })();
