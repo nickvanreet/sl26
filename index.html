@@ -2426,6 +2426,7 @@ function syncMsg(t, warn){ var el = document.getElementById("syncmsg"); if(el){ 
 function _fetchJSON(url, opts){ return fetch(url, opts).then(function(r){ if(!r.ok) throw new Error("http " + r.status); return r.text(); }).then(function(t){ return t ? JSON.parse(t) : null; }); }
 function blobToDataURL(blob){ return new Promise(function(res){ var r = new FileReader(); r.onload = function(){ res(r.result); }; r.onerror = function(){ res(null); }; r.readAsDataURL(blob); }); }
 function dagLabel(day){ var d = document.querySelector('details.day[data-date="' + day + '"]'); return d ? d.querySelector(".ddate").textContent : day; }
+function relTime(ts){ var s = Math.max(0, Math.round((Date.now() - ts) / 1000)); if(s < 45) return "net"; if(s < 3600) return Math.floor(s/60) + " min geleden"; if(s < 86400) return Math.floor(s/3600) + " uur geleden"; return Math.floor(s/86400) + " dag(en) geleden"; }
 
 function renderSync(){
   var box = document.getElementById("syncbox"); if(!box) return;
@@ -2449,8 +2450,12 @@ function renderSync(){
     });
     return;
   }
+  var whoOk = who && NAMES.indexOf(who) >= 0;
+  var lastAt = get("sl26:fam:syncedat");
+  var lastTxt = lastAt ? ("laatst gesynct " + relTime(parseInt(lastAt, 10))) : "nog niet gesynct van dit toestel";
   box.innerHTML =
-    '<p class="note" style="margin-bottom:8px">Verbonden ☁️ · code <b>' + esc(c.fam) + '</b>. Sync haalt ieders voortgang, dagboek én foto\'s op.</p>' +
+    '<p class="note" style="margin-bottom:8px">Verbonden ☁️ · code <b>' + esc(c.fam) + '</b> · je synct als <b>' + (whoOk ? esc(who) : "(kies eerst je naam!)") + '</b><br>' +
+    '<span id="synctime" style="color:var(--mist)">' + lastTxt + '</span></p>' +
     '<button class="sharebtn" id="syncnow">☁️ Sync nu</button>' +
     '<div class="sharerow" style="margin-top:8px"><button class="gamebtn ghost" id="synclink" style="flex:1">📤 Deel de sync-link</button><button class="gamebtn ghost" id="syncoff">Loskoppelen</button></div>' +
     '<p class="note" id="syncmsg"></p>';
@@ -2468,6 +2473,10 @@ function renderSync(){
 function syncNow(){
   var c = sbCfg(); if(!c){ renderSync(); return; }
   if(!(who && NAMES.indexOf(who) >= 0)){ syncMsg("Kies eerst je naam bovenaan. 🙂", true); return; }
+  var lastName = get("sl26:fam:lastsyncname");
+  if(lastName && lastName !== who){
+    if(!confirm("Dit toestel synchroniseerde vorige keer als " + lastName + ".\nNu ben je " + who + ". Toch syncen als " + who + "?\n\n(Dit overschrijft de cloud-gegevens van " + who + ".)")){ syncMsg("Sync afgebroken — kies bovenaan de juiste naam.", true); return; }
+  }
   syncMsg("Bezig met synchroniseren… ☁️");
   var base = c.url, H = sbHead(c), Hm = Object.assign({ Prefer:"resolution=merge-duplicates" }, H);
   var m = countM(who), pushes = [];
@@ -2501,6 +2510,8 @@ function syncNow(){
       var d = (s.updated || "").slice(0,10).replace(/-/g, "");
       put("sl26:shared:" + s.name, (s.missions|0) + "~" + (s.badges|0) + "~" + (s.rank|0) + "~" + d + "~" + (s.streak|0));
     });
+    put("sl26:fam:lastsyncname", who); put("sl26:fam:syncedat", String(Date.now()));
+    var stEl = document.getElementById("synctime"); if(stEl) stEl.textContent = "laatst gesynct net";
     famJournal = r[1] || []; famPhotos = r[2] || [];
     updateScoreboard(); renderFamJournal();
     syncMsg("Klaar! Iedereen is bijgewerkt. 🎉");
