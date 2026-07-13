@@ -149,6 +149,33 @@ details.day[open]>summary .dteaser{display:none}
 .chip{background:var(--ice);border-radius:7px;padding:3px 8px;font-size:11.5px;font-weight:600;color:#3c5c66}
 .chip.hot{background:#ffe6da;color:#a63a10}
 
+/* ---------- durfjacht (avontuur) ---------- */
+.durfpanel{background:linear-gradient(135deg,#ff6b2c,#ffc233);color:#3a1a00;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(255,107,44,.25)}
+.durfpanel h3{color:#3a1a00;font-size:16px;margin:0 0 2px}
+.durfpanel .dp{font-size:30px;font-weight:800;line-height:1}
+.durfpanel .dp small{font-size:14px;font-weight:700;opacity:.75}
+.durfbar{height:12px;border-radius:99px;background:rgba(255,255,255,.45);overflow:hidden;margin:9px 0 4px}
+.durfbar i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .5s}
+.durflvl{font-weight:800;font-size:13px}
+.durftrofee{margin-top:9px;background:rgba(255,255,255,.4);border-radius:10px;padding:8px 10px;font-weight:700;font-size:13px}
+.durfrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:9px}
+.durfbtn{border:1.5px solid var(--flare);background:transparent;color:var(--flare);border-radius:10px;padding:8px 12px;font:800 13px var(--dsp);cursor:pointer}
+.durfbtn.on{background:var(--flare);color:#fff}
+.engwrap{font-size:12px;color:var(--mist);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.engpick{display:inline-flex;gap:1px}
+.engstar{background:none;border:0;cursor:pointer;font-size:18px;line-height:1;padding:0 1px;color:var(--line)}
+.engstar.on{color:var(--flare)}
+.engmsg{font-weight:700;color:var(--soca)}
+/* dieren-spotter */
+.spot{display:flex;gap:11px;align-items:flex-start;padding:11px 4px;border-bottom:1px solid var(--line)}
+.spot .sem{font-size:28px;line-height:1;filter:grayscale(1) opacity(.5);transition:filter .25s}
+.spot.on .sem{filter:none}
+.spot .snm{font-weight:800}
+.spot.on .snm{color:var(--soca)}
+.spot .sfact{font-size:12.5px;color:var(--mist);margin-top:2px}
+.spot .stick{margin-left:auto;align-self:center;border:1.5px solid var(--soca);background:transparent;color:var(--soca);border-radius:10px;padding:7px 11px;font:800 12px var(--dsp);cursor:pointer;white-space:nowrap}
+.spot.on .stick{background:var(--soca);color:#fff}
+
 /* ---------- checklists ---------- */
 .check{display:flex;gap:11px;align-items:flex-start;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}
 .check:last-child{border-bottom:0}
@@ -820,77 +847,93 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
 <!-- ================= AVONTUUR ================= -->
 <section class="tabpane" id="t-avontuur">
   <h2 class="sec">De 10 grootste dingen</h2>
-  <p class="note" style="margin-bottom:10px">⚡ = hoe spannend. 5 bliksems = knijp je billen samen.</p>
+  <p class="note" style="margin-bottom:10px">⚡ = hoe spannend. 5 bliksems = knijp je billen samen. Deed je het? Tik <b>“Ik durfde het!”</b> en pak je durfpunten. 💥</p>
+  <div id="durfmeter"></div>
 
-  <div class="card"><div class="adv"><span class="em">🛶</span><div>
+  <div class="card" data-adv="av01" data-bolts="4"><div class="adv"><span class="em">🛶</span><div>
     <h3>Rafting op de Soča</h3>
     <div class="note">Echte stroomversnellingen door een smaragdgroene kloof. Je krijgt wetsuit, zwemvest en helm. Peddelen op commando — en ja, je wordt kletsnat.</div>
     <div class="bolts">⚡⚡⚡⚡<span class="off">⚡</span></div>
     <div class="meta"><span class="chip">Vanaf 6 jaar</span><span class="chip">±3 uur</span><span class="chip">Dag 3</span></div><div class="lnk"><a href="https://socastsplash.si" target="_blank" rel="noopener">🔗 Soča Splash</a></div>
   </div></div></div>
 
-  <div class="card"><div class="adv"><span class="em">🪂</span><div>
+  <div class="card" data-adv="av02" data-bolts="5"><div class="adv"><span class="em">🪂</span><div>
     <h3>Zipline Bovec</h3>
     <div class="note">1,2 kilometer aan een kabel dwars over de vallei, tot 60 km/u, met bergen aan alle kanten. Iedereen mag. De eerste seconde is de ergste.</div>
     <div class="bolts">⚡⚡⚡⚡⚡</div>
     <div class="meta"><span class="chip">Iedereen</span><span class="chip">±1 uur</span><span class="chip">Dag 4</span></div><div class="lnk"><a href="https://zipline-bovec.si" target="_blank" rel="noopener">🔗 zipline-bovec.si</a></div>
   </div></div></div>
 
-  <div class="card"><div class="adv"><span class="em">💦</span><div>
+  <div class="card" data-adv="av03" data-bolts="5"><div class="adv"><span class="em">💦</span><div>
     <h3>Canyoning</h3>
     <div class="note">Aan een touw langs watervallen naar beneden, en springen in poelen. Alleen voor 12+. De jongste doet kajak met een ouder — ook nat, ook goed.</div>
     <div class="bolts">⚡⚡⚡⚡⚡</div>
     <div class="meta"><span class="chip hot">12+</span><span class="chip">±3 uur</span><span class="chip">Dag 4</span></div><div class="lnk"><a href="https://aquatours.si" target="_blank" rel="noopener">🔗 aquatours.si</a></div>
   </div></div></div>
 
-  <div class="card"><div class="adv"><span class="em">🛷</span><div>
+  <div class="card" data-adv="av04" data-bolts="4"><div class="adv"><span class="em">🛷</span><div>
     <h3>Straža-toboggan (Bled)</h3>
     <div class="note">Stoeltjeslift omhoog, rodelbaan naar beneden. Jij bepaalt met de hendel hoe hard je gaat. Familierecord verbreken = jouw taak.</div>
     <div class="bolts">⚡⚡⚡⚡<span class="off">⚡</span></div>
     <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 10</span></div><div class="lnk"><a href="https://www.straza-bled.si/en/" target="_blank" rel="noopener">🔗 straza-bled.si</a></div>
   </div></div></div>
 
-  <div class="card"><div class="adv"><span class="em">🚂</span><div>
+  <div class="card" data-adv="av05" data-bolts="2"><div class="adv"><span class="em">🚂</span><div>
     <h3>Postojna: treintje in de grot</h3>
     <div class="note">Een échte trein die de grot in rijdt. Binnen woont het <b>mensvisje</b>: een blinde, bleke salamander die "babydraak" heet, 100+ jaar oud wordt en jaren zonder eten kan.</div>
     <div class="bolts">⚡⚡<span class="off">⚡⚡⚡</span></div>
     <div class="meta"><span class="chip">Iedereen</span><span class="chip hot">10°C — trui!</span><span class="chip">Dag 13</span></div><div class="lnk"><a href="https://www.postojnska-jama.eu/en/" target="_blank" rel="noopener">🔗 postojnska-jama.eu</a></div>
   </div></div></div>
 
-  <div class="card"><div class="adv"><span class="em">🌊</span><div>
+  <div class="card" data-adv="av06" data-bolts="3"><div class="adv"><span class="em">🌊</span><div>
     <h3>Achter de Peričnik-waterval</h3>
     <div class="note">52 meter water valt naar beneden — en er loopt een pad áchter langs. Je komt er nat en gillend uit. Precies zoals het hoort.</div>
     <div class="bolts">⚡⚡⚡<span class="off">⚡⚡</span></div>
     <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 5</span></div>
   </div></div></div>
 
-  <div class="card"><div class="adv"><span class="em">🕳</span><div>
+  <div class="card" data-adv="av07" data-bolts="4"><div class="adv"><span class="em">🕳</span><div>
     <h3>Škocjan: de brug in de grot</h3>
     <div class="note">Een ondergrondse canyon met een rivier, en een brug die 45 meter boven het water hangt. Foto's mogen niet — dus onthouden.</div>
     <div class="bolts">⚡⚡⚡⚡<span class="off">⚡</span></div>
     <div class="meta"><span class="chip hot">12°C — trui!</span><span class="chip">Dag 12</span></div><div class="lnk"><a href="https://www.park-skocjanske-jame.si/en" target="_blank" rel="noopener">🔗 park-skocjanske-jame.si</a></div>
   </div></div></div>
 
-  <div class="card"><div class="adv"><span class="em">🛶</span><div>
+  <div class="card" data-adv="av08" data-bolts="2"><div class="adv"><span class="em">🛶</span><div>
     <h3>Kano op het Bohinj-meer</h3>
     <div class="note">Je eigen kano, bergen rondom, en een setter die probeert mee te varen. Het meer is 20–22°C: het warmste zoete water van de reis.</div>
     <div class="bolts">⚡⚡<span class="off">⚡⚡⚡</span></div>
     <div class="meta"><span class="chip">Iedereen</span><span class="chip">🐾 Billie mag mee</span><span class="chip">Dag 9</span></div><div class="lnk"><a href="https://www.bohinj.si/en/" target="_blank" rel="noopener">🔗 bohinj.si</a></div>
   </div></div></div>
 
-  <div class="card"><div class="adv"><span class="em">🏛</span><div>
+  <div class="card" data-adv="av09" data-bolts="2"><div class="adv"><span class="em">🏛</span><div>
     <h3>Gladiatorentunnels in Pula</h3>
     <div class="note">Een Romeins amfitheater van bijna 2000 jaar oud. Onder de arena lopen de tunnels waar de gladiatoren stonden te wachten.</div>
     <div class="bolts">⚡⚡<span class="off">⚡⚡⚡</span></div>
     <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 15</span></div>
   </div></div></div>
 
-  <div class="card"><div class="adv"><span class="em">🐴</span><div>
+  <div class="card" data-adv="av10" data-bolts="1"><div class="adv"><span class="em">🐴</span><div>
     <h3>Lipizzaners aaien in Lipica</h3>
     <div class="note">Beroemde witte paarden, gefokt sinds 1580. De veulens worden donkerbruin geboren en worden pas na jaren wit. Aaien mag.</div>
     <div class="bolts">⚡<span class="off">⚡⚡⚡⚡</span></div>
     <div class="meta"><span class="chip">Iedereen</span><span class="chip">Dag 12</span></div><div class="lnk"><a href="https://www.lipica.org/en/" target="_blank" rel="noopener">🔗 lipica.org</a></div>
   </div></div></div>
+
+  <h2 class="sec">🎲 Wie durft?</h2>
+  <p class="note" style="margin-bottom:10px">Draai het rad: het kiest wie de volgende uitdaging moet doen. Geen flauwekul — je bent gekozen!</p>
+  <div class="card" style="text-align:center">
+    <div class="wheelwrap">
+      <div class="wheelstage"><svg id="darewheel" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
+      <button class="spinbtn" id="darespin">Draai het durf-rad!</button>
+      <div class="wheelout" id="dareout"></div>
+    </div>
+  </div>
+
+  <h2 class="sec">🐾 Dieren-spotter</h2>
+  <p class="note" style="margin-bottom:10px">Slovenië zit vol bijzondere dieren. Spot je er eentje? Tik ’m aan! Verzamel ze en word <b>Dierenspotter</b>.</p>
+  <div id="spotmeter"></div>
+  <div id="spotters"></div>
 
   <h2 class="sec">Waar kan je zwemmen?</h2>
   <div class="card">
@@ -1347,6 +1390,8 @@ function setWho(n){
   updateRank();
   updateScoreboard();
   if(typeof refreshExtras === "function") refreshExtras();
+  if(typeof renderDurfjacht === "function") renderDurfjacht();
+  if(typeof renderDierenspotter === "function") renderDierenspotter();
 }
 var VALID = ["Loes","Willem","Charlotte","Mama","Papa","Iedereen"];
 document.querySelectorAll("[data-name]").forEach(function(b){
@@ -1500,6 +1545,8 @@ var BADGES = [
   {k:"hoogte",     em:"😱", name:"Hoogtevrees weg", ms:["m03","m18","m21"]},
   {k:"kampeerder", em:"🏕", name:"Kampeerder",   ms:["m31","m32","m33","m34"]},
   {k:"inpakker",   em:"🎒", name:"Ingepakt!",    ms:["p01","p02","p03","p04","p05","p06","p07","p08","p09","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"]},
+  {k:"avonturier", em:"🦸", name:"Avonturier",   ms:["av01","av02","av04","av06","av08","av10"]},
+  {k:"spotter",    em:"🐾", name:"Dierenspotter",ms:["dz01","dz02","dz03","dz05","dz08"]},
   {k:"verbonden",  em:"☁️", name:"Verbonden!",   ms:["synced"]}
 ];
 var badgeDone = {};
@@ -1806,6 +1853,202 @@ var _wheelDeg = 0, _spinning = false;
     setTimeout(function(){ _spinning = false; btn.disabled = false; out.textContent = "🎡 " + WHEELNAMES[w] + " doet " + WHEELTASKS[_wheelTask] + "!"; confetti(); beep([392,523], 0.16); }, 4150);
   });
 })();
+
+/* ================= AVONTUUR: durfjacht, durf-rad & dieren-spotter (v19) ================= */
+var ADV = [
+  {id:"av01",bolts:4},{id:"av02",bolts:5},{id:"av03",bolts:5},{id:"av04",bolts:4},{id:"av05",bolts:2},
+  {id:"av06",bolts:3},{id:"av07",bolts:4},{id:"av08",bolts:2},{id:"av09",bolts:2},{id:"av10",bolts:1}
+];
+var ADVMAX = ADV.reduce(function(s,a){ return s + a.bolts; }, 0);   // 32 (alle 10)
+/* doel = alles behalve canyoning (av03, alleen 12+); zo kan ELK kind 100% halen,
+   en wie tóch canyoning durft krijgt bonuspunten bovenop het doel. */
+var GOAL = ADV.reduce(function(s,a){ return s + (a.id === "av03" ? 0 : a.bolts); }, 0);   // 27
+var AVBADGE = ["av01","av02","av04","av06","av08","av10"];          // 'iedereen kan'-avonturen -> Avonturier-trofee
+function advPhotoId(advid){ return (who||"gast") + ":adv:" + advid; }
+function durfPts(person){ var n=0; ADV.forEach(function(a){ if(done(person,a.id)) n+=a.bolts; }); return n; }
+function durfLevel(p){
+  if(p<=0)    return "Nog geen durfpunten — waag de sprong! 🫣";
+  if(p<7)     return "Voorzichtige starter 🐣";
+  if(p<14)    return "Waaghals in wording 😬";
+  if(p<21)    return "Durfal ⚡";
+  if(p<GOAL)  return "Adrenaline-junkie 🤟";
+  return "Meester-avonturier 🏆";
+}
+function engMsg(cardBolts, rating){
+  if(rating < cardBolts)  return "minder eng dan gedacht — held! 🦸";
+  if(rating === cardBolts) return "precies zo eng als de sterren!";
+  return "nog enger dan de sterren — WOW! 🤯";
+}
+function buildEngPicker(advid, cardBolts){
+  var wrap = document.createElement("div"); wrap.className = "engwrap";
+  var lbl = document.createElement("span"); lbl.textContent = "Hoe eng was het écht?";
+  var pick = document.createElement("div"); pick.className = "engpick";
+  var msg = document.createElement("span"); msg.className = "engmsg";
+  function paint(){
+    var r = parseInt(get(key("eng:"+advid)) || "0", 10);
+    pick.querySelectorAll(".engstar").forEach(function(s, i){ s.classList.toggle("on", i < r); });
+    msg.textContent = r ? engMsg(cardBolts, r) : "";
+  }
+  for(var i=1;i<=5;i++){ (function(v){
+    var s = document.createElement("button"); s.type="button"; s.className="engstar"; s.textContent="⚡"; s.setAttribute("aria-label", v+" bliksems eng");
+    s.addEventListener("click", function(){ put(key("eng:"+advid), String(v)); paint(); });
+    pick.appendChild(s);
+  })(i); }
+  wrap.appendChild(lbl); wrap.appendChild(pick); wrap.appendChild(msg);
+  paint();
+  return wrap;
+}
+function renderAdvPhoto(pa, advid){
+  var pid = advPhotoId(advid);
+  photoGet(pid, function(blob){
+    pa.innerHTML = "";
+    if(blob){
+      var url = URL.createObjectURL(blob);
+      var img = document.createElement("img"); img.src = url; img.alt = "durf-bewijs";
+      var rm = document.createElement("button"); rm.className="rm"; rm.type="button"; rm.textContent="✕ weg";
+      rm.addEventListener("click", function(){ if(!confirm("Dit bewijs-foto verwijderen? Weg is weg (van dit toestel).")) return; photoDel(pid, function(){ try{URL.revokeObjectURL(url);}catch(e){} renderAdvPhoto(pa, advid); }); });
+      pa.appendChild(img); pa.appendChild(rm);
+    } else if(_photoOk){
+      var btn = document.createElement("button"); btn.className="addphoto"; btn.type="button"; btn.textContent="📷 Bewijs toevoegen";
+      var inp = document.createElement("input"); inp.type="file"; inp.accept="image/*"; inp.style.display="none";
+      inp.addEventListener("change", function(){ var f=inp.files&&inp.files[0]; if(!f) return; btn.textContent="⏳ bezig…"; resizePhoto(f, function(b){ if(!b){ btn.textContent="📷 mislukt — opnieuw"; return; } photoPut(pid, b, function(ok){ if(ok) renderAdvPhoto(pa, advid); else btn.textContent="📷 opslaan lukte niet (vol?)"; }); }); });
+      btn.addEventListener("click", function(){ inp.click(); });
+      pa.appendChild(btn); pa.appendChild(inp);
+    }
+  });
+}
+function renderDurfjacht(){
+  var panel = document.getElementById("durfmeter");
+  if(panel){
+    var pts = durfPts(who), shown = Math.min(pts, GOAL), bonus = Math.max(0, pts - GOAL);
+    var pct = Math.round(shown/GOAL*100);
+    var must = AVBADGE.filter(function(m){ return done(who,m); }).length;
+    var avon = must === AVBADGE.length;
+    panel.innerHTML =
+      '<div class="durfpanel">'+
+        '<h3>💥 Durfmeter</h3>'+
+        '<div class="dp">'+shown+' <small>/ '+GOAL+' durfpunten'+(bonus>0 ? '  +'+bonus+' bonus 🔥' : '')+'</small></div>'+
+        '<div class="durfbar"><i style="width:'+pct+'%"></i></div>'+
+        '<div class="durflvl">'+esc(durfLevel(pts))+'</div>'+
+        '<div class="durftrofee">'+(avon
+          ? '🏆 AVONTURIER VAN SLOVENIË! Je durfde alle must-do avonturen. 🦸'
+          : '🦸 Avonturier-trofee: '+must+'/'+AVBADGE.length+' must-do avonturen gedurfd')+'</div>'+
+      '</div>';
+  }
+  document.querySelectorAll('#t-avontuur [data-adv]').forEach(function(card){
+    var advid = card.getAttribute("data-adv");
+    var bolts = parseInt(card.getAttribute("data-bolts") || "0", 10);
+    var old = card.querySelector(".durfrow"); if(old) old.remove();
+    var oldp = card.querySelector(".dfphoto");
+    if(oldp){ var oi = oldp.querySelector("img"); if(oi && oi.src && oi.src.slice(0,5) === "blob:"){ try{ URL.revokeObjectURL(oi.src); }catch(e){} } oldp.remove(); }   // blob-URL vrijgeven i.p.v. lekken
+    var isDone = done(who, advid);
+    var row = document.createElement("div"); row.className = "durfrow";
+    var btn = document.createElement("button"); btn.type="button"; btn.className = "durfbtn" + (isDone ? " on" : "");
+    btn.textContent = isDone ? ("✅ Gedurfd! +" + bolts) : ("Ik durfde het! (+" + bolts + ")");
+    btn.addEventListener("click", function(){
+      if(done(who, advid)){ del(key(advid)); del(key("eng:"+advid)); }
+      else {
+        put(key(advid), ymd(new Date()));
+        confetti();
+        if(bolts >= 5){ beep([300,880,300], 0.34); } else beep([523,784,1047], 0.2);
+      }
+      renderDurfjacht(); updateRank(true); updateScoreboard();
+    });
+    row.appendChild(btn);
+    if(isDone) row.appendChild(buildEngPicker(advid, bolts));
+    card.appendChild(row);
+    if(isDone && _photoOk){
+      var pw = document.createElement("div"); pw.className = "dfphoto dbphoto";
+      card.appendChild(pw);
+      renderAdvPhoto(pw, advid);
+    }
+  });
+}
+
+/* ---- durf-rad: wie moet de volgende uitdaging doen? ---- */
+var DARES = [
+  "springt als eerste van de rots in de Soča",
+  "neemt de koudste duik van vandaag",
+  "eet een hap Mohant-stinkkaas 🧀",
+  "gaat als eerste de zipline af",
+  "zit vooraan in de raft",
+  "roept 'ZLATOROG!' zo hard mogelijk",
+  "loopt als eerste achter de Peričnik-waterval",
+  "vertelt het mensvisje-feitje uit het hoofd na",
+  "aait een Lipizzaner-paard",
+  "kiest het engste avontuur voor morgen",
+  "doet 10 seconden een berenimitatie 🐻",
+  "bestelt zelf het ijsje in het Sloveens (hvala!)"
+];
+(function(){
+  var svg = document.getElementById("darewheel"); if(!svg) return;
+  var n = WHEELNAMES.length, cx=100, cy=100, r=96, parts="";
+  for(var i=0;i<n;i++){
+    var a0=(i/n)*2*Math.PI - Math.PI/2, a1=((i+1)/n)*2*Math.PI - Math.PI/2;
+    var x0=(cx+r*Math.cos(a0)).toFixed(1), y0=(cy+r*Math.sin(a0)).toFixed(1);
+    var x1=(cx+r*Math.cos(a1)).toFixed(1), y1=(cy+r*Math.sin(a1)).toFixed(1);
+    parts += '<path d="M100,100 L'+x0+','+y0+' A96,96 0 0 1 '+x1+','+y1+' Z" fill="'+WHEELCOLORS[i%WHEELCOLORS.length]+'"/>';
+    var am=(a0+a1)/2, tx=(cx+r*0.62*Math.cos(am)).toFixed(1), ty=(cy+r*0.62*Math.sin(am)).toFixed(1);
+    var tc = WHEELNAMES[i]==="Papa" ? "#5a3d00" : "#fff";
+    parts += '<text x="'+tx+'" y="'+ty+'" fill="'+tc+'" font-size="12" font-weight="800" text-anchor="middle" dominant-baseline="middle" transform="rotate('+((am*180/Math.PI)+90).toFixed(1)+' '+tx+' '+ty+')">'+esc(WHEELNAMES[i])+'</text>';
+  }
+  parts += '<circle cx="100" cy="100" r="13" fill="#fff"/>';
+  svg.innerHTML = parts;
+})();
+var _dareDeg = 0, _dareSpin = false;
+(function(){
+  var btn = document.getElementById("darespin"); if(!btn) return;
+  btn.addEventListener("click", function(){
+    if(_dareSpin) return;
+    var svg = document.getElementById("darewheel"), out = document.getElementById("dareout");
+    var n = WHEELNAMES.length, w = Math.floor(Math.random()*n);
+    var dare = DARES[Math.floor(Math.random()*DARES.length)];
+    var center = (w+0.5)/n*360, jitter = (Math.random()-0.5)*(360/n)*0.5;
+    var need = ((-(center+jitter) - _dareDeg) % 360 + 360) % 360;
+    _dareDeg += 360*5 + need;
+    _dareSpin = true; btn.disabled = true; out.textContent = "";
+    svg.style.transform = "rotate(" + _dareDeg + "deg)";
+    setTimeout(function(){ _dareSpin = false; btn.disabled = false; out.textContent = "🎲 " + WHEELNAMES[w] + " durft: " + dare + "!"; confetti(); beep([392,523,659], 0.18); }, 4150);
+  });
+})();
+
+/* ---- dieren-spotter ---- */
+var ANIMALS = [
+  {id:"dz01", em:"🐉", name:"Mensvisje (babydraak)", fact:"Blinde, bleke grot-salamander. Wordt 100+ jaar en kan jaren zonder eten. Zie 'm in Postojna."},
+  {id:"dz02", em:"🐐", name:"Alpensteenbok",        fact:"Klimt langs bijna verticale rotswanden. Kijk omhoog in de Julische Alpen."},
+  {id:"dz03", em:"🐿️", name:"Marmot",               fact:"Fluit keihard als alarm. Woont in holen hoog in de bergen."},
+  {id:"dz04", em:"🐻", name:"Bruine beer",          fact:"Slovenië heeft er ~1000! Heel zeldzaam om te zien — dubbele glorie."},
+  {id:"dz05", em:"🦎", name:"Vuursalamander",       fact:"Zwart met felgele vlekken. Komt tevoorschijn na de regen."},
+  {id:"dz06", em:"🦅", name:"Steenarend",           fact:"Cirkelt hoog boven de bergtoppen op zoek naar prooi."},
+  {id:"dz07", em:"🦌", name:"Gems",                 fact:"Springt moeiteloos langs steile, gladde hellingen."},
+  {id:"dz08", em:"🐟", name:"Soča-forel",           fact:"Zeldzame gemarmerde forel in het smaragdgroene Soča-water."}
+];
+var SPOTBADGE = ["dz01","dz02","dz03","dz05","dz08"];
+function renderDierenspotter(){
+  var spotted = ANIMALS.filter(function(a){ return done(who,a.id); }).length;
+  var meter = document.getElementById("spotmeter");
+  if(meter){
+    var reqDone = SPOTBADGE.filter(function(m){ return done(who,m); }).length;
+    var full = reqDone === SPOTBADGE.length;
+    meter.innerHTML = '<div class="cool">🐾 Gespot: <b>'+spotted+'/'+ANIMALS.length+'</b>'+
+      (full ? ' — 🏆 Dierenspotter-trofee verdiend!' : ' · Dierenspotter-trofee: '+reqDone+'/'+SPOTBADGE.length)+'</div>';
+  }
+  var box = document.getElementById("spotters"); if(!box) return;
+  box.innerHTML = "";
+  ANIMALS.forEach(function(a){
+    var seen = done(who, a.id);
+    var row = document.createElement("div"); row.className = "spot" + (seen ? " on" : "");
+    row.innerHTML = '<div class="sem">'+a.em+'</div><div><div class="snm">'+esc(a.name)+'</div><div class="sfact">'+esc(a.fact)+'</div></div>';
+    var btn = document.createElement("button"); btn.type="button"; btn.className="stick"; btn.textContent = seen ? "✅ Gespot" : "👀 Gespot!";
+    btn.addEventListener("click", function(){
+      if(done(who, a.id)) del(key(a.id));
+      else { put(key(a.id), ymd(new Date())); confetti(); beep([659,880], 0.16); }
+      renderDierenspotter(); updateRank(true); updateScoreboard();
+    });
+    row.appendChild(btn);
+    box.appendChild(row);
+  });
+}
 
 /* ---------- koudste water (leaderboard, koudste = stoerste) ---------- */
 var COLDPRESETS = [["Mostnica",12],["Soča",14],["Napoleonbrug",16],["Sava",19],["Bohinj",21],["Adria",25]];
@@ -2247,6 +2490,8 @@ function resetScores(){
   loadBingo(); loadPlates(); renderColdboard();
   updateRank(); updateScoreboard();
   if(typeof refreshExtras === "function") refreshExtras();   // klus + rota + prijzenkast (medailles)
+  if(typeof renderDurfjacht === "function") renderDurfjacht();
+  if(typeof renderDierenspotter === "function") renderDierenspotter();
   refreshDagboek(); renderFamJournal();                       // dagboek blijft — foto's/teksten intact
   if(sbCfg()) syncNow();                                       // duw de nul-score naar de cloud (teksten/foto's blijven)
   alert("Klaar — je spel staat weer op nul. Je foto's en dagboek zijn er nog. 📸");
@@ -2290,17 +2535,20 @@ function wipeMemories(){
   famPhotos  = famPhotos.filter(function(p){ return p.name  !== match; });
   famVotes   = famVotes.filter(function(v){ return v.owner !== match && v.voter !== match; });
   refreshDagboek(); renderFamJournal();
-  /* 2) foto's (IndexedDB) + cloud op de achtergrond; daarna nog eens herrenderen */
+  /* 2) foto's (IndexedDB: dag-foto's én durf-bewijs) + cloud op de achtergrond; daarna nog eens herrenderen */
   var afterPhotos = function(){
     refreshDagboek(); renderFamJournal();                     // foto-UI verversen ná de deletes
+    if(typeof renderDurfjacht === "function") renderDurfjacht();
     cloudWipeMemories(match, function(okAll){
       if(okAll) alert("Foto's & dagboek van " + match + " zijn gewist ✅ — ook uit de familie-cloud.\nDe scores staan er nog.");
       else alert("Foto's & dagboek van " + match + " zijn op dit toestel gewist ✅\n⚠️ De familie-cloud gaf een foutmelding — check je internet en probeer straks nog eens, anders komt de data bij de volgende sync terug.");
     });
   };
-  var dates = tripDates(), pending = dates.length;
+  var pids = tripDates().map(function(d){ return match + ":" + d; })
+             .concat(ADV.map(function(a){ return match + ":adv:" + a.id; }));   // durf-bewijs-foto's
+  var pending = pids.length;
   if(!pending){ afterPhotos(); }
-  else dates.forEach(function(d){ photoDel(match + ":" + d, function(){ if(--pending === 0) afterPhotos(); }); });
+  else pids.forEach(function(pid){ photoDel(pid, function(){ if(--pending === 0) afterPhotos(); }); });
 }
 document.getElementById("resetscores").addEventListener("click", resetScores);
 document.getElementById("wipemem").addEventListener("click", wipeMemories);
@@ -2734,6 +2982,7 @@ if(who && VALID.indexOf(who) >= 0){
 } else {
   intro.style.display = "flex";      // eerst je naam kiezen
   loadTicks(); loadBingo(); loadPlates(); refreshDagboek(); renderColdboard(); updateRank(); updateScoreboard();
+  renderDurfjacht(); renderDierenspotter();
 }
 
 /* ---------- links openen: #s= (score) of #sync= (familie-cloud) ---------- */

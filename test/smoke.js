@@ -61,7 +61,10 @@ function scenario(label, seed, when, storageWorks = true){
   ok(doc.querySelectorAll(".lnk a").length >= 40, `links aanwezig (${doc.querySelectorAll(".lnk a").length})`);
   ok([...doc.querySelectorAll(".lnk a")].every(a => /^https:\/\//.test(a.href)), "alle links zijn https");
   ok(doc.querySelectorAll("#kast button").length === 46, `prijzenkast heeft 46 medailles (${doc.querySelectorAll("#kast button").length})`);
-  ok(doc.querySelectorAll("#badges .badge").length === 12, `12 badges (${doc.querySelectorAll("#badges .badge").length})`);
+  ok(doc.querySelectorAll("#badges .badge").length === 14, `14 badges (${doc.querySelectorAll("#badges .badge").length})`);
+  ok(doc.querySelectorAll("#t-avontuur [data-adv]").length === 10, `10 afvinkbare avonturen (${doc.querySelectorAll("#t-avontuur [data-adv]").length})`);
+  ok(!!doc.getElementById("darewheel") && doc.querySelectorAll("#darewheel path").length === 5, "durf-rad met 5 namen");
+  ok(doc.querySelectorAll("#spotters .spot").length === 8, `dieren-spotter met 8 dieren (${doc.querySelectorAll("#spotters .spot").length})`);
   ok(!!doc.getElementById("t-logboek") && !!doc.getElementById("hsync"), "logboek-tab + header sync-knop aanwezig");
   ok(!!doc.getElementById("lbsync"), "logboek heeft een eigen 'Haal het logboek op'-knop");
   ok(!!doc.getElementById("resetscores") && !doc.getElementById("resetme"), "spel-reset knop bestaat (oude alles-wisknop is weg)");
@@ -380,6 +383,42 @@ console.log("\n19. Sticky pincode: opnieuw verbinden met een pinloze config omze
   dom.window.prompt = (msg) => /Huidige wis-pincode/.test(msg) ? "1234" : (/Nieuwe wis-pincode/.test(msg) ? "5555" : null);
   click(dom, doc.getElementById("setpin"));
   ok(dom.window.localStorage.getItem("sl26:fam:pinlock") === pinHash("5555"), "juiste oude pin → pinlock gewijzigd");
+  dom.window.close();
+}
+
+console.log("\n20. Durfjacht: 'Ik durfde het!' geeft durfpunten; eng-rating & toggle werken");
+{
+  const { dom, doc } = load({ "sl26:who":"Loes" }, "2026-07-20T09:00:00");
+  ok(doc.querySelectorAll("#t-avontuur [data-adv]").length === 10, "10 avontuurkaarten met durf-knop");
+  ok(/0 \/ 27/.test(doc.getElementById("durfmeter").textContent), "durfmeter start op 0/27 (canyoning 12+ zit niet in het doel)");
+  const btn = doc.querySelector('#t-avontuur [data-adv="av02"] .durfbtn');   // zipline = 5 bliksems
+  ok(!!btn && /Ik durfde het/.test(btn.textContent), "av02 heeft een 'Ik durfde het!'-knop");
+  click(dom, btn);
+  ok(dom.window.localStorage.getItem("sl26:Loes:av02") !== null, "av02 is afgevinkt in de opslag");
+  ok(/5 \/ 27/.test(doc.getElementById("durfmeter").textContent), "durfmeter staat nu op 5 durfpunten");
+  const stars = doc.querySelectorAll('#t-avontuur [data-adv="av02"] .engstar');
+  ok(stars.length === 5, `eng-rating met 5 sterren verschijnt na afvinken (${stars.length})`);
+  click(dom, stars[2]);   // 3 bliksems eng
+  ok(dom.window.localStorage.getItem("sl26:Loes:eng:av02") === "3", "eng-rating opgeslagen (3)");
+  click(dom, doc.querySelector('#t-avontuur [data-adv="av02"] .durfbtn'));   // nogmaals = uit
+  ok(dom.window.localStorage.getItem("sl26:Loes:av02") === null, "nogmaals tikken maakt av02 weer leeg");
+  ok(/0 \/ 27/.test(doc.getElementById("durfmeter").textContent), "durfmeter terug op 0");
+  dom.window.close();
+}
+
+console.log("\n21. Avonturier- & Dierenspotter-trofee ontgrendelen (tellen mee in de badges)");
+{
+  const seed = { "sl26:who":"Willem" };
+  ["av01","av02","av04","av06","av08","av10"].forEach(a => seed["sl26:Willem:"+a] = "2026-07-20");  // 6 must-do
+  ["dz01","dz02","dz03","dz05","dz08"].forEach(d => seed["sl26:Willem:"+d] = "2026-07-20");          // 5 dieren
+  const { dom, doc } = load(seed, "2026-07-25T09:00:00");
+  const avon = [...doc.querySelectorAll("#badges .badge")].find(b => /Avonturier/.test(b.textContent));
+  ok(!!avon && avon.classList.contains("on"), "Avonturier-trofee ontgrendeld met de 6 must-do avonturen");
+  ok(avon && /6\/6/.test(avon.textContent), "Avonturier toont 6/6");
+  const spot = [...doc.querySelectorAll("#badges .badge")].find(b => /Dierenspotter/.test(b.textContent));
+  ok(!!spot && spot.classList.contains("on"), "Dierenspotter-trofee ontgrendeld met 5 dieren");
+  ok(/19 \/ 27/.test(doc.getElementById("durfmeter").textContent), "durfmeter telt de bliksems correct op (4+5+4+3+2+1=19)");
+  ok(/5\/8/.test(doc.getElementById("spotmeter").textContent), "spotmeter toont 5/8 gespot");
   dom.window.close();
 }
 
