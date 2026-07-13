@@ -176,6 +176,28 @@ details.day[open]>summary .dteaser{display:none}
 .spot .stick{margin-left:auto;align-self:center;border:1.5px solid var(--soca);background:transparent;color:var(--soca);border-radius:10px;padding:7px 11px;font:800 12px var(--dsp);cursor:pointer;white-space:nowrap}
 .spot.on .stick{background:var(--soca);color:#fff}
 
+/* ---------- Billie ---------- */
+.billiehero{position:relative;overflow:hidden;text-align:center;background:linear-gradient(135deg,#efe9ff,#fff);border-radius:16px;padding:16px;box-shadow:0 1px 3px rgba(60,40,90,.08)}
+body.night .billiehero{background:linear-gradient(135deg,#241f33,#1a1622)}
+.bface{font-size:66px;line-height:1;display:inline-block;transition:transform .2s;cursor:pointer}
+.bface.wag{animation:wag .5s ease}
+@keyframes wag{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+.bbubble{margin:6px auto 12px;max-width:290px;background:#fff;border-radius:14px;padding:9px 13px;font-weight:700;color:#3a2c5a;box-shadow:0 1px 4px rgba(60,40,90,.12)}
+body.night .bbubble{background:#2c2540;color:#e6ddff}
+.blijwrap{display:flex;align-items:center;gap:8px;justify-content:center;font-size:12px;color:var(--mist);margin-bottom:12px;flex-wrap:wrap}
+.blijbar{width:130px;height:12px;border-radius:99px;background:rgba(120,90,200,.18);overflow:hidden}
+.blijbar i{display:block;height:100%;background:linear-gradient(90deg,#8b6df0,#ff6b9d);border-radius:99px;transition:width .5s}
+.petbtn{border:0;border-radius:14px;background:linear-gradient(135deg,#8b6df0,#ff6b9d);color:#fff;font:800 16px var(--dsp);padding:13px 26px;cursor:pointer;box-shadow:0 3px 10px rgba(139,109,240,.35)}
+.petbtn:active{transform:scale(.96)}
+.cuddlecount{margin-top:9px;font-weight:800;font-size:13px;color:#a23b73}
+body.night .cuddlecount{color:#ff9ec7}
+.pawfloat{position:absolute;bottom:60px;font-size:22px;pointer-events:none;animation:pawup 1.3s ease-out forwards}
+@keyframes pawup{0%{opacity:0;transform:translateY(0) scale(.6)}15%{opacity:1}100%{opacity:0;transform:translateY(-130px) scale(1.25)}}
+.billiediarycard{background:linear-gradient(135deg,#fff8ec,#fff)}
+body.night .billiediarycard{background:#26200f}
+.billiediarycard h3{margin-bottom:4px}
+.billiediarycard p{font-size:14px;line-height:1.55}
+
 /* ---------- checklists ---------- */
 .check{display:flex;gap:11px;align-items:flex-start;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}
 .check:last-child{border-bottom:0}
@@ -1234,11 +1256,8 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
 
 <!-- ================= BILLIE ================= -->
 <section class="tabpane" id="t-billie">
-  <div class="card" style="text-align:center;background:linear-gradient(135deg,#f2f0ff,#fff)">
-    <div style="font-size:44px">🐕‍🦺</div>
-    <h3 style="font-size:20px">Billie gaat mee</h3>
-    <div class="note">18 dagen, 5 rivieren, 1 zee. Ze rekent op jullie.</div>
-  </div>
+  <div id="billiehero"></div>
+  <p class="note" style="text-align:center;margin:-2px 0 10px">18 dagen, 5 rivieren, 1 zee. Hoe beter je voor Billie zorgt, hoe blijer ze wordt. 🐾</p>
 
   <h2 class="sec">Wie doet wat vandaag?</h2>
   <p class="note" style="margin-bottom:8px">De klussen rouleren elke dag. Iedereen doet dus alles — niemand zit 18 dagen aan de poepzakjes vast.</p>
@@ -1246,6 +1265,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   <div class="card" id="klusbord"></div>
 
   <h2 class="sec">Altijd, elke dag</h2>
+  <p class="note" style="margin-bottom:8px">Elke taak die je afvinkt, vult Billie's Blij-meter hierboven. Alle vier = dolgelukkige hond! 🐾</p>
   <div class="card">
     <label class="check"><input type="checkbox" data-p="b01"><span class="box"></span><span class="ctxt">Waterbak bijvullen<small>Elke ochtend en avond, ook onderweg.</small></span></label>
     <label class="check"><input type="checkbox" data-p="b02"><span class="box"></span><span class="ctxt">Tekencheck<small>Elke avond: oren, nek, buik, poten, tussen de tenen.</small></span></label>
@@ -1282,7 +1302,15 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
     <div class="cnt"><span class="lab">🦴 Stokken veroverd</span><button data-c="c2" data-d="-1">−</button><span class="num" id="c2">0</span><button class="plus" data-c="c2" data-d="1">+</button></div>
     <div class="cnt"><span class="lab">🐶 Andere honden ontmoet</span><button data-c="c3" data-d="-1">−</button><span class="num" id="c3">0</span><button class="plus" data-c="c3" data-d="1">+</button></div>
     <div class="cnt"><span class="lab">🐐 Geiten/steenbokken gespot</span><button data-c="c4" data-d="-1">−</button><span class="num" id="c4">0</span><button class="plus" data-c="c4" data-d="1">+</button></div>
+    <div class="cnt"><span class="lab">🐿️ Eekhoorns achtervolgd (nooit gevangen)</span><button data-c="c5" data-d="-1">−</button><span class="num" id="c5">0</span><button class="plus" data-c="c5" data-d="1">+</button></div>
+    <div class="cnt"><span class="lab">🟤 Modderpoelen ontdekt</span><button data-c="c6" data-d="-1">−</button><span class="num" id="c6">0</span><button class="plus" data-c="c6" data-d="1">+</button></div>
   </div>
+
+  <div id="billiediary"></div>
+
+  <h2 class="sec">🏅 Billie's prijzenkast</h2>
+  <p class="note" style="margin-bottom:8px">Verdien medailles voor Billie door samen avonturen te beleven en haar te knuffelen.</p>
+  <div id="billiemedals" class="badges"></div>
 
   <footer>
     Reisboek Slovenië 2026 · Kids editie<br>
@@ -1392,6 +1420,7 @@ function setWho(n){
   if(typeof refreshExtras === "function") refreshExtras();
   if(typeof renderDurfjacht === "function") renderDurfjacht();
   if(typeof renderDierenspotter === "function") renderDierenspotter();
+  if(typeof renderBillie === "function") renderBillie();
 }
 var VALID = ["Loes","Willem","Charlotte","Mama","Papa","Iedereen"];
 document.querySelectorAll("[data-name]").forEach(function(b){
@@ -1487,6 +1516,7 @@ ticks.forEach(function(inp){
     updateRank(true);
     updateScoreboard();
     renderKast();
+    if(id && id.charAt(0) === "b" && typeof renderBillie === "function") renderBillie();   // Billie's Blij-meter
   });
 });
 
@@ -1679,11 +1709,110 @@ document.querySelectorAll("#counters button").forEach(function(b){
     var v = Math.max(0, (parseInt(get("sl26:fam:"+c)||"0",10)) + parseInt(b.dataset.d,10));
     put("sl26:fam:"+c, String(v));
     document.getElementById(c).textContent = v;
+    if(typeof renderBillieDiary === "function") renderBillieDiary();
+    if(typeof renderBillieMedals === "function") renderBillieMedals();
   });
 });
-["c1","c2","c3","c4"].forEach(function(c){
-  document.getElementById(c).textContent = get("sl26:fam:"+c) || "0";
+["c1","c2","c3","c4","c5","c6"].forEach(function(c){
+  var el = document.getElementById(c); if(el) el.textContent = get("sl26:fam:"+c) || "0";
 });
+
+/* ================= BILLIE: humeur, knuffels, dagboekje & prijzenkast (v21) ================= */
+function billieCnt(c){ return parseInt(get("sl26:fam:"+c) || "0", 10); }
+function billieCuddles(){ return parseInt(get("sl26:fam:cuddles") || "0", 10); }
+function billieCareDone(){ return ["b01","b02","b03","b04"].filter(function(b){ return get(key(b)) !== null; }).length; }
+function billieMood(){
+  var care = billieCareDone();
+  if(care >= 4) return { em:"🥰", say:"Kwispelkwispel! Beste dag ooit! 🐾" };
+  if(care === 3) return { em:"😊", say:"Bijna alles gedaan — aai me eens?" };
+  if(care >= 1) return { em:"🐶", say:"Vergeet je m'n water en schaduw niet?" };
+  return { em:"🥺", say:"Ik heb dorst en zoek schaduw…" };
+}
+var _petSays = ["Aaah, lekker! 🥰","Nog een keer!","Kwispel kwispel!","Woef! ❤️","Ik hou van jullie!","Zzz… beste knuffel ooit."];
+function pawBurst(){
+  if(reduced) return;
+  try{
+    var host = document.querySelector(".billiehero"); if(!host) return;
+    for(var i=0;i<8;i++){ (function(k){
+      var s = document.createElement("span");
+      s.className = "pawfloat"; s.textContent = (k % 2) ? "❤️" : "🐾";
+      s.style.left = (26 + Math.random()*48) + "%";
+      s.style.animationDelay = (Math.random()*0.22).toFixed(2) + "s";
+      host.appendChild(s);
+      setTimeout(function(){ try{ s.remove(); }catch(e){} }, 1500);
+    })(i); }
+  }catch(e){}
+}
+function petBillie(){
+  put("sl26:fam:cuddles", String(billieCuddles() + 1));
+  pawBurst();
+  beep([210,150,250], 0.12);                                   // woef
+  var bf = document.getElementById("bface");
+  if(bf){ bf.classList.remove("wag"); void bf.offsetWidth; bf.classList.add("wag"); }
+  var cc = document.querySelector(".cuddlecount"); if(cc) cc.textContent = "❤️ " + billieCuddles() + " knuffels gegeven";
+  var bub = document.querySelector(".bbubble"); if(bub) bub.textContent = _petSays[billieCuddles() % _petSays.length];
+  renderBillieDiary(); renderBillieMedals();
+}
+function renderBillie(){
+  var hero = document.getElementById("billiehero");
+  if(hero){
+    var m = billieMood(), care = billieCareDone(), pct = Math.round(care/4*100);
+    hero.innerHTML =
+      '<div class="billiehero">'+
+        '<div class="bface" id="bface">'+m.em+'</div>'+
+        '<div class="bbubble">'+esc(m.say)+'</div>'+
+        '<div class="blijwrap"><span>Blij-meter</span><div class="blijbar"><i style="width:'+pct+'%"></i></div><b>'+care+'/4 verzorgd</b></div>'+
+        '<button class="petbtn" id="petbtn">🐾 Aai Billie!</button>'+
+        '<div class="cuddlecount">❤️ '+billieCuddles()+' knuffels gegeven</div>'+
+      '</div>';
+    var pb = document.getElementById("petbtn"); if(pb) pb.addEventListener("click", petBillie);
+    var bf = document.getElementById("bface"); if(bf) bf.addEventListener("click", petBillie);
+  }
+  renderBillieDiary();
+  renderBillieMedals();
+}
+function renderBillieDiary(){
+  var box = document.getElementById("billiediary"); if(!box) return;
+  var c1=billieCnt("c1"),c2=billieCnt("c2"),c3=billieCnt("c3"),c4=billieCnt("c4"),c5=billieCnt("c5"),c6=billieCnt("c6"),cu=billieCuddles();
+  var total = c1+c2+c3+c4+c5+c6;
+  var parts = [];
+  if(c1) parts.push("sprong ik in " + c1 + " " + (c1===1 ? "rivier" : "rivieren en meren"));
+  if(c2) parts.push("veroverde ik " + c2 + " " + (c2===1 ? "stok" : "stokken"));
+  if(c3) parts.push("maakte ik " + c3 + " nieuwe " + (c3===1 ? "vriend" : "vrienden"));
+  if(c4) parts.push("spotte ik " + c4 + " " + (c4===1 ? "geit" : "geiten en steenbokken"));
+  if(c5) parts.push("achtervolgde ik " + c5 + " eekhoorns (weer niet gevangen 🙈)");
+  if(c6) parts.push("ontdekte ik " + c6 + " heerlijke modderpoelen");
+  var text;
+  if(total === 0 && cu === 0){
+    text = "Woef! De grote reis begint bijna. Ik snuffel alvast aan mijn koffer. Ik kan NIET wachten! 🐾";
+  } else {
+    var body = parts.length ? ("Tot nu toe " + parts.join(", ") + ". ") : "";
+    var hug = cu ? ("En ik kreeg al " + cu + " " + (cu===1 ? "knuffel" : "knuffels") + ". ") : "";
+    text = "Woef! Dit is mijn reisverslag. " + body + hug + "Beste. Reis. Ooit. 🐕❤️";
+  }
+  box.innerHTML = '<div class="card billiediarycard"><h3>📖 Billie\'s dagboekje</h3><p>' + esc(text) + '</p></div>';
+}
+var BILLIEMEDALS = [
+  {k:"c1", em:"🏊", name:"Waterhond",       need:5,  reach:"5 rivieren/meren in"},
+  {k:"c2", em:"🦴", name:"Stokkenkampioen", need:10, reach:"10 stokken veroverd"},
+  {k:"c3", em:"🐶", name:"Sociale vlinder", need:10, reach:"10 honden ontmoet"},
+  {k:"c4", em:"🐐", name:"Bergspeurder",    need:5,  reach:"5 geiten/steenbokken"},
+  {k:"c6", em:"🟤", name:"Moddermonster",   need:5,  reach:"5 modderpoelen"},
+  {k:"cuddles", em:"❤️", name:"Knuffelkoning", need:50, reach:"50 knuffels"}
+];
+function billieVal(k){ return k === "cuddles" ? billieCuddles() : billieCnt(k); }
+function renderBillieMedals(){
+  var box = document.getElementById("billiemedals"); if(!box) return;
+  box.innerHTML = "";
+  BILLIEMEDALS.forEach(function(md){
+    var v = billieVal(md.k), full = v >= md.need;
+    var el = document.createElement("div");
+    el.className = "badge" + (full ? " on" : "");
+    el.title = md.reach;
+    el.innerHTML = '<div class="bem">'+md.em+'</div><div class="bnm">'+md.name+'</div><div class="bpr">'+Math.min(v, md.need)+'/'+md.need+'</div>';
+    box.appendChild(el);
+  });
+}
 
 /* ---------- noodnummers ---------- */
 [["tel1","call1"],["tel2","call2"]].forEach(function(pair){
@@ -2494,6 +2623,7 @@ function resetScores(){
   if(typeof refreshExtras === "function") refreshExtras();   // klus + rota + prijzenkast (medailles)
   if(typeof renderDurfjacht === "function") renderDurfjacht();
   if(typeof renderDierenspotter === "function") renderDierenspotter();
+  if(typeof renderBillie === "function") renderBillie();
   refreshDagboek(); renderFamJournal();                       // dagboek blijft — foto's/teksten intact
   if(sbCfg()) syncNow();                                       // duw de nul-score naar de cloud (teksten/foto's blijven)
   alert("Klaar — je spel staat weer op nul. Je foto's en dagboek zijn er nog. 📸");
@@ -2984,7 +3114,7 @@ if(who && VALID.indexOf(who) >= 0){
 } else {
   intro.style.display = "flex";      // eerst je naam kiezen
   loadTicks(); loadBingo(); loadPlates(); refreshDagboek(); renderColdboard(); updateRank(); updateScoreboard();
-  renderDurfjacht(); renderDierenspotter();
+  renderDurfjacht(); renderDierenspotter(); renderBillie();
 }
 
 /* ---------- links openen: #s= (score) of #sync= (familie-cloud) ---------- */

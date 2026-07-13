@@ -66,6 +66,10 @@ function scenario(label, seed, when, storageWorks = true){
   ok(!!doc.getElementById("darewheel") && doc.querySelectorAll("#darewheel path").length === 5, "durf-rad met 5 namen");
   ok(doc.querySelectorAll("#spotters .spot").length === 8, `dieren-spotter met 8 dieren (${doc.querySelectorAll("#spotters .spot").length})`);
   ok(!!doc.getElementById("t-logboek") && !!doc.getElementById("hsync"), "logboek-tab + header sync-knop aanwezig");
+  ok(!!doc.querySelector("#billiehero .bface") && !!doc.getElementById("petbtn"), "Billie-humeur + aai-knop aanwezig");
+  ok(doc.querySelectorAll("#counters .cnt").length === 6, `Billie-wandelrapport heeft 6 tellers (${doc.querySelectorAll("#counters .cnt").length})`);
+  ok(doc.querySelectorAll("#billiemedals .badge").length === 6, `Billie's prijzenkast heeft 6 medailles (${doc.querySelectorAll("#billiemedals .badge").length})`);
+  ok(/dagboekje/i.test((doc.getElementById("billiediary")||{}).textContent||""), "Billie's dagboekje rendert");
   ok(!!doc.getElementById("lbsync"), "logboek heeft een eigen 'Haal het logboek op'-knop");
   ok(!!doc.getElementById("resetscores") && !doc.getElementById("resetme"), "spel-reset knop bestaat (oude alles-wisknop is weg)");
   ok(/Papa/.test((doc.getElementById("wipemem")||{}).textContent||""), "aparte foto's&dagboek-wisknop is voorbehouden aan Papa");
@@ -419,6 +423,46 @@ console.log("\n21. Avonturier- & Dierenspotter-trofee ontgrendelen (tellen mee i
   ok(!!spot && spot.classList.contains("on"), "Dierenspotter-trofee ontgrendeld met 5 dieren");
   ok(/19 \/ 27/.test(doc.getElementById("durfmeter").textContent), "durfmeter telt de bliksems correct op (4+5+4+3+2+1=19)");
   ok(/5\/8/.test(doc.getElementById("spotmeter").textContent), "spotmeter toont 5/8 gespot");
+  dom.window.close();
+}
+
+console.log("\n22. Billie: Blij-meter volgt de zorgtaken, aaien telt knuffels");
+{
+  const { dom, doc } = load({ "sl26:who":"Loes" }, "2026-07-20T09:00:00");
+  ok(/0\/4 verzorgd/.test(doc.getElementById("billiehero").textContent), "Blij-meter start op 0/4");
+  ok(/dorst/.test(doc.querySelector("#billiehero .bbubble").textContent), "trieste Billie zonder zorg");
+  // vink de 4 zorgtaken af
+  ["b01","b02","b03","b04"].forEach(id => {
+    const inp = doc.querySelector(`input[data-p="${id}"]`);
+    inp.checked = true; inp.dispatchEvent(new dom.window.Event("change",{bubbles:true}));
+  });
+  ok(/4\/4 verzorgd/.test(doc.getElementById("billiehero").textContent), "Blij-meter staat op 4/4 na alle zorgtaken");
+  ok(/Kwispel/i.test(doc.querySelector("#billiehero .bbubble").textContent), "dolgelukkige Billie bij volledige zorg");
+  ok(doc.querySelector("#billiehero .blijbar i").style.width === "100%", "Blij-balk 100% vol");
+  // aai Billie 3x -> 3 knuffels
+  const pet = doc.getElementById("petbtn");
+  click(dom, pet); click(dom, pet); click(dom, pet);
+  ok(dom.window.localStorage.getItem("sl26:fam:cuddles") === "3", "aaien telt knuffels (3)");
+  ok(/3 knuffels/.test(doc.querySelector(".cuddlecount").textContent), "knuffelteller toont 3");
+  ok(/3 knuffels/.test(doc.getElementById("billiediary").textContent), "dagboekje ververst live na het aaien (niet stale)");
+  dom.window.close();
+}
+
+console.log("\n23. Billie: tellers voeden het dagboekje en de prijzenkast");
+{
+  const seed = { "sl26:who":"Willem", "sl26:fam:c1":"5", "sl26:fam:c3":"10", "sl26:fam:cuddles":"50" };
+  const { dom, doc } = load(seed, "2026-07-22T09:00:00");
+  ok(/sprong ik in 5 rivieren/.test(doc.getElementById("billiediary").textContent), "dagboekje verwerkt de tellers");
+  ok(/50 knuffels/.test(doc.getElementById("billiediary").textContent), "dagboekje noemt de knuffels");
+  const meds = [...doc.querySelectorAll("#billiemedals .badge")];
+  const water = meds.find(b => /Waterhond/.test(b.textContent));
+  const soc = meds.find(b => /Sociale vlinder/.test(b.textContent));
+  const knuf = meds.find(b => /Knuffelkoning/.test(b.textContent));
+  const stok = meds.find(b => /Stokkenkampioen/.test(b.textContent));
+  ok(!!water && water.classList.contains("on"), "Waterhond ontgrendeld bij 5 rivieren");
+  ok(!!soc && soc.classList.contains("on"), "Sociale vlinder ontgrendeld bij 10 honden");
+  ok(!!knuf && knuf.classList.contains("on"), "Knuffelkoning ontgrendeld bij 50 knuffels");
+  ok(!!stok && !stok.classList.contains("on"), "Stokkenkampioen nog niet ontgrendeld (0/10)");
   dom.window.close();
 }
 
