@@ -1762,6 +1762,7 @@ function renderDagboek(){
 function renderPhotoArea(pa, date){
   var id = photoId(date);
   photoGet(id, function(blob){
+    var prev = pa.querySelector("img"); if(prev && prev.src && prev.src.slice(0,5) === "blob:"){ try{ URL.revokeObjectURL(prev.src); }catch(e){} }   // oude blob-URL vrijgeven i.p.v. lekken
     pa.innerHTML = "";
     if(blob){
       var url = URL.createObjectURL(blob);
@@ -1797,6 +1798,7 @@ function renderPhotoArea(pa, date){
 }
 function renderFotoReis(){
   var box = document.getElementById("fotoreis"); if(!box) return;
+  var prev = box.querySelector("img"); if(prev && prev.src && prev.src.slice(0,5) === "blob:"){ try{ URL.revokeObjectURL(prev.src); }catch(e){} }   // oude blob-URL vrijgeven i.p.v. lekken
   var favId = get("sl26:fam:favphoto");
   if(!favId){ box.innerHTML = '<h3>⭐ Foto van de reis</h3><p class="note">Nog niet gekozen. Voeg hieronder foto\'s toe en tik op de ster ★ bij je favoriet.</p>'; return; }
   photoGet(favId, function(blob){
