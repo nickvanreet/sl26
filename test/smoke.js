@@ -71,9 +71,13 @@ function scenario(label, seed, when, storageWorks = true){
   ok(!doc.querySelector("#t-missies #syncbox") && !doc.querySelector("#t-missies #family"), "sync/scorebord zijn WEG uit de Missies-tab");
   ok(!doc.getElementById("shareScore") && !doc.getElementById("pasteScore"), "WhatsApp 'deel mijn score' is verwijderd");
   ok(!!doc.querySelector("#billiehero .bface") && !!doc.getElementById("petbtn"), "Billie-humeur + aai-knop aanwezig");
+  ok(doc.querySelectorAll("#billiecare .check").length === 5, `Billie heeft 5 dagtaken (${doc.querySelectorAll("#billiecare .check").length})`);
+  ok(!!doc.getElementById("resetwalk") && !!doc.getElementById("bphoto") && !!doc.getElementById("resetcuddle"), "reset-wandelrapport + Billie-foto + reset-knuffels knoppen aanwezig");
   ok(doc.querySelectorAll("#counters .cnt").length === 6, `Billie-wandelrapport heeft 6 tellers (${doc.querySelectorAll("#counters .cnt").length})`);
   ok(doc.querySelectorAll("#billiemedals .badge").length === 6, `Billie's prijzenkast heeft 6 medailles (${doc.querySelectorAll("#billiemedals .badge").length})`);
   ok(/dagboekje/i.test((doc.getElementById("billiediary")||{}).textContent||""), "Billie's dagboekje rendert");
+  ok(/droomt Billie van/.test((doc.getElementById("billiediary")||{}).textContent||""), "Billie's wens van de dag verschijnt");
+  ok(!doc.querySelector('input[data-p="b01"]'), "oude vaste zorg-checkboxes (b01) zijn weg");
   ok(!!doc.getElementById("lbsync"), "logboek heeft een eigen 'Haal het logboek op'-knop");
   ok(!!doc.getElementById("resetscores") && !doc.getElementById("resetme"), "spel-reset knop bestaat (oude alles-wisknop is weg)");
   ok(/Papa/.test((doc.getElementById("wipemem")||{}).textContent||""), "aparte foto's&dagboek-wisknop is voorbehouden aan Papa");
@@ -430,26 +434,41 @@ console.log("\n21. Avonturier- & Dierenspotter-trofee ontgrendelen (tellen mee i
   dom.window.close();
 }
 
-console.log("\n22. Billie: Blij-meter volgt de zorgtaken, aaien telt knuffels");
+console.log("\n22. Billie: dagtaken (per dag) vullen de Blij-meter; aaien + reset knuffels");
 {
   const { dom, doc } = load({ "sl26:who":"Loes" }, "2026-07-20T09:00:00");
-  ok(/0\/4 verzorgd/.test(doc.getElementById("billiehero").textContent), "Blij-meter start op 0/4");
+  ok(/0\/5 verzorgd/.test(doc.getElementById("billiehero").textContent), "Blij-meter start op 0/5 (5 dagtaken)");
   ok(/dorst/.test(doc.querySelector("#billiehero .bbubble").textContent), "trieste Billie zonder zorg");
-  // vink de 4 zorgtaken af
-  ["b01","b02","b03","b04"].forEach(id => {
-    const inp = doc.querySelector(`input[data-p="${id}"]`);
-    inp.checked = true; inp.dispatchEvent(new dom.window.Event("change",{bubbles:true}));
-  });
-  ok(/4\/4 verzorgd/.test(doc.getElementById("billiehero").textContent), "Blij-meter staat op 4/4 na alle zorgtaken");
+  const cares = [...doc.querySelectorAll("#billiecare input[type=checkbox]")];
+  ok(cares.length === 5, `5 dagtaken (${cares.length})`);
+  cares.forEach(inp => { inp.checked = true; inp.dispatchEvent(new dom.window.Event("change",{bubbles:true})); });
+  ok(/5\/5 verzorgd/.test(doc.getElementById("billiehero").textContent), "Blij-meter 5/5 na alle dagtaken");
   ok(/Kwispel/i.test(doc.querySelector("#billiehero .bbubble").textContent), "dolgelukkige Billie bij volledige zorg");
   ok(doc.querySelector("#billiehero .blijbar i").style.width === "100%", "Blij-balk 100% vol");
-  // aai Billie 3x -> 3 knuffels
+  // dagtaken staan per dag onder de datum (familie-breed), niet per speler
+  ok(dom.window.localStorage.getItem("sl26:fam:care:2026-07-20:water") !== null, "dagtaak opgeslagen onder de datum (sl26:fam:care:2026-07-20:water)");
+  ok(dom.window.localStorage.getItem("sl26:Loes:b01") === null, "geen oude per-speler zorg-sleutel meer");
+  // aai 3x, dagboekje ververst, dan reset knuffels
   const pet = doc.getElementById("petbtn");
   click(dom, pet); click(dom, pet); click(dom, pet);
   ok(dom.window.localStorage.getItem("sl26:fam:cuddles") === "3", "aaien telt knuffels (3)");
-  ok(/3 knuffels/.test(doc.querySelector(".cuddlecount").textContent), "knuffelteller toont 3");
-  ok(/3 knuffels/.test(doc.getElementById("billiediary").textContent), "dagboekje ververst live na het aaien (niet stale)");
+  ok(/3 knuffels/.test(doc.getElementById("billiediary").textContent), "dagboekje ververst live na het aaien");
+  dom.window.confirm = () => true;
+  click(dom, doc.getElementById("resetcuddle"));
+  ok((dom.window.localStorage.getItem("sl26:fam:cuddles") || "0") === "0", "↺ reset knuffels zet ze weer op nul");
   dom.window.close();
+}
+
+console.log("\n22b. Billie: dagtaken resetten vanzelf op een nieuwe dag");
+{
+  // taak gedaan op 20 juli
+  const { dom, doc } = load({ "sl26:who":"Loes", "sl26:fam:care:2026-07-20:water":"2026-07-20" }, "2026-07-20T09:00:00");
+  ok(/1\/5 verzorgd/.test(doc.getElementById("billiehero").textContent), "op 20 juli telt de gedane taak mee (1/5)");
+  dom.window.close();
+  // volgende dag: dezelfde opslag, maar Billie begint weer op 0
+  const day2 = load({ "sl26:who":"Loes", "sl26:fam:care:2026-07-20:water":"2026-07-20" }, "2026-07-21T09:00:00");
+  ok(/0\/5 verzorgd/.test(day2.doc.getElementById("billiehero").textContent), "op 21 juli staat de Blij-meter weer op 0/5");
+  day2.dom.window.close();
 }
 
 console.log("\n23. Billie: tellers voeden het dagboekje en de prijzenkast");

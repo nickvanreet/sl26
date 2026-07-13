@@ -197,6 +197,15 @@ body.night .cuddlecount{color:#ff9ec7}
 body.night .billiediarycard{background:#26200f}
 .billiediarycard h3{margin-bottom:4px}
 .billiediarycard p{font-size:14px;line-height:1.55}
+.bwish{font-weight:800;color:#b9701a;margin-bottom:6px}
+body.night .bwish{color:#ffcf7a}
+.bface.hasphoto{position:relative;font-size:0}
+.bavatar{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 10px rgba(60,40,90,.28);display:block}
+.bmoodbadge{position:absolute;right:-2px;bottom:-2px;font-size:32px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}
+.bctl{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.bmini{border:0;border-radius:10px;background:rgba(255,255,255,.55);color:#3a2c5a;font:700 12px var(--dsp);padding:7px 12px;cursor:pointer}
+body.night .bmini{background:rgba(255,255,255,.14);color:#e6ddff}
+#resetwalk{color:var(--mist)}
 
 /* ---------- checklists ---------- */
 .check{display:flex;gap:11px;align-items:flex-start;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}
@@ -1249,14 +1258,9 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   <div class="card"><div class="rota" id="rota"></div></div>
   <div class="card" id="klusbord"></div>
 
-  <h2 class="sec">Altijd, elke dag</h2>
-  <p class="note" style="margin-bottom:8px">Elke taak die je afvinkt, vult Billie's Blij-meter hierboven. Alle vier = dolgelukkige hond! 🐾</p>
-  <div class="card">
-    <label class="check"><input type="checkbox" data-p="b01"><span class="box"></span><span class="ctxt">Waterbak bijvullen<small>Elke ochtend en avond, ook onderweg.</small></span></label>
-    <label class="check"><input type="checkbox" data-p="b02"><span class="box"></span><span class="ctxt">Tekencheck<small>Elke avond: oren, nek, buik, poten, tussen de tenen.</small></span></label>
-    <label class="check"><input type="checkbox" data-p="b03"><span class="box"></span><span class="ctxt">Schaduw zoeken<small>Zet haar mand nooit in de volle zon.</small></span></label>
-    <label class="check"><input type="checkbox" data-p="b04"><span class="box"></span><span class="ctxt">Poepzakje mee<small>Altijd. Overal. Ja, ook in het bos.</small></span></label>
-  </div>
+  <h2 class="sec">Billie's taken van vandaag</h2>
+  <p class="note" style="margin-bottom:8px">Elke dag opnieuw afvinken! Alles gedaan = een dolgelukkige hond. De Blij-meter hierboven loopt mee. 🐾</p>
+  <div class="card" id="billiecare"></div>
   <div class="warn"><b>Regel nummer 1:</b> Billie blijft <b>nooit</b> alleen in de auto. Ook niet "heel even". Ook niet met een raampje open.</div>
 
   <h2 class="sec">Waar mag Billie zwemmen?</h2>
@@ -1290,6 +1294,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
     <div class="cnt"><span class="lab">🐿️ Eekhoorns achtervolgd (nooit gevangen)</span><button data-c="c5" data-d="-1">−</button><span class="num" id="c5">0</span><button class="plus" data-c="c5" data-d="1">+</button></div>
     <div class="cnt"><span class="lab">🟤 Modderpoelen ontdekt</span><button data-c="c6" data-d="-1">−</button><span class="num" id="c6">0</span><button class="plus" data-c="c6" data-d="1">+</button></div>
   </div>
+  <button class="reset" id="resetwalk">↺ Wandelrapport op nul</button>
 
   <div id="billiediary"></div>
 
@@ -1426,6 +1431,7 @@ function setWho(n){
   if(typeof renderDurfjacht === "function") renderDurfjacht();
   if(typeof renderDierenspotter === "function") renderDierenspotter();
   if(typeof renderBillie === "function") renderBillie();
+  if(typeof renderBillieCare === "function") renderBillieCare();
 }
 var VALID = ["Loes","Willem","Charlotte","Mama","Papa","Iedereen"];
 document.querySelectorAll("[data-name]").forEach(function(b){
@@ -1442,6 +1448,7 @@ document.querySelectorAll("nav.tabs button").forEach(function(b){
     document.getElementById("t"+"-"+b.dataset.tab).classList.add("active");
     if(b.dataset.tab === "logboek" && typeof renderFamJournal === "function") renderFamJournal();
     if(b.dataset.tab === "familie"){ if(typeof renderSync === "function") renderSync(); if(typeof updateScoreboard === "function") updateScoreboard(); }
+    if(b.dataset.tab === "billie"){ if(typeof renderBillie === "function") renderBillie(); if(typeof renderBillieCare === "function") renderBillieCare(); }
     window.scrollTo(0,0);
   });
 });
@@ -1497,6 +1504,10 @@ function tick(){
     document.getElementById("phase").textContent = "Kids editie";
     updateMap("home");
   }
+  /* dag voorbij terwijl de app openstond? Billie's dagtaken & Blij-meter opnieuw. */
+  if(typeof renderBillie === "function" && _billieDay && ymd(new Date()) !== _billieDay){
+    renderBillie(); renderBillieCare();
+  }
 }
 function updateMap(node){
   var m = document.getElementById("routemap"); if(!m) return;
@@ -1522,7 +1533,6 @@ ticks.forEach(function(inp){
     updateRank(true);
     updateScoreboard();
     renderKast();
-    if(id && id.charAt(0) === "b" && typeof renderBillie === "function") renderBillie();   // Billie's Blij-meter
   });
 });
 
@@ -1722,18 +1732,42 @@ document.querySelectorAll("#counters button").forEach(function(b){
 ["c1","c2","c3","c4","c5","c6"].forEach(function(c){
   var el = document.getElementById(c); if(el) el.textContent = get("sl26:fam:"+c) || "0";
 });
+(function(){ var b = document.getElementById("resetwalk"); if(b) b.addEventListener("click", resetWalk); })();
 
-/* ================= BILLIE: humeur, knuffels, dagboekje & prijzenkast (v21) ================= */
+/* ================= BILLIE: humeur, dagtaken, foto, knuffels, dagboekje & prijzenkast ================= */
 function billieCnt(c){ return parseInt(get("sl26:fam:"+c) || "0", 10); }
 function billieCuddles(){ return parseInt(get("sl26:fam:cuddles") || "0", 10); }
-function billieCareDone(){ return ["b01","b02","b03","b04"].filter(function(b){ return get(key(b)) !== null; }).length; }
+/* dagtaken: familie-breed én per dag — elke ochtend weer op nul, zodat Billie
+   dagelijkse verzorging nodig heeft. Sleutel: sl26:fam:care:<datum>:<taak> */
+var CARE = [
+  {id:"water",   em:"💧", t:"Waterbak bijvullen",  d:"'s Ochtends én 's avonds, ook onderweg."},
+  {id:"teek",    em:"🔍", t:"Tekencheck",           d:"Oren, nek, buik, poten, tussen de tenen."},
+  {id:"schaduw", em:"🌳", t:"Schaduw & vers water", d:"Nooit in de volle zon laten liggen."},
+  {id:"poep",    em:"💩", t:"Poepzakje mee",        d:"Altijd. Overal. Ja, ook in het bos."},
+  {id:"wandel",  em:"🚶", t:"Grote wandeling",      d:"Eén keer flink snuffelen, rennen en spelen."}
+];
+function careKey(id){ return "sl26:fam:care:" + ymd(new Date()) + ":" + id; }
+function billieCareDone(){ return CARE.filter(function(c){ return get(careKey(c.id)) !== null; }).length; }
 function billieMood(){
-  var care = billieCareDone();
-  if(care >= 4) return { em:"🥰", say:"Kwispelkwispel! Beste dag ooit! 🐾" };
-  if(care === 3) return { em:"😊", say:"Bijna alles gedaan — aai me eens?" };
-  if(care >= 1) return { em:"🐶", say:"Vergeet je m'n water en schaduw niet?" };
+  var care = billieCareDone(), n = CARE.length, f = n ? care/n : 0;
+  if(care >= n && n > 0) return { em:"🥰", say:"Kwispelkwispel! Alles gedaan — beste dag ooit! 🐾" };
+  if(f >= 0.6)           return { em:"😊", say:"Bijna alles gedaan — aai me eens?" };
+  if(care >= 1)          return { em:"🐶", say:"Vergeet je m'n water en schaduw niet?" };
   return { em:"🥺", say:"Ik heb dorst en zoek schaduw…" };
 }
+var BWISHES = [
+  "een gloednieuwe rivier om in te ploffen 🌊",
+  "de allerlekkerste stok van de hele reis 🦴",
+  "een nieuwe hondenvriend om mee te rennen 🐶",
+  "een modderpoel zo groot als een zwembad 🟤",
+  "een eekhoorn die ze EINDELIJK bijna vangt 🐿️",
+  "een lange wandeling hoog de bergen in ⛰️",
+  "een dutje in de schaduw na het zwemmen 😴",
+  "extra veel knuffels van iedereen ❤️",
+  "een geit spotten op een steile rots 🐐",
+  "de koudste duik van de dag 🥶"
+];
+function billieWish(){ return BWISHES[_seed(ymd(new Date())) % BWISHES.length]; }
 var _petSays = ["Aaah, lekker! 🥰","Nog een keer!","Kwispel kwispel!","Woef! ❤️","Ik hou van jullie!","Zzz… beste knuffel ooit."];
 function pawBurst(){
   if(reduced) return;
@@ -1759,20 +1793,87 @@ function petBillie(){
   var bub = document.querySelector(".bbubble"); if(bub) bub.textContent = _petSays[billieCuddles() % _petSays.length];
   renderBillieDiary(); renderBillieMedals();
 }
+/* echte foto van Billie als avatar in de hero (met humeur-emoji als badge) */
+var _billieAvatarUrl = null, _billieAvatarChecked = false;
+function applyAvatarFace(){                                      // synchroon: toont de gecachete foto -> geen flikker naar de emoji
+  var bf = document.getElementById("bface"); if(!bf || !_billieAvatarUrl) return;
+  var img = document.createElement("img"); img.className = "bavatar"; img.src = _billieAvatarUrl; img.alt = "Billie";
+  var badge = document.createElement("span"); badge.className = "bmoodbadge"; badge.textContent = billieMood().em;
+  bf.classList.add("hasphoto"); bf.innerHTML = ""; bf.appendChild(img); bf.appendChild(badge);
+}
+function loadBillieAvatar(){                                     // leest 1x uit IndexedDB en cachet de object-URL
+  _billieAvatarChecked = true;
+  photoGet("billie:avatar", function(blob){
+    if(_billieAvatarUrl){ try{ URL.revokeObjectURL(_billieAvatarUrl); }catch(e){} _billieAvatarUrl = null; }
+    if(blob){ _billieAvatarUrl = URL.createObjectURL(blob); }
+    applyAvatarFace();
+  });
+}
+function pickBillieAvatar(){
+  if(!_photoOk){ alert("Foto's kunnen op dit toestel niet bewaard worden."); return; }
+  var inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.style.display = "none";
+  var onFocus, cleanup = function(){ try{ inp.remove(); }catch(e){} window.removeEventListener("focus", onFocus); };
+  onFocus = function(){ setTimeout(function(){ if(!inp.files || !inp.files.length) cleanup(); }, 400); };  // dialoog geannuleerd -> opruimen
+  inp.addEventListener("change", function(){
+    window.removeEventListener("focus", onFocus);
+    var f = inp.files && inp.files[0]; if(!f){ cleanup(); return; }
+    var ph = document.getElementById("bphoto"); if(ph) ph.textContent = "⏳ bezig…";
+    resizePhoto(f, function(b){
+      if(!b){ if(ph) ph.textContent = "📷 mislukt — opnieuw"; cleanup(); return; }
+      photoPut("billie:avatar", b, function(ok){ if(ph) ph.textContent = "📷 Andere foto"; if(ok) loadBillieAvatar(); cleanup(); });
+    });
+  });
+  window.addEventListener("focus", onFocus);
+  document.body.appendChild(inp); inp.click();
+}
+function resetCuddles(){
+  if(!confirm("Alle knuffels terug op nul? Billie vergeeft het je meteen. 🐾")) return;
+  del("sl26:fam:cuddles");
+  renderBillie();
+}
+function resetWalk(){
+  if(!confirm("Het hele wandelrapport terug op nul? Alle tellers worden 0.")) return;
+  ["c1","c2","c3","c4","c5","c6"].forEach(function(c){ del("sl26:fam:"+c); var el = document.getElementById(c); if(el) el.textContent = "0"; });
+  renderBillieDiary(); renderBillieMedals();
+}
+var _billieDay = "";
+function renderBillieCare(){
+  var box = document.getElementById("billiecare"); if(!box) return;
+  _billieDay = ymd(new Date());                    // onthoud welke dag getekend is (voor de middernacht-reset)
+  box.innerHTML = "";
+  CARE.forEach(function(c){
+    var row = document.createElement("label"); row.className = "check";
+    var inp = document.createElement("input"); inp.type = "checkbox"; inp.checked = get(careKey(c.id)) !== null;
+    var bx = document.createElement("span"); bx.className = "box";
+    var txt = document.createElement("span"); txt.className = "ctxt"; txt.innerHTML = c.em + " " + esc(c.t) + "<small>" + esc(c.d) + "</small>";
+    inp.addEventListener("change", function(){
+      if(inp.checked) put(careKey(c.id), ymd(new Date())); else del(careKey(c.id));
+      renderBillie();
+      if(inp.checked && billieCareDone() === CARE.length){ confetti(); beep([523,784,1047,1319], 0.24); }
+    });
+    row.appendChild(inp); row.appendChild(bx); row.appendChild(txt);
+    box.appendChild(row);
+  });
+}
 function renderBillie(){
   var hero = document.getElementById("billiehero");
   if(hero){
-    var m = billieMood(), care = billieCareDone(), pct = Math.round(care/4*100);
+    var m = billieMood(), care = billieCareDone(), n = CARE.length, pct = Math.round(care/n*100);
     hero.innerHTML =
       '<div class="billiehero">'+
         '<div class="bface" id="bface">'+m.em+'</div>'+
         '<div class="bbubble">'+esc(m.say)+'</div>'+
-        '<div class="blijwrap"><span>Blij-meter</span><div class="blijbar"><i style="width:'+pct+'%"></i></div><b>'+care+'/4 verzorgd</b></div>'+
+        '<div class="blijwrap"><span>Blij-meter</span><div class="blijbar"><i style="width:'+pct+'%"></i></div><b>'+care+'/'+n+' verzorgd</b></div>'+
         '<button class="petbtn" id="petbtn">🐾 Aai Billie!</button>'+
         '<div class="cuddlecount">❤️ '+billieCuddles()+' knuffels gegeven</div>'+
+        '<div class="bctl"><button class="bmini" id="bphoto">📷 Billie\'s foto</button><button class="bmini" id="resetcuddle">↺ knuffels</button></div>'+
       '</div>';
     var pb = document.getElementById("petbtn"); if(pb) pb.addEventListener("click", petBillie);
     var bf = document.getElementById("bface"); if(bf) bf.addEventListener("click", petBillie);
+    var ph = document.getElementById("bphoto"); if(ph) ph.addEventListener("click", pickBillieAvatar);
+    var rc = document.getElementById("resetcuddle"); if(rc) rc.addEventListener("click", resetCuddles);
+    applyAvatarFace();                            // gecachete foto meteen tonen (geen flikker)
+    if(!_billieAvatarChecked) loadBillieAvatar(); // 1e keer: uit IndexedDB laden
   }
   renderBillieDiary();
   renderBillieMedals();
@@ -1796,7 +1897,9 @@ function renderBillieDiary(){
     var hug = cu ? ("En ik kreeg al " + cu + " " + (cu===1 ? "knuffel" : "knuffels") + ". ") : "";
     text = "Woef! Dit is mijn reisverslag. " + body + hug + "Beste. Reis. Ooit. 🐕❤️";
   }
-  box.innerHTML = '<div class="card billiediarycard"><h3>📖 Billie\'s dagboekje</h3><p>' + esc(text) + '</p></div>';
+  box.innerHTML = '<div class="card billiediarycard"><h3>📖 Billie\'s dagboekje</h3>' +
+    '<p class="bwish">🌟 Vandaag droomt Billie van: ' + esc(billieWish()) + '</p>' +
+    '<p>' + esc(text) + '</p></div>';
 }
 var BILLIEMEDALS = [
   {k:"c1", em:"🏊", name:"Waterhond",       need:5,  reach:"5 rivieren/meren in"},
@@ -3068,7 +3171,7 @@ if(who && VALID.indexOf(who) >= 0){
 } else {
   intro.style.display = "flex";      // eerst je naam kiezen
   loadTicks(); loadBingo(); loadPlates(); refreshDagboek(); renderColdboard(); updateRank(); updateScoreboard();
-  renderDurfjacht(); renderDierenspotter(); renderBillie();
+  renderDurfjacht(); renderDierenspotter(); renderBillie(); renderBillieCare();
 }
 
 /* ---------- links openen: #sync= (familie-cloud) ---------- */
