@@ -74,7 +74,11 @@ function scenario(label, seed, when, storageWorks = true){
   ok(doc.querySelectorAll("#billiecare .check").length === 5, `Billie heeft 5 dagtaken (${doc.querySelectorAll("#billiecare .check").length})`);
   ok(!!doc.getElementById("resetwalk") && !!doc.getElementById("bphoto") && !!doc.getElementById("resetcuddle"), "reset-wandelrapport + Billie-foto + reset-knuffels knoppen aanwezig");
   ok(doc.querySelectorAll("#counters .cnt").length === 6, `Billie-wandelrapport heeft 6 tellers (${doc.querySelectorAll("#counters .cnt").length})`);
-  ok(doc.querySelectorAll("#billiemedals .badge").length === 6, `Billie's prijzenkast heeft 6 medailles (${doc.querySelectorAll("#billiemedals .badge").length})`);
+  ok(doc.querySelectorAll("#billiemedals .badge").length === 7, `Billie's prijzenkast heeft 7 medailles (${doc.querySelectorAll("#billiemedals .badge").length})`);
+  ok(doc.querySelectorAll("#billietricks .spot").length === 8, `Billie heeft 8 trucjes (${doc.querySelectorAll("#billietricks .spot").length})`);
+  ok(doc.querySelectorAll("#billiepass .passrow").length === 6, `Billie's paspoort heeft 6 velden (${doc.querySelectorAll("#billiepass .passrow").length})`);
+  ok(doc.querySelectorAll(".soundboard .sbtn").length === 3, `soundboard heeft 3 geluiden (${doc.querySelectorAll(".soundboard .sbtn").length})`);
+  ok(!!doc.querySelector("#family .fam.bilrow"), "Billie staat als eigen rij op het familie-scorebord");
   ok(/dagboekje/i.test((doc.getElementById("billiediary")||{}).textContent||""), "Billie's dagboekje rendert");
   ok(/droomt Billie van/.test((doc.getElementById("billiediary")||{}).textContent||""), "Billie's wens van de dag verschijnt");
   ok(!doc.querySelector('input[data-p="b01"]'), "oude vaste zorg-checkboxes (b01) zijn weg");
@@ -273,9 +277,10 @@ console.log("\n15. Familie-scorebord: balk, kroon & streak van anderen");
     "sl26:shared:Willem":"20~2~2~20260721~3"
   }, "2026-07-20T09:00:00");
   const fam = doc.getElementById("family");
-  ok(fam.querySelectorAll(".fbar i").length === 2, `2 voortgangsbalken (${fam.querySelectorAll(".fbar i").length})`);
+  ok(fam.querySelectorAll(".fam:not(.bilrow) .fbar i").length === 2, `2 kinder-voortgangsbalken (${fam.querySelectorAll(".fam:not(.bilrow) .fbar i").length})`);
   ok(/👑/.test(fam.textContent), "de leider (Willem, 20) krijgt een kroon");
   ok(/🔥3/.test(fam.textContent), "streak van een gedeelde speler wordt getoond");
+  ok(!!fam.querySelector(".fam.bilrow"), "Billie heeft haar eigen rij bovenaan het scorebord");
   dom.window.close();
 }
 
@@ -487,6 +492,38 @@ console.log("\n23. Billie: tellers voeden het dagboekje en de prijzenkast");
   ok(!!knuf && knuf.classList.contains("on"), "Knuffelkoning ontgrendeld bij 50 knuffels");
   ok(!!stok && !stok.classList.contains("on"), "Stokkenkampioen nog niet ontgrendeld (0/10)");
   dom.window.close();
+}
+
+console.log("\n24. Billie: trucjes tellen mee; Billie staat op het familiebord met punten");
+{
+  const seed = { "sl26:who":"Loes", "sl26:fam:cuddles":"12", "sl26:fam:c1":"3", "sl26:fam:c2":"4" };
+  ["zit","poot","af"].forEach(t => seed["sl26:fam:trick:"+t] = "2026-07-20");   // 3 trucjes geleerd
+  const { dom, doc } = load(seed, "2026-07-22T09:00:00");
+  const tricks = [...doc.querySelectorAll("#billietricks .spot")];
+  ok(tricks.length === 8, `8 trucjes (${tricks.length})`);
+  ok(tricks.filter(r => r.classList.contains("on")).length === 3, "3 trucjes al geleerd");
+  const learnBtn = [...doc.querySelectorAll("#billietricks .stick")].find(b => /Leren/.test(b.textContent));
+  click(dom, learnBtn);
+  ok([...doc.querySelectorAll("#billietricks .spot.on")].length === 4, "na tikken zijn er 4 trucjes geleerd");
+  // Familie-tab -> Billie-rij met punten = cuddles(12) + walk(7) + tricks(4)*5 = 39
+  click(dom, doc.querySelector('nav.tabs button[data-tab="familie"]'));
+  const brow = doc.querySelector("#family .fam.bilrow");
+  ok(!!brow, "Billie-rij op het familiebord");
+  ok(brow.querySelector(".fsc").textContent.trim() === "39", `Billie-punten = 12+7+20 = 39 ("${brow.querySelector(".fsc").textContent.trim()}")`);
+  ok(/12 knuffels/.test(brow.textContent) && /4 trucjes/.test(brow.textContent), "Billie-rij toont knuffels & trucjes");
+  dom.window.close();
+}
+
+console.log("\n25. Billie's paspoort onthoudt wat je invult");
+{
+  const { dom, doc } = load({ "sl26:who":"Willem" }, "2026-07-20T09:00:00");
+  const ras = [...doc.querySelectorAll("#billiepass .passinp")][0];
+  ras.value = "Setter"; ras.dispatchEvent(new dom.window.Event("input",{bubbles:true}));
+  ok(dom.window.localStorage.getItem("sl26:fam:pass:ras") === "Setter", "paspoort-veld wordt opgeslagen");
+  dom.window.close();
+  const again = load({ "sl26:who":"Willem", "sl26:fam:pass:ras":"Setter" }, "2026-07-20T09:00:00");
+  ok([...again.doc.querySelectorAll("#billiepass .passinp")][0].value === "Setter", "paspoort-veld wordt teruggeladen");
+  again.dom.window.close();
 }
 
 console.log(failed ? `\n${failed} test(s) GEFAALD\n` : "\nAlles in orde.\n");

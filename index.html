@@ -206,6 +206,20 @@ body.night .bwish{color:#ffcf7a}
 .bmini{border:0;border-radius:10px;background:rgba(255,255,255,.55);color:#3a2c5a;font:700 12px var(--dsp);padding:7px 12px;cursor:pointer}
 body.night .bmini{background:rgba(255,255,255,.14);color:#e6ddff}
 #resetwalk{color:var(--mist)}
+/* paspoort + soundboard */
+.passrow{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line)}
+.passrow:last-child{border-bottom:0}
+.passlab{font-weight:800;font-size:13px;min-width:118px;color:var(--soca)}
+.passinp{flex:1;min-width:0;border:0;border-bottom:1px dashed var(--line);background:transparent;color:var(--ink);font:600 14px var(--dsp);padding:4px 2px}
+.passinp:focus{outline:none;border-bottom-color:var(--soca)}
+.soundboard{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.sbtn{border:0;border-radius:10px;background:var(--ice);color:#3c5c66;font:800 13px var(--dsp);padding:9px 14px;cursor:pointer}
+body.night .sbtn{background:#2c2116;color:#dcc9b0}
+/* Billie op het familiebord — #family-prefix wint van '#family .fam', en 'bilrow'
+   botst niet met de bestaande .billie (dagtip-vakjes) */
+#family .fam.bilrow{background:linear-gradient(135deg,#fff2d8,#fff);border:1.5px solid var(--sun);border-radius:12px;padding:10px;margin-bottom:8px;color:var(--ink)}
+body.night #family .fam.bilrow{background:#2a2313;border-color:#6a531f;color:var(--ink)}
+#family .fam.bilrow .fbar i{background:linear-gradient(90deg,#ff9f43,#ffd36b)}
 
 /* ---------- checklists ---------- */
 .check{display:flex;gap:11px;align-items:flex-start;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}
@@ -1261,6 +1275,22 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   <h2 class="sec">Billie's taken van vandaag</h2>
   <p class="note" style="margin-bottom:8px">Elke dag opnieuw afvinken! Alles gedaan = een dolgelukkige hond. De Blij-meter hierboven loopt mee. 🐾</p>
   <div class="card" id="billiecare"></div>
+
+  <h2 class="sec">🎓 Billie's trucjes</h2>
+  <p class="note" style="margin-bottom:8px">Leer Billie kunstjes! Elk trucje dat ze kan, tik je aan. Alle acht = Trucjeskampioen. 🏅</p>
+  <div id="billietricks"></div>
+
+  <h2 class="sec">🪪 Billie's paspoort</h2>
+  <p class="note" style="margin-bottom:8px">Vul Billie's steekbrief in — helemaal van jullie.</p>
+  <div class="card" id="billiepass"></div>
+  <div class="card"><b style="font-size:13px">🔊 Praat met Billie</b>
+    <div class="soundboard">
+      <button class="sbtn" data-sound="woef" type="button">Woef! 🐕</button>
+      <button class="sbtn" data-sound="jank" type="button">Zielige jank 🥺</button>
+      <button class="sbtn" data-sound="blij" type="button">Blij gepiep 🎾</button>
+    </div>
+  </div>
+
   <div class="warn"><b>Regel nummer 1:</b> Billie blijft <b>nooit</b> alleen in de auto. Ook niet "heel even". Ook niet met een raampje open.</div>
 
   <h2 class="sec">Waar mag Billie zwemmen?</h2>
@@ -1299,7 +1329,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   <div id="billiediary"></div>
 
   <h2 class="sec">🏅 Billie's prijzenkast</h2>
-  <p class="note" style="margin-bottom:8px">Verdien medailles voor Billie door samen avonturen te beleven en haar te knuffelen.</p>
+  <p class="note" style="margin-bottom:8px">Verdien medailles voor Billie door samen avonturen te beleven, trucjes te leren en haar te knuffelen.</p>
   <div id="billiemedals" class="badges"></div>
 
   <footer>
@@ -1432,6 +1462,8 @@ function setWho(n){
   if(typeof renderDierenspotter === "function") renderDierenspotter();
   if(typeof renderBillie === "function") renderBillie();
   if(typeof renderBillieCare === "function") renderBillieCare();
+  if(typeof renderBillieTricks === "function") renderBillieTricks();
+  if(typeof renderBilliePass === "function") renderBilliePass();
 }
 var VALID = ["Loes","Willem","Charlotte","Mama","Papa","Iedereen"];
 document.querySelectorAll("[data-name]").forEach(function(b){
@@ -1448,7 +1480,7 @@ document.querySelectorAll("nav.tabs button").forEach(function(b){
     document.getElementById("t"+"-"+b.dataset.tab).classList.add("active");
     if(b.dataset.tab === "logboek" && typeof renderFamJournal === "function") renderFamJournal();
     if(b.dataset.tab === "familie"){ if(typeof renderSync === "function") renderSync(); if(typeof updateScoreboard === "function") updateScoreboard(); }
-    if(b.dataset.tab === "billie"){ if(typeof renderBillie === "function") renderBillie(); if(typeof renderBillieCare === "function") renderBillieCare(); }
+    if(b.dataset.tab === "billie"){ if(typeof renderBillie === "function") renderBillie(); if(typeof renderBillieCare === "function") renderBillieCare(); if(typeof renderBillieTricks === "function") renderBillieTricks(); if(typeof renderBilliePass === "function") renderBilliePass(); }
     window.scrollTo(0,0);
   });
 });
@@ -1901,15 +1933,33 @@ function renderBillieDiary(){
     '<p class="bwish">🌟 Vandaag droomt Billie van: ' + esc(billieWish()) + '</p>' +
     '<p>' + esc(text) + '</p></div>';
 }
+/* trucjes: familie-breed, blijvend geleerd. Sleutel: sl26:fam:trick:<id> */
+var TRICKS = [
+  {id:"zit",   em:"🪑", t:"Zit",           d:"De klassieker om mee te starten."},
+  {id:"poot",  em:"🤝", t:"Poot geven",    d:"Een nette pootjesknuffel."},
+  {id:"af",    em:"⬇️", t:"Af / lig",      d:"Rustig gaan liggen op commando."},
+  {id:"blijf", em:"✋", t:"Blijf",          d:"Stil blijven zitten, ook al loop je weg."},
+  {id:"rol",   em:"🔄", t:"Rollen",         d:"Een hele draai op de grond."},
+  {id:"high5", em:"🙌", t:"High five",      d:"Poot omhoog tegen jouw hand."},
+  {id:"zoek",  em:"🔎", t:"Zoek de bal",    d:"Verstoppen en laten zoeken."},
+  {id:"draai", em:"💫", t:"Draai een rondje", d:"Op z'n staart achterna, in het rond."}
+];
+function tricksDone(){ return TRICKS.filter(function(t){ return get("sl26:fam:trick:"+t.id) !== null; }).length; }
 var BILLIEMEDALS = [
   {k:"c1", em:"🏊", name:"Waterhond",       need:5,  reach:"5 rivieren/meren in"},
   {k:"c2", em:"🦴", name:"Stokkenkampioen", need:10, reach:"10 stokken veroverd"},
   {k:"c3", em:"🐶", name:"Sociale vlinder", need:10, reach:"10 honden ontmoet"},
   {k:"c4", em:"🐐", name:"Bergspeurder",    need:5,  reach:"5 geiten/steenbokken"},
   {k:"c6", em:"🟤", name:"Moddermonster",   need:5,  reach:"5 modderpoelen"},
+  {k:"tricks", em:"🎓", name:"Trucjeskampioen", need:TRICKS.length, reach:"alle trucjes geleerd"},
   {k:"cuddles", em:"❤️", name:"Knuffelkoning", need:50, reach:"50 knuffels"}
 ];
-function billieVal(k){ return k === "cuddles" ? billieCuddles() : billieCnt(k); }
+function billieVal(k){ return k === "cuddles" ? billieCuddles() : (k === "tricks" ? tricksDone() : billieCnt(k)); }
+function billieMedalsEarned(){ return BILLIEMEDALS.filter(function(md){ return billieVal(md.k) >= md.need; }).length; }
+function billiePunten(){
+  var walk = ["c1","c2","c3","c4","c5","c6"].reduce(function(s,c){ return s + billieCnt(c); }, 0);
+  return billieCuddles() + walk + tricksDone() * 5;
+}
 function renderBillieMedals(){
   var box = document.getElementById("billiemedals"); if(!box) return;
   box.innerHTML = "";
@@ -1922,6 +1972,70 @@ function renderBillieMedals(){
     box.appendChild(el);
   });
 }
+function renderBillieTricks(){
+  var box = document.getElementById("billietricks"); if(!box) return;
+  box.innerHTML = "";
+  TRICKS.forEach(function(t){
+    var learned = get("sl26:fam:trick:"+t.id) !== null;
+    var row = document.createElement("div"); row.className = "spot" + (learned ? " on" : "");
+    row.innerHTML = '<div class="sem">'+t.em+'</div><div><div class="snm">'+esc(t.t)+'</div><div class="sfact">'+esc(t.d)+'</div></div>';
+    var btn = document.createElement("button"); btn.type = "button"; btn.className = "stick"; btn.textContent = learned ? "✅ Kan het!" : "🎓 Leren!";
+    btn.addEventListener("click", function(){
+      if(get("sl26:fam:trick:"+t.id) !== null) del("sl26:fam:trick:"+t.id);
+      else { put("sl26:fam:trick:"+t.id, ymd(new Date())); confetti(); beep([440,660,880], 0.16); }
+      renderBillieTricks(); renderBillieMedals();
+    });
+    row.appendChild(btn);
+    box.appendChild(row);
+  });
+}
+var PASS = [
+  {id:"ras",      label:"Ras",            ph:"bv. Setter"},
+  {id:"leeftijd", label:"Leeftijd",       ph:"bv. 3 jaar"},
+  {id:"kracht",   label:"Superkracht",    ph:"bv. onvermoeibaar zwemmen"},
+  {id:"eten",     label:"Lievelingseten", ph:"bv. kaas 🧀"},
+  {id:"plek",     label:"Lievelingsplek", ph:"bv. de Soča"},
+  {id:"motto",    label:"Motto",          ph:"bv. Altijd erbij!"}
+];
+function renderBilliePass(){
+  var box = document.getElementById("billiepass"); if(!box) return;
+  box.innerHTML = "";
+  PASS.forEach(function(p){
+    var row = document.createElement("div"); row.className = "passrow";
+    var lab = document.createElement("span"); lab.className = "passlab"; lab.textContent = p.label;
+    var inp = document.createElement("input"); inp.className = "passinp"; inp.type = "text"; inp.placeholder = p.ph;
+    inp.maxLength = 60; inp.setAttribute("aria-label", p.label);
+    inp.value = get("sl26:fam:pass:"+p.id) || "";
+    inp.addEventListener("input", function(){ put("sl26:fam:pass:"+p.id, inp.value.slice(0,60)); });
+    row.appendChild(lab); row.appendChild(inp);
+    box.appendChild(row);
+  });
+}
+/* Billie als speciale rij op het familie-scorebord */
+function billieFamRow(){
+  var cu = billieCuddles();
+  var walk = ["c1","c2","c3","c4","c5","c6"].reduce(function(s,c){ return s + billieCnt(c); }, 0);
+  var meds = billieMedalsEarned(), pts = billiePunten();
+  var pct = Math.round(meds / BILLIEMEDALS.length * 100);
+  var d = document.createElement("div"); d.className = "fam bilrow";
+  d.innerHTML =
+    '<div class="famtop"><div class="fnm">🐾 Billie' +
+      '<small>❤️ ' + cu + ' knuffels · 🎾 ' + walk + ' avonturen · 🎓 ' + tricksDone() + ' trucjes · 🏅 ' + meds + '/' + BILLIEMEDALS.length + '</small></div>' +
+      '<div class="fsc">' + pts + '</div></div>' +
+    '<div class="fbar"><i style="width:' + pct + '%"></i></div>';
+  return d;
+}
+(function(){
+  document.querySelectorAll(".soundboard .sbtn").forEach(function(b){
+    b.addEventListener("click", function(){
+      var s = b.dataset.sound;
+      if(s === "woef") beep([210,150,250], 0.14);
+      else if(s === "jank") beep([520,430,340,270], 0.42);
+      else beep([420,620,520,720], 0.2);
+      var bf = document.getElementById("bface"); if(bf){ bf.classList.remove("wag"); void bf.offsetWidth; bf.classList.add("wag"); }
+    });
+  });
+})();
 
 /* ---------- noodnummers ---------- */
 [["tel1","call1"],["tel2","call2"]].forEach(function(pair){
@@ -2633,7 +2747,8 @@ function renderFamily(){
   });
   rows.sort(function(a,b){ return b.m - a.m; });
   box.innerHTML = "";
-  if(!rows.length){ box.innerHTML = '<p class="note">Nog geen scores. Verbind hierboven met de familie-cloud (☁️ Familie-sync) om ieders scores live te zien.</p>'; return; }
+  if(typeof billieFamRow === "function") box.appendChild(billieFamRow());   // Billie staat altijd trots bovenaan
+  if(!rows.length){ box.insertAdjacentHTML("beforeend", '<p class="note" style="margin-top:8px">Nog geen scores van de kinderen. Verbind hierboven met de familie-cloud (☁️ Familie-sync) om ieders scores live te zien.</p>'); return; }
   var top = rows[0].m;
   rows.forEach(function(r){
     var rank = RANKS[r.r] ? RANKS[r.r][1] : "";
@@ -3171,7 +3286,7 @@ if(who && VALID.indexOf(who) >= 0){
 } else {
   intro.style.display = "flex";      // eerst je naam kiezen
   loadTicks(); loadBingo(); loadPlates(); refreshDagboek(); renderColdboard(); updateRank(); updateScoreboard();
-  renderDurfjacht(); renderDierenspotter(); renderBillie(); renderBillieCare();
+  renderDurfjacht(); renderDierenspotter(); renderBillie(); renderBillieCare(); renderBillieTricks(); renderBilliePass();
 }
 
 /* ---------- links openen: #sync= (familie-cloud) ---------- */
