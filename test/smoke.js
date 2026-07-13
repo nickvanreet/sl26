@@ -64,7 +64,8 @@ function scenario(label, seed, when, storageWorks = true){
   ok(doc.querySelectorAll("#badges .badge").length === 12, `12 badges (${doc.querySelectorAll("#badges .badge").length})`);
   ok(!!doc.getElementById("t-logboek") && !!doc.getElementById("hsync"), "logboek-tab + header sync-knop aanwezig");
   ok(!!doc.getElementById("lbsync"), "logboek heeft een eigen 'Haal het logboek op'-knop");
-  ok(/Papa/.test((doc.getElementById("resetme")||{}).textContent||""), "wisknop is voorbehouden aan Papa");
+  ok(!!doc.getElementById("resetscores") && !doc.getElementById("resetme"), "spel-reset knop bestaat (oude alles-wisknop is weg)");
+  ok(/Papa/.test((doc.getElementById("wipemem")||{}).textContent||""), "aparte foto's&dagboek-wisknop is voorbehouden aan Papa");
   ok(!/€|budget/i.test(doc.body.textContent), "nog steeds geen prijzen");
   return { dom, doc };
 }
@@ -272,67 +273,74 @@ console.log("\n16. Verhaal-estafette: voorlees-knop (TTS)");
   ok(/draak/.test(doc.getElementById("vhfull").textContent), "verhaal wordt ook getoond bij voorlezen");
 }
 
-console.log("\n17a. Zonder ingestelde wis-pincode is wissen uitgeschakeld");
+console.log("\n17a. Spel resetten (elke speler z'n eigen): scores op nul, FOTO's & DAGBOEK blijven");
 {
-  const seed = { "sl26:who":"Papa", "sl26:fam:sb": CFG(null) };   // verbonden, maar géén pincode
+  const seed = { "sl26:who":"Loes" };            // géén cloud nodig; puur lokaal
+  for(let i=1;i<=36;i++) seed["sl26:Loes:m"+String(i).padStart(2,"0")] = "2026-07-20";
+  seed["sl26:Loes:bingo0"] = "1"; seed["sl26:Loes:bingo1"] = "1";
+  seed["sl26:Loes:cold"] = "8";
+  seed["sl26:Loes:note:2026-07-18"] = "Rafting was episch!";   // dagboek — moet BLIJVEN
+  seed["sl26:Loes:note:2026-07-20"] = "Beste dag ooit";        // dagboek — moet BLIJVEN
+  const { dom, doc } = load(seed, "2026-07-20T09:00:00");
+  ok(doc.getElementById("rankcount").textContent === "36", `36 missies vóór reset (${doc.getElementById("rankcount").textContent})`);
+  ok([...doc.querySelectorAll("#badges .badge.on")].length > 0, "badges verdiend vóór reset");
+  dom.window.confirm = () => true;
+  dom.window.alert = () => {};
+  click(dom, doc.getElementById("resetscores"));
+  ok(doc.getElementById("rankcount").textContent === "0", `0 missies na reset (${doc.getElementById("rankcount").textContent})`);
+  ok([...doc.querySelectorAll("#badges .badge.on")].length === 0, "geen badges meer na reset");
+  ok(doc.querySelectorAll('#bingo button[aria-pressed="true"]').length === 0, "bingo leeg na reset");
+  ok(!/8°/.test(doc.getElementById("coldboard").textContent), "koudste-record weg na reset");
+  // en de HERINNERINGEN blijven staan:
+  ok(dom.window.localStorage.getItem("sl26:Loes:note:2026-07-18") === "Rafting was episch!", "dagboektekst 1 BLIJFT bewaard na spel-reset");
+  ok(dom.window.localStorage.getItem("sl26:Loes:note:2026-07-20") === "Beste dag ooit", "dagboektekst 2 BLIJFT bewaard na spel-reset");
+  const notes = [...doc.querySelectorAll("#dagboek .dbentry .dbnote")];
+  const d1 = notes.find(t => t.dataset.date === "2026-07-18");
+  ok(!!d1 && d1.value === "Rafting was episch!", "dagboek toont de notitie nog steeds na de reset");
+  dom.window.close();
+}
+
+console.log("\n17b. Foto's & dagboek wissen — zonder ingestelde pincode uitgeschakeld");
+{
+  const seed = { "sl26:who":"Papa", "sl26:fam:sb": CFG(null) };
+  seed["sl26:Papa:note:2026-07-18"] = "Blijft staan zonder pincode";
+  const { dom, doc } = load(seed, "2026-07-20T09:00:00");
+  dom.window.confirm = () => true;
+  dom.window.prompt = () => "9999";
+  dom.window.alert = () => {};
+  click(dom, doc.getElementById("wipemem"));
+  ok(dom.window.localStorage.getItem("sl26:Papa:note:2026-07-18") === "Blijft staan zonder pincode", "geen pincode ingesteld = niets gewist");
+  dom.window.close();
+}
+
+console.log("\n17c. Papa wist foto's & dagboek van een speler — maar de SCORES blijven staan");
+{
+  const seed = { "sl26:who":"Papa", "sl26:fam:sb": CFG("1234") };
   for(let i=1;i<=36;i++) seed["sl26:Papa:m"+String(i).padStart(2,"0")] = "2026-07-20";
+  seed["sl26:Papa:bingo0"] = "1";
+  seed["sl26:Papa:note:2026-07-18"] = "Deze tekst wordt gewist";
   const { dom, doc } = load(seed, "2026-07-20T09:00:00");
   ok(doc.getElementById("rankcount").textContent === "36", "36 missies vóór");
-  dom.window.confirm = () => true;               // zelfs als alles wordt bevestigd…
-  dom.window.prompt = () => "9999";              // …en een pincode wordt geprobeerd…
-  dom.window.alert = () => {};
-  click(dom, doc.getElementById("resetme"));
-  ok(doc.getElementById("rankcount").textContent === "36", "…blijft alles staan: geen ingestelde pincode = niets wissen");
-  dom.window.close();
-}
-
-console.log("\n17b. Een kind zonder de pincode kan niet wissen");
-{
-  const seed = { "sl26:who":"Loes", "sl26:fam:sb": CFG("1234") };  // pincode ingesteld door Papa
-  for(let i=1;i<=36;i++) seed["sl26:Loes:m"+String(i).padStart(2,"0")] = "2026-07-20";
-  const { dom, doc } = load(seed, "2026-07-20T09:00:00");
   dom.window.confirm = () => true;
   dom.window.alert = () => {};
-  dom.window.prompt = (msg) => /wis-pincode/.test(msg) ? "0000" : (/Wiens/.test(msg) ? "Loes" : null);  // kind gokt fout
-  click(dom, doc.getElementById("resetme"));
-  ok(doc.getElementById("rankcount").textContent === "36", "kind met verkeerde pincode wist niets");
+  dom.window.prompt = (msg) => /wis-pincode/.test(msg) ? "1234" : (/wissen/.test(msg) ? "Papa" : null);
+  click(dom, doc.getElementById("wipemem"));
+  ok(dom.window.localStorage.getItem("sl26:Papa:note:2026-07-18") === null, "dagboektekst is gewist");
+  ok(doc.getElementById("rankcount").textContent === "36", `SCORES blijven staan na foto's&dagboek-wis (${doc.getElementById("rankcount").textContent})`);
+  ok(dom.window.localStorage.getItem("sl26:Papa:m01") === "2026-07-20", "missie-datum staat er nog");
   dom.window.close();
 }
 
-console.log("\n17c. Papa wist met de juiste pincode een speler volledig (missies, medailles, badges, bingo)");
+console.log("\n17d. Foto's & dagboek: verkeerde pincode wist niets");
 {
   const seed = { "sl26:who":"Papa", "sl26:fam:sb": CFG("1234") };
-  for(let i=1;i<=36;i++) seed["sl26:Papa:m"+String(i).padStart(2,"0")] = "2026-07-20";
-  seed["sl26:Papa:p01"] = "1";
-  seed["sl26:Papa:bingo0"] = "1"; seed["sl26:Papa:bingo1"] = "1";
-  seed["sl26:Papa:cold"] = "8";
-  seed["sl26:Papa:note:2026-07-18"] = "Test-notitie";
-  const { dom, doc } = load(seed, "2026-07-20T09:00:00");
-  ok(doc.getElementById("rankcount").textContent === "36", `36 missies vóór wissen (${doc.getElementById("rankcount").textContent})`);
-  ok([...doc.querySelectorAll("#kast button.won")].length > 0, "medailles gewonnen vóór wissen");
-  ok([...doc.querySelectorAll("#badges .badge.on")].length > 0, "badges verdiend vóór wissen");
-  dom.window.confirm = () => true;
-  dom.window.alert = () => {};
-  dom.window.prompt = (msg) => /wis-pincode/.test(msg) ? "1234" : (/Wiens/.test(msg) ? "Papa" : null);
-  click(dom, doc.getElementById("resetme"));
-  ok(doc.getElementById("rankcount").textContent === "0", `0 missies na wissen (${doc.getElementById("rankcount").textContent})`);
-  ok([...doc.querySelectorAll("#kast button.won")].length === 0, "geen medailles meer na wissen (trofeeën resetten óók)");
-  ok([...doc.querySelectorAll("#badges .badge.on")].length === 0, "geen badges meer na wissen");
-  ok(doc.querySelectorAll('#bingo button[aria-pressed="true"]').length === 0, "bingo leeg na wissen");
-  ok(!/8°/.test(doc.getElementById("coldboard").textContent), "koudste-record weg na wissen");
-  dom.window.close();
-}
-
-console.log("\n17d. Verkeerde pincode wist niets");
-{
-  const seed = { "sl26:who":"Papa", "sl26:fam:sb": CFG("1234") };
-  for(let i=1;i<=36;i++) seed["sl26:Papa:m"+String(i).padStart(2,"0")] = "2026-07-20";
+  seed["sl26:Papa:note:2026-07-18"] = "Overleeft een foute pincode";
   const { dom, doc } = load(seed, "2026-07-20T09:00:00");
   dom.window.confirm = () => true;
   dom.window.alert = () => {};
-  dom.window.prompt = (msg) => /wis-pincode/.test(msg) ? "0000" : (/Wiens/.test(msg) ? "Papa" : null);
-  click(dom, doc.getElementById("resetme"));
-  ok(doc.getElementById("rankcount").textContent === "36", `verkeerde pincode → niets gewist (${doc.getElementById("rankcount").textContent})`);
+  dom.window.prompt = (msg) => /wis-pincode/.test(msg) ? "0000" : (/wissen/.test(msg) ? "Papa" : null);
+  click(dom, doc.getElementById("wipemem"));
+  ok(dom.window.localStorage.getItem("sl26:Papa:note:2026-07-18") === "Overleeft een foute pincode", "verkeerde pincode → dagboek blijft");
   dom.window.close();
 }
 
@@ -346,7 +354,32 @@ console.log("\n18. Papa stelt de wis-pincode in via de familie-cloud (control in
   click(dom, setpin);
   const cfg = JSON.parse(dom.window.localStorage.getItem("sl26:fam:sb"));
   ok(cfg.pinh === pinHash("4321"), "pincode-hash staat nu in de familie-config (reist mee in de sync-link)");
+  ok(dom.window.localStorage.getItem("sl26:fam:pinlock") === pinHash("4321"), "pincode staat ook in de sticky 'pinlock' (blijft na loskoppelen)");
   ok(/ingesteld ✅/.test(doc.getElementById("syncbox").textContent), "sync-tab toont nu 'ingesteld ✅'");
+  dom.window.close();
+}
+
+console.log("\n19. Sticky pincode: opnieuw verbinden met een pinloze config omzeilt de wis-pincode NIET");
+{
+  // config zónder pinh (zoals na 'loskoppelen' + opnieuw verbinden via de invite-link), maar pinlock staat lokaal
+  const seed = { "sl26:who":"Papa", "sl26:fam:sb": CFG(null), "sl26:fam:pinlock": pinHash("1234") };
+  seed["sl26:Papa:note:2026-07-18"] = "Beschermd door pinlock";
+  const { dom, doc } = load(seed, "2026-07-20T09:00:00");
+  dom.window.confirm = () => true;
+  dom.window.alert = () => {};
+  // verkeerde pin -> niets gewist (bewijst dat pinlock de gate voedt, niet de lege config.pinh)
+  dom.window.prompt = (msg) => /Papa's wis-pincode/.test(msg) ? "0000" : (/wissen/.test(msg) ? "Papa" : null);
+  click(dom, doc.getElementById("wipemem"));
+  ok(dom.window.localStorage.getItem("sl26:Papa:note:2026-07-18") === "Beschermd door pinlock", "pinloze config + pinlock: verkeerde pin wist niets");
+  ok(/wijzig/.test(doc.getElementById("setpin").textContent), "setpin toont 'wijzig' door pinlock (ook al mist config.pinh)");
+  // setpin met pinlock: verkeerde oude pin wijzigt niets
+  dom.window.prompt = (msg) => /Huidige wis-pincode/.test(msg) ? "0000" : (/Nieuwe wis-pincode/.test(msg) ? "5555" : null);
+  click(dom, doc.getElementById("setpin"));
+  ok(dom.window.localStorage.getItem("sl26:fam:pinlock") === pinHash("1234"), "verkeerde oude pin → pinlock ongewijzigd");
+  // juiste oude pin -> pinlock wijzigt
+  dom.window.prompt = (msg) => /Huidige wis-pincode/.test(msg) ? "1234" : (/Nieuwe wis-pincode/.test(msg) ? "5555" : null);
+  click(dom, doc.getElementById("setpin"));
+  ok(dom.window.localStorage.getItem("sl26:fam:pinlock") === pinHash("5555"), "juiste oude pin → pinlock gewijzigd");
   dom.window.close();
 }
 

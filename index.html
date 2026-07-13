@@ -1056,8 +1056,10 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
     <label class="check"><input type="checkbox" data-p="p19"><span class="box"></span><span class="ctxt">Slaapzak + kussen + matje<small>De pop-uptenten in Piran hebben géén matras.</small></span></label>
     <label class="check"><input type="checkbox" data-p="p20"><span class="box"></span><span class="ctxt">Iets voor onderweg (8 uur auto!)</span></label>
   </div>
-  <button class="reset" id="resetme">🔒 Gegevens wissen (alleen Papa)</button>
-  <p class="note" style="text-align:center;margin-top:4px">Alleen Papa kan met de geheime wis-pincode gegevens van een gezinslid wissen. Papa stelt die pincode in bij <b>🏅 Missies → familie-cloud</b>.</p>
+  <button class="reset" id="resetscores">↺ Mijn spel opnieuw beginnen</button>
+  <p class="note" style="text-align:center;margin-top:2px;margin-bottom:14px">Zet je eigen missies, medailles, badges, bingo en koudste water terug op nul om opnieuw te beginnen.<br><b>Je foto's en dagboek blijven altijd bewaard. 📸</b></p>
+  <button class="reset" id="wipemem" style="color:var(--flare);border:1px solid var(--flare);border-radius:12px;padding:9px 14px;text-decoration:none">🔒 Foto's & dagboek wissen (alleen Papa)</button>
+  <p class="note" style="text-align:center;margin-top:4px">Alleen Papa kan — met de geheime pincode — de foto's en dagboekteksten van een gezinslid definitief verwijderen. De scores blijven daarbij staan. Papa stelt de pincode in bij <b>🏅 Missies → familie-cloud</b>.</p>
 </section>
 
 <!-- ================= SPELLEN ================= -->
@@ -1262,6 +1264,12 @@ function del(k){ try{ localStorage.removeItem(k); }catch(e){} delete mem[k]; }
 function clearPrefix(prefix){
   try{ var rm = []; for(var i=0;i<localStorage.length;i++){ var kk = localStorage.key(i); if(kk && kk.indexOf(prefix) === 0) rm.push(kk); } rm.forEach(function(kk){ try{ localStorage.removeItem(kk); }catch(e){} }); }catch(e){}
   Object.keys(mem).forEach(function(kk){ if(kk.indexOf(prefix) === 0) delete mem[kk]; });
+}
+/* wis alles onder 'prefix' behalve wat onder 'keep' valt (bv. dagboekteksten bewaren) */
+function clearPrefixExcept(prefix, keep){
+  var hit = function(kk){ return kk.indexOf(prefix) === 0 && (!keep || kk.indexOf(keep) !== 0); };
+  try{ var rm = []; for(var i=0;i<localStorage.length;i++){ var kk = localStorage.key(i); if(kk && hit(kk)) rm.push(kk); } rm.forEach(function(kk){ try{ localStorage.removeItem(kk); }catch(e){} }); }catch(e){}
+  Object.keys(mem).forEach(function(kk){ if(hit(kk)) delete mem[kk]; });
 }
 
 /* ---------- feestjes: confetti + geluid (geen bestanden, alles gegenereerd) ---------- */
@@ -1713,6 +1721,7 @@ function renderPhotoArea(pa, date){
       var img = document.createElement("img"); img.src = url; img.alt = "reisfoto";
       var rm = document.createElement("button"); rm.className = "rm"; rm.type = "button"; rm.textContent = "✕ weg";
       rm.addEventListener("click", function(){
+        if(!confirm("Deze foto verwijderen? Weg is weg (van dit toestel).")) return;
         if(get("sl26:fam:favphoto") === id) del("sl26:fam:favphoto");
         photoDel(id, function(){ try{ URL.revokeObjectURL(url); }catch(e){} renderPhotoArea(pa, date); renderFotoReis(); });
       });
@@ -2212,22 +2221,42 @@ document.getElementById("addScore").addEventListener("click", function(){
   if(importScore(v)) document.getElementById("pasteScore").value = "";
 });
 
-/* ---------- wissen: ALLEEN Papa, met een geheime pincode ----------
-   De pincode hoort bij de familie-cloud (sl26:fam:sb.pinh). Papa stelt 'm in
-   bij 'Missies → familie-cloud' en deelt de sync-link; zo staat de pincode op
-   ieders toestel. Een kind kan zichzelf hier NIET tot Papa maken: de knop
-   'Papa' bovenaan zet alleen een naam, niet de pincode. Wie de pincode niet
-   kent, kan niets wissen — en zonder ingestelde pincode is wissen uitgeschakeld.
-   (Let wel: dit is een gezins-PWA, geen kluis — met de sync-link of de
-   ontwikkelaarstools valt de beveiliging te omzeilen. Bedoeld tegen per-ongeluk
-   en kattenkwaad, niet tegen een vastberaden tiener.) */
+/* ================= OPNIEUW BEGINNEN / WISSEN — twee aparte acties =================
+   1) SPEL RESETTEN (elke speler z'n eigen): missies, medailles, badges, bingo,
+      koudste water… gaan op nul. Foto's en dagboekteksten blijven ALTIJD bewaard.
+      Geen pincode nodig; je reset enkel je eigen naam.
+   2) FOTO'S & DAGBOEK WISSEN (alleen Papa, met pincode): verwijdert enkel de
+      herinneringen (foto's + notities) van een gekozen gezinslid, lokaal én in
+      de cloud. De scores blijven staan. De pincode hoort bij de familie-cloud
+      (sl26:fam:sb.pinh); Papa stelt 'm in bij 'Missies → familie-cloud' en deelt
+      de sync-link, zodat de pincode op ieders toestel staat.
+      (Let wel: dit is een gezins-PWA, geen kluis — met de sync-link of de
+      ontwikkelaarstools valt de beveiliging te omzeilen. Bedoeld tegen
+      per-ongeluk en kattenkwaad, niet tegen een vastberaden tiener.) */
 function pinHash(p){ return String(_seed("pin:" + p)); }
 
-function cloudWipeMember(member, cb){
+/* ---- 1) spel resetten — enkel de huidige speler, foto's & teksten blijven ---- */
+function resetScores(){
+  var whoName = who && NAMES.indexOf(who) >= 0 ? who : "jou";
+  if(!(who && NAMES.indexOf(who) >= 0)){ alert("Kies eerst bovenaan je naam. 🙂"); return; }
+  if(!confirm("Het spel van " + whoName + " opnieuw beginnen?\n\nMissies, medailles, badges, bingo en koudste water gaan terug op nul.\n\nJe foto's en dagboekteksten blijven gewoon bewaard. 📸")) return;
+  clearPrefixExcept("sl26:" + who + ":", "sl26:" + who + ":note:");   // alles behalve de dagboeknotities
+  del("sl26:shared:" + who);
+  ticks.forEach(function(inp){ inp.checked = false; });
+  lastRankIdx = -1; badgeDone = {}; bingoLines = 0;
+  loadBingo(); loadPlates(); renderColdboard();
+  updateRank(); updateScoreboard();
+  if(typeof refreshExtras === "function") refreshExtras();   // klus + rota + prijzenkast (medailles)
+  refreshDagboek(); renderFamJournal();                       // dagboek blijft — foto's/teksten intact
+  if(sbCfg()) syncNow();                                       // duw de nul-score naar de cloud (teksten/foto's blijven)
+  alert("Klaar — je spel staat weer op nul. Je foto's en dagboek zijn er nog. 📸");
+}
+
+/* ---- 2) foto's & dagboek wissen — enkel de herinneringen, scores blijven ---- */
+function cloudWipeMemories(member, cb){
   var c = sbCfg(); if(!c){ cb(true); return; }
   var base = c.url, H = sbHead(c), f = encodeURIComponent(c.fam), n = encodeURIComponent(member);
-  var eps = [
-    "/rest/v1/scores?family=eq."  + f + "&name=eq."  + n,
+  var eps = [                                                  // GEEN scores — die blijven staan
     "/rest/v1/journal?family=eq." + f + "&name=eq."  + n,
     "/rest/v1/photos?family=eq."  + f + "&name=eq."  + n,
     "/rest/v1/votes?family=eq."   + f + "&owner=eq." + n,
@@ -2240,48 +2269,41 @@ function cloudWipeMember(member, cb){
       .catch(function(){ okAll = false; });
   })).then(function(){ cb(okAll); });
 }
-function papaWipe(){
+function wipeMemories(){
   var c = sbCfg();
-  if(!c){ alert("🔒 Wissen kan pas als de familie-cloud verbonden is.\nGa naar het tabblad 🏅 Missies en verbind — daar stelt Papa ook de geheime wis-pincode in."); return; }
-  var stored = c.pinh || "";
-  if(!stored){ alert("🔒 Papa heeft nog geen wis-pincode ingesteld.\nGa naar 🏅 Missies → familie-cloud en tik op 'Wis-pincode instellen'.\nDaarna kun je hier gegevens wissen."); return; }
+  if(!c){ alert("🔒 Wissen kan pas als de familie-cloud verbonden is.\nGa naar het tabblad 🏅 Missies en verbind — daar stelt Papa ook de geheime pincode in."); return; }
+  var stored = get("sl26:fam:pinlock") || c.pinh || "";   // 'pinlock' blijft staan, ook na loskoppelen/opnieuw verbinden
+  if(!stored){ alert("🔒 Papa heeft nog geen wis-pincode ingesteld.\nGa naar 🏅 Missies → familie-cloud en tik op 'Wis-pincode instellen'.\nDaarna kun je hier foto's & dagboek wissen."); return; }
   var pin = prompt("🔒 Papa's wis-pincode:");
   if(pin === null) return;
   if(pinHash(pin.trim()) !== stored){ alert("Verkeerde pincode. 🔒 Er is niets gewist."); return; }
-  var member = prompt("Wiens gegevens wil je wissen?\nTyp de naam precies:\nLoes · Willem · Charlotte · Mama · Papa");
+  var member = prompt("Van wie de foto's & dagboekteksten wissen?\nTyp de naam precies:\nLoes · Willem · Charlotte · Mama · Papa");
   if(member === null) return;
   var match = NAMES.filter(function(x){ return x.toLowerCase() === member.trim().toLowerCase(); })[0];
   if(!match){ alert("Onbekende naam: \"" + member + "\".\nKies uit: Loes, Willem, Charlotte, Mama of Papa."); return; }
-  if(!confirm("ALLES van " + match + " wissen?\n\nMissies, medailles, badges, bingo, koudste water, dagboek, foto's én stemmen — op dit toestel én in de familie-cloud.\n\nLet op: heeft " + match + " zelf nog gegevens op een eigen toestel, dan kunnen die bij een volgende sync terugkomen.")) return;
-  /* 1) lokaal wissen + herrenderen — synchroon, zodat het scherm meteen klopt */
-  clearPrefix("sl26:" + match + ":");
-  del("sl26:shared:" + match);
+  if(!confirm("Alle FOTO'S en DAGBOEKTEKSTEN van " + match + " wissen — op dit toestel én in de familie-cloud?\n\nDe scores, medailles en badges blijven gewoon staan.\nDit kan NIET ongedaan gemaakt worden.\n\nLet op: heeft " + match + " zelf nog foto's/teksten op een eigen toestel, dan kunnen die bij een volgende sync terugkomen.")) return;
+  /* 1) lokaal: dagboeknotities + 'foto van de reis'-verwijzing; scores blijven staan */
+  clearPrefix("sl26:" + match + ":note:");
   var fav = get("sl26:fam:favphoto");
-  if(fav && fav.indexOf(match + ":") === 0) del("sl26:fam:favphoto");   // 'foto van de reis' hing aan deze speler
-  if(match === who){
-    ticks.forEach(function(inp){ inp.checked = false; });
-    lastRankIdx = -1; badgeDone = {}; bingoLines = 0;
-    loadBingo(); loadPlates(); renderColdboard();
-  }
+  if(fav && fav.indexOf(match + ":") === 0) del("sl26:fam:favphoto");
   famJournal = famJournal.filter(function(j){ return j.name !== match; });
   famPhotos  = famPhotos.filter(function(p){ return p.name  !== match; });
   famVotes   = famVotes.filter(function(v){ return v.owner !== match && v.voter !== match; });
-  updateRank(); updateScoreboard();
-  if(typeof refreshExtras === "function") refreshExtras();   // klus + rota + prijzenkast (medailles)
   refreshDagboek(); renderFamJournal();
-  /* 2) foto's (IndexedDB) en cloud op de achtergrond; daarna nog eens herrenderen */
+  /* 2) foto's (IndexedDB) + cloud op de achtergrond; daarna nog eens herrenderen */
   var afterPhotos = function(){
-    refreshDagboek(); renderFamJournal();                    // foto-UI verversen ná de deletes
-    cloudWipeMember(match, function(okAll){
-      if(okAll) alert(match + " is gewist ✅ — ook uit de familie-cloud.");
-      else alert(match + " is op dit toestel gewist ✅\n⚠️ De familie-cloud gaf een foutmelding — check je internet en probeer straks nog eens te wissen, anders komt de data bij de volgende sync terug.");
+    refreshDagboek(); renderFamJournal();                     // foto-UI verversen ná de deletes
+    cloudWipeMemories(match, function(okAll){
+      if(okAll) alert("Foto's & dagboek van " + match + " zijn gewist ✅ — ook uit de familie-cloud.\nDe scores staan er nog.");
+      else alert("Foto's & dagboek van " + match + " zijn op dit toestel gewist ✅\n⚠️ De familie-cloud gaf een foutmelding — check je internet en probeer straks nog eens, anders komt de data bij de volgende sync terug.");
     });
   };
   var dates = tripDates(), pending = dates.length;
   if(!pending){ afterPhotos(); }
   else dates.forEach(function(d){ photoDel(match + ":" + d, function(){ if(--pending === 0) afterPhotos(); }); });
 }
-document.getElementById("resetme").addEventListener("click", papaWipe);
+document.getElementById("resetscores").addEventListener("click", resetScores);
+document.getElementById("wipemem").addEventListener("click", wipeMemories);
 
 /* ---------- werkt de opslag hier écht? ---------- */
 var persists = false;
@@ -2530,6 +2552,7 @@ function renderSync(){
     return;
   }
   var whoOk = who && NAMES.indexOf(who) >= 0;
+  var pinSet = !!(get("sl26:fam:pinlock") || c.pinh);
   var lastAt = get("sl26:fam:syncedat");
   var lastTxt = lastAt ? ("laatst gesynct " + relTime(parseInt(lastAt, 10))) : "nog niet gesynct van dit toestel";
   box.innerHTML =
@@ -2538,25 +2561,27 @@ function renderSync(){
     '<button class="sharebtn" id="syncnow">☁️ Sync nu</button>' +
     '<div class="sharerow" style="margin-top:8px"><button class="gamebtn ghost" id="synclink" style="flex:1">📤 Deel de sync-link</button><button class="gamebtn ghost" id="syncoff">Loskoppelen</button></div>' +
     '<div class="synrow" style="margin-top:8px;align-items:center;gap:8px">' +
-      '<span class="note" style="flex:1">🔒 Wis-pincode (Papa): ' + (c.pinh ? 'ingesteld ✅' : '<b>nog niet ingesteld</b>') + '</span>' +
-      '<button class="gamebtn ghost" id="setpin">' + (c.pinh ? 'wijzig' : 'instellen') + '</button>' +
+      '<span class="note" style="flex:1">🔒 Wis-pincode (Papa): ' + (pinSet ? 'ingesteld ✅' : '<b>nog niet ingesteld</b>') + '</span>' +
+      '<button class="gamebtn ghost" id="setpin">' + (pinSet ? 'wijzig' : 'instellen') + '</button>' +
     '</div>' +
     '<p class="note" id="syncmsg"></p>';
   document.getElementById("syncnow").addEventListener("click", syncNow);
   document.getElementById("syncoff").addEventListener("click", function(){ if(confirm("Loskoppelen van de familie-cloud? Je data blijft op dit toestel.")){ del("sl26:fam:sb"); renderSync(); } });
   document.getElementById("setpin").addEventListener("click", function(){
     var cur = sbCfg(); if(!cur) return;
-    if(cur.pinh){
+    var lock = get("sl26:fam:pinlock") || cur.pinh || "";      // sticky: kan niet omzeild worden door opnieuw te verbinden
+    if(lock){
       var old = prompt("Huidige wis-pincode (van Papa):");
       if(old === null) return;
-      if(pinHash(old.trim()) !== cur.pinh){ syncMsg("Verkeerde huidige pincode — niets gewijzigd.", true); return; }
+      if(pinHash(old.trim()) !== lock){ syncMsg("Verkeerde huidige pincode — niets gewijzigd.", true); return; }
     }
     var np = prompt("Nieuwe wis-pincode voor Papa (4 tot 8 cijfers).\nAlleen Papa mag deze kennen; dan kan niemand anders gegevens wissen.");
     if(np === null) return;
     np = np.trim();
     if(!/^\d{4,8}$/.test(np)){ syncMsg("Pincode moet 4 tot 8 cijfers zijn.", true); return; }
-    cur.pinh = pinHash(np);
-    put("sl26:fam:sb", JSON.stringify(cur));
+    var h = pinHash(np);
+    cur.pinh = h; put("sl26:fam:sb", JSON.stringify(cur));      // reist mee in de sync-link
+    put("sl26:fam:pinlock", h);                                // blijft lokaal staan, ook na loskoppelen
     renderSync();
     syncMsg("Wis-pincode ingesteld 🔒 — deel opnieuw de sync-link zodat elk toestel 'm heeft.");
   });
@@ -2720,7 +2745,7 @@ function importFromHash(){
   if(sy){
     try{
       var cfg = JSON.parse(atob(decodeURIComponent(sy[1])));
-      if(cfg && cfg.url && cfg.key && cfg.fam){ put("sl26:fam:sb", JSON.stringify(cfg)); renderSync(); syncMsg("Verbonden met de familie-cloud! ☁️"); syncNow(); }
+      if(cfg && cfg.url && cfg.key && cfg.fam){ put("sl26:fam:sb", JSON.stringify(cfg)); if(cfg.pinh) put("sl26:fam:pinlock", cfg.pinh); renderSync(); syncMsg("Verbonden met de familie-cloud! ☁️"); syncNow(); }
     }catch(e){}
     if(history.replaceState) history.replaceState(null, "", location.pathname + location.search);
   }
