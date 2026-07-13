@@ -1,5 +1,5 @@
 /* Slovenie 2026 - kids editie: alles offline beschikbaar na 1x laden */
-var CACHE = "sl26-v21";
+var CACHE = "sl26-v22";
 var FILES = ["./", "./index.html", "./manifest.webmanifest",
              "./icon-192.png", "./icon-512.png", "./icon-maskable.png"];
 

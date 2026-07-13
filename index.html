@@ -279,9 +279,9 @@ body.night .billiediarycard{background:#26200f}
 .tabpane.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 nav.tabs{position:sticky;top:0;z-index:60;background:#07222b;box-shadow:0 4px 14px rgba(3,26,34,.3)}
-.tabsrow{display:flex;gap:4px;padding:8px 14px}
+.tabsrow{display:flex;flex-wrap:wrap;gap:4px;padding:8px 14px}
 nav.tabs button{
-  flex:1;border:0;border-radius:11px;background:rgba(255,255,255,.07);cursor:pointer;
+  flex:1 1 calc(25% - 3px);border:0;border-radius:11px;background:rgba(255,255,255,.07);cursor:pointer;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
   color:#8fb6c0;font:700 9.5px/1 var(--dsp);letter-spacing:.3px;min-height:54px;padding:6px 2px;
 }
@@ -338,7 +338,6 @@ body.night .tip small,body.night .note{color:var(--mist)}
 .sharerow{display:flex;gap:6px;margin-top:8px}
 .sharerow input{flex:1;min-width:0;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);font:600 12.5px var(--mono)}
 .sharerow button{border:0;border-radius:9px;background:var(--sea);color:#fff;font:800 13px var(--dsp);padding:0 14px;cursor:pointer}
-#shareMsg{min-height:16px;margin-top:6px;font-weight:600}
 #family{margin-top:6px}
 #family .fam{padding:10px 0;border-bottom:1px solid var(--line)}
 #family .fam:last-child{border-bottom:0}
@@ -539,6 +538,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
     <button role="tab" aria-selected="false" data-tab="dagboek"><span class="i">📔</span>Dagboek</button>
     <button role="tab" aria-selected="false" data-tab="logboek"><span class="i">📸</span>Logboek</button>
     <button role="tab" aria-selected="false" data-tab="billie"><span class="i">🐾</span>Billie</button>
+    <button role="tab" aria-selected="false" data-tab="familie"><span class="i">👨‍👩‍👧‍👦</span>Familie</button>
   </div>
 </nav>
 <noscript><style>.tabpane{display:block!important}nav.tabs{display:none}</style></noscript>
@@ -995,22 +995,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
     <div class="bar"><i id="rankbar" style="width:0%"></i></div>
     <div class="r3"><span id="rankcount">0</span> van de <span id="ranktotal">40</span> missies volbracht</div>
   </div>
-
-  <div class="score" id="scoreboard"></div>
-  <p class="note" style="text-align:center;margin-top:6px;font-size:11px">Scorebord van dit toestel</p>
-
-  <h2 class="sec">☁️ Familie-sync</h2>
-  <div class="card" id="syncbox"></div>
-
-  <h2 class="sec">Familie-scorebord</h2>
-  <p class="note" style="margin-bottom:8px">Met sync zie je elkaars voortgang live. Zonder internet? Deel je code via WhatsApp en plak die van de anderen.</p>
-  <button class="sharebtn" id="shareScore">📤 Deel mijn score</button>
-  <div class="sharerow">
-    <input id="pasteScore" placeholder="Plak hier een code van iemand" autocapitalize="off" autocomplete="off" spellcheck="false">
-    <button id="addScore">Toevoegen</button>
-  </div>
-  <p class="note" id="shareMsg"></p>
-  <div id="family"></div>
+  <p class="note" style="text-align:center;margin-top:6px">Ieders scores & de familie-sync staan nu in het tabblad <b>👨‍👩‍👧‍👦 Familie</b>.</p>
 
   <h2 class="sec">Badges</h2>
   <p class="note" style="margin-bottom:2px">Verzamel ze door bij elkaar horende missies af te ronden.</p>
@@ -1124,7 +1109,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   <button class="reset" id="resetscores">↺ Mijn spel opnieuw beginnen</button>
   <p class="note" style="text-align:center;margin-top:2px;margin-bottom:14px">Zet je eigen missies, medailles, badges, bingo en koudste water terug op nul om opnieuw te beginnen.<br><b>Je foto's en dagboek blijven altijd bewaard. 📸</b></p>
   <button class="reset" id="wipemem" style="color:var(--flare);border:1px solid var(--flare);border-radius:12px;padding:9px 14px;text-decoration:none">🔒 Foto's & dagboek wissen (alleen Papa)</button>
-  <p class="note" style="text-align:center;margin-top:4px">Alleen Papa kan — met de geheime pincode — de foto's en dagboekteksten van een gezinslid definitief verwijderen. De scores blijven daarbij staan. Papa stelt de pincode in bij <b>🏅 Missies → familie-cloud</b>.</p>
+  <p class="note" style="text-align:center;margin-top:4px">Alleen Papa kan — met de geheime pincode — de foto's en dagboekteksten van een gezinslid definitief verwijderen. De scores blijven daarbij staan. Papa stelt de pincode in bij <b>👨‍👩‍👧‍👦 Familie → familie-cloud</b>.</p>
 </section>
 
 <!-- ================= SPELLEN ================= -->
@@ -1319,6 +1304,26 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   </footer>
 </section>
 
+<!-- ================= FAMILIE ================= -->
+<section class="tabpane" id="t-familie">
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,#0b3440,#0fa98e);color:#fff">
+    <div style="font-size:40px">👨‍👩‍👧‍👦</div>
+    <h3 style="font-size:19px;color:#fff">Familie-scorebord</h3>
+    <div class="note" style="color:#cdeee6">Zie live hoe iedereen het doet. Verbind één keer met de familie-cloud en deel de link — dan lopen alle scores samen.</div>
+  </div>
+
+  <h2 class="sec">☁️ Familie-sync</h2>
+  <div class="card" id="syncbox"></div>
+
+  <h2 class="sec">🏆 Scorebord</h2>
+  <p class="note" style="margin-bottom:8px">Met sync zie je elkaars voortgang, badges en streaks live — ook van de andere toestellen.</p>
+  <div id="family"></div>
+
+  <h2 class="sec">Op dit toestel</h2>
+  <p class="note" style="margin-bottom:8px">Wie er op dít toestel gespeeld heeft, ook zonder internet.</p>
+  <div class="score" id="scoreboard"></div>
+</section>
+
 </main>
 
 <script>
@@ -1436,6 +1441,7 @@ document.querySelectorAll("nav.tabs button").forEach(function(b){
     document.querySelectorAll(".tabpane").forEach(function(p){ p.classList.remove("active"); });
     document.getElementById("t"+"-"+b.dataset.tab).classList.add("active");
     if(b.dataset.tab === "logboek" && typeof renderFamJournal === "function") renderFamJournal();
+    if(b.dataset.tab === "familie"){ if(typeof renderSync === "function") renderSync(); if(typeof updateScoreboard === "function") updateScoreboard(); }
     window.scrollTo(0,0);
   });
 });
@@ -2499,7 +2505,7 @@ function nextKvCard(){
 }
 (function(){ var b = document.getElementById("kvnext"); if(b) b.addEventListener("click", nextKvCard); nextKvCard(); })();
 
-/* ---------- familie-scorebord: score delen & vergelijken (offline, via WhatsApp) ---------- */
+/* ---------- familie-scorebord: ieders voortgang vergelijken (via de familie-cloud) ---------- */
 function countBadges(person){
   var n = 0;
   BADGES.forEach(function(bd){
@@ -2508,35 +2514,7 @@ function countBadges(person){
   });
   return n;
 }
-function pad2(x){ return String(x).padStart(2,"0"); }
-function today8(){ var d = new Date(); return "" + d.getFullYear() + pad2(d.getMonth()+1) + pad2(d.getDate()); }
 function fmtDate(d8){ return (d8 && d8.length === 8) ? d8.slice(6,8)+"/"+d8.slice(4,6) : ""; }
-function encodeScore(person){
-  var m = countM(person);
-  return ["v1", person, m, countBadges(person), rankIdxFor(m), today8(), klusTotal(person), streakOf(person)].join("~");
-}
-function parseScore(code){
-  if(!code) return null;
-  var p = String(code).trim().split("~");
-  if(p[0] !== "v1" || p.length < 6) return null;
-  if(NAMES.indexOf(p[1]) < 0) return null;
-  var m = parseInt(p[2],10), b = parseInt(p[3],10), r = parseInt(p[4],10);
-  if(isNaN(m) || m < 0 || m > 60 || isNaN(b) || isNaN(r)) return null;
-  return { name:p[1], m:m, b:b, r:r, d:p[5], st:(p.length > 7 ? (parseInt(p[7],10) || 0) : 0) };
-}
-function shareMsg(t, warn){
-  var el = document.getElementById("shareMsg"); if(!el) return;
-  el.textContent = t || ""; el.style.color = warn ? "var(--flare)" : "var(--soca)";
-}
-function importScore(code){
-  var s = parseScore(code);
-  if(!s){ shareMsg("Hmm, die code snap ik niet. 🤔", true); return false; }
-  if(s.name === who){ shareMsg("Dat ben jij zelf — jouw score staat al bovenaan. 🙂", true); return false; }
-  put("sl26:shared:"+s.name, s.m+"~"+s.b+"~"+s.r+"~"+s.d+"~"+s.st);
-  renderFamily();
-  shareMsg("Score van "+s.name+" toegevoegd! 🎉", false);
-  return true;
-}
 function renderFamily(){
   var box = document.getElementById("family"); if(!box) return;
   var rows = [];
@@ -2552,7 +2530,7 @@ function renderFamily(){
   });
   rows.sort(function(a,b){ return b.m - a.m; });
   box.innerHTML = "";
-  if(!rows.length){ box.innerHTML = '<p class="note">Nog geen scores. Deel die van jou en plak die van de anderen erbij. 📤</p>'; return; }
+  if(!rows.length){ box.innerHTML = '<p class="note">Nog geen scores. Verbind hierboven met de familie-cloud (☁️ Familie-sync) om ieders scores live te zien.</p>'; return; }
   var top = rows[0].m;
   rows.forEach(function(r){
     var rank = RANKS[r.r] ? RANKS[r.r][1] : "";
@@ -2570,30 +2548,6 @@ function renderFamily(){
     box.appendChild(d);
   });
 }
-function showCode(code){
-  var inp = document.getElementById("pasteScore");
-  inp.value = code; try{ inp.select(); }catch(e){}
-  shareMsg("Kopieer deze code en stuur 'm door. 📋", false);
-}
-document.getElementById("shareScore").addEventListener("click", function(){
-  if(!(who && NAMES.indexOf(who) >= 0)){ shareMsg("Kies eerst je naam bovenaan. 🙂", true); return; }
-  var code = encodeScore(who);
-  var link = location.origin + location.pathname + "#s=" + encodeURIComponent(code);
-  var text = who + " heeft " + countM(who) + "/" + MIDS.length + " missies! Bekijk & vergelijk: " + link;
-  if(navigator.share){
-    navigator.share({ title:"Mijn Slovenië-score", text:text, url:link }).catch(function(){});
-  } else if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(function(){ shareMsg("Link gekopieerd — plak 'm in WhatsApp! 📋", false); }).catch(function(){ showCode(code); });
-  } else {
-    showCode(code);
-  }
-});
-document.getElementById("addScore").addEventListener("click", function(){
-  var v = document.getElementById("pasteScore").value.trim();
-  var m = v.match(/#s=([^\s]+)/);
-  if(m) v = decodeURIComponent(m[1]);
-  if(importScore(v)) document.getElementById("pasteScore").value = "";
-});
 
 /* ================= OPNIEUW BEGINNEN / WISSEN — twee aparte acties =================
    1) SPEL RESETTEN (elke speler z'n eigen): missies, medailles, badges, bingo,
@@ -2602,7 +2556,7 @@ document.getElementById("addScore").addEventListener("click", function(){
    2) FOTO'S & DAGBOEK WISSEN (alleen Papa, met pincode): verwijdert enkel de
       herinneringen (foto's + notities) van een gekozen gezinslid, lokaal én in
       de cloud. De scores blijven staan. De pincode hoort bij de familie-cloud
-      (sl26:fam:sb.pinh); Papa stelt 'm in bij 'Missies → familie-cloud' en deelt
+      (sl26:fam:sb.pinh); Papa stelt 'm in bij 'Familie → familie-cloud' en deelt
       de sync-link, zodat de pincode op ieders toestel staat.
       (Let wel: dit is een gezins-PWA, geen kluis — met de sync-link of de
       ontwikkelaarstools valt de beveiliging te omzeilen. Bedoeld tegen
@@ -2648,9 +2602,9 @@ function cloudWipeMemories(member, cb){
 }
 function wipeMemories(){
   var c = sbCfg();
-  if(!c){ alert("🔒 Wissen kan pas als de familie-cloud verbonden is.\nGa naar het tabblad 🏅 Missies en verbind — daar stelt Papa ook de geheime pincode in."); return; }
+  if(!c){ alert("🔒 Wissen kan pas als de familie-cloud verbonden is.\nGa naar het tabblad 👨‍👩‍👧‍👦 Familie en verbind — daar stelt Papa ook de geheime pincode in."); return; }
   var stored = get("sl26:fam:pinlock") || c.pinh || "";   // 'pinlock' blijft staan, ook na loskoppelen/opnieuw verbinden
-  if(!stored){ alert("🔒 Papa heeft nog geen wis-pincode ingesteld.\nGa naar 🏅 Missies → familie-cloud en tik op 'Wis-pincode instellen'.\nDaarna kun je hier foto's & dagboek wissen."); return; }
+  if(!stored){ alert("🔒 Papa heeft nog geen wis-pincode ingesteld.\nGa naar 👨‍👩‍👧‍👦 Familie → familie-cloud en tik op 'Wis-pincode instellen'.\nDaarna kun je hier foto's & dagboek wissen."); return; }
   var pin = prompt("🔒 Papa's wis-pincode:");
   if(pin === null) return;
   if(pinHash(pin.trim()) !== stored){ alert("Verkeerde pincode. 🔒 Er is niets gewist."); return; }
@@ -3091,7 +3045,7 @@ function renderFamJournal(){
   b.addEventListener("click", function(){
     if(sbCfg()){ syncNow(); }
     else {
-      var mt = document.querySelector('nav.tabs button[data-tab="missies"]'); if(mt) mt.click();
+      var mt = document.querySelector('nav.tabs button[data-tab="familie"]'); if(mt) mt.click();
       var sb = document.getElementById("syncbox"); if(sb) sb.scrollIntoView({ behavior:"smooth", block:"center" });
     }
   });
@@ -3101,7 +3055,7 @@ function renderFamJournal(){
   b.addEventListener("click", function(){
     if(sbCfg()){ syncNow(); }
     else {
-      var mt = document.querySelector('nav.tabs button[data-tab="missies"]'); if(mt) mt.click();
+      var mt = document.querySelector('nav.tabs button[data-tab="familie"]'); if(mt) mt.click();
       var sb = document.getElementById("syncbox"); if(sb) sb.scrollIntoView({ behavior:"smooth", block:"center" });
     }
   });
@@ -3117,11 +3071,9 @@ if(who && VALID.indexOf(who) >= 0){
   renderDurfjacht(); renderDierenspotter(); renderBillie();
 }
 
-/* ---------- links openen: #s= (score) of #sync= (familie-cloud) ---------- */
+/* ---------- links openen: #sync= (familie-cloud) ---------- */
 function importFromHash(){
   var h = location.hash || "";
-  var sc = h.match(/^#s=(.+)$/);
-  if(sc){ importScore(decodeURIComponent(sc[1])); if(history.replaceState) history.replaceState(null, "", location.pathname + location.search); return; }
   var sy = h.match(/^#sync=(.+)$/);
   if(sy){
     try{

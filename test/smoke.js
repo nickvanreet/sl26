@@ -1,7 +1,7 @@
 /* Rookproef v8 — draai voor elke deploy: npm install jsdom && node smoke.js */
 const { JSDOM } = require("jsdom");
 const fs = require("fs");
-const TABS = ["dagen","avontuur","missies","spellen","dagboek","logboek","billie"];
+const TABS = ["dagen","avontuur","missies","spellen","dagboek","logboek","billie","familie"];
 let failed = 0;
 const ok = (c,l) => { console.log(`  ${c?"OK  ":"FOUT"}  ${l}`); if(!c) failed++; };
 
@@ -48,7 +48,7 @@ function scenario(label, seed, when, storageWorks = true){
   const tabs = doc.querySelectorAll("nav.tabs button");
   let switched = 0;
   tabs.forEach((b,i) => { click(dom,b); const a = doc.querySelector(".tabpane.active"); if(a && a.id === "t-"+TABS[i]) switched++; });
-  ok(switched === 7, `alle 7 tabbladen wisselen (${switched}/7)`);
+  ok(switched === 8, `alle 8 tabbladen wisselen (${switched}/8)`);
 
   ok(doc.querySelectorAll("details.day").length === 18, "18 dagkaarten");
   ok(doc.querySelectorAll("input[data-m]").length === 46, `46 missies (36 + 10 foto) (${doc.querySelectorAll("input[data-m]").length})`);
@@ -66,6 +66,10 @@ function scenario(label, seed, when, storageWorks = true){
   ok(!!doc.getElementById("darewheel") && doc.querySelectorAll("#darewheel path").length === 5, "durf-rad met 5 namen");
   ok(doc.querySelectorAll("#spotters .spot").length === 8, `dieren-spotter met 8 dieren (${doc.querySelectorAll("#spotters .spot").length})`);
   ok(!!doc.getElementById("t-logboek") && !!doc.getElementById("hsync"), "logboek-tab + header sync-knop aanwezig");
+  ok(!!doc.getElementById("t-familie"), "aparte Familie-tab aanwezig");
+  ok(!!doc.querySelector("#t-familie #syncbox") && !!doc.querySelector("#t-familie #family") && !!doc.querySelector("#t-familie #scoreboard"), "sync + familie-scorebord + toestel-scorebord staan in de Familie-tab");
+  ok(!doc.querySelector("#t-missies #syncbox") && !doc.querySelector("#t-missies #family"), "sync/scorebord zijn WEG uit de Missies-tab");
+  ok(!doc.getElementById("shareScore") && !doc.getElementById("pasteScore"), "WhatsApp 'deel mijn score' is verwijderd");
   ok(!!doc.querySelector("#billiehero .bface") && !!doc.getElementById("petbtn"), "Billie-humeur + aai-knop aanwezig");
   ok(doc.querySelectorAll("#counters .cnt").length === 6, `Billie-wandelrapport heeft 6 tellers (${doc.querySelectorAll("#counters .cnt").length})`);
   ok(doc.querySelectorAll("#billiemedals .badge").length === 6, `Billie's prijzenkast heeft 6 medailles (${doc.querySelectorAll("#billiemedals .badge").length})`);
