@@ -88,6 +88,7 @@ function scenario(label, seed, when, storageWorks = true){
   ok(!!doc.getElementById("lbsync"), "logboek heeft een eigen 'Haal het logboek op'-knop");
   ok(!!doc.getElementById("resetscores") && !doc.getElementById("resetme"), "spel-reset knop bestaat (oude alles-wisknop is weg)");
   ok(/Papa/.test((doc.getElementById("wipemem")||{}).textContent||""), "aparte foto's&dagboek-wisknop is voorbehouden aan Papa");
+  ok(!!doc.querySelector("#t-logboek #wipemem"), "foto's&dagboek-wisknop staat nu onder het Logboek");
   ok(!/€|budget/i.test(doc.body.textContent), "nog steeds geen prijzen");
   return { dom, doc };
 }
