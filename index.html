@@ -49,6 +49,7 @@ header{
 .hrow{display:flex;align-items:center;gap:8px}
 .logo{font-weight:900;letter-spacing:-.5px;font-size:17px;text-transform:uppercase;line-height:1}
 .logo em{font-style:normal;color:var(--soca)}
+.logo .lv,#intro h1 .lv{font-style:normal;color:#ff4d79}   /* de 'love' die stiekem in sLOVEnië zit ❤️ */
 .hsub{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:#7ea8b3;text-transform:uppercase;margin-top:2px}
 .who{margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;row-gap:4px}
 .who button{
@@ -537,6 +538,11 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
 #famjournal .lp .who{position:absolute;top:5px;left:5px;background:rgba(8,34,44,.6);color:#fff;font:700 10px var(--dsp);padding:2px 6px;border-radius:6px}
 #famjournal .votebtn{position:absolute;bottom:5px;right:5px;border:0;border-radius:8px;background:rgba(255,255,255,.92);color:#0b2530;font:800 11px var(--dsp);padding:5px 8px;cursor:pointer;display:flex;align-items:center;gap:3px}
 #famjournal .votebtn.mine{background:var(--sun);color:#5a3d00}
+#famjournal .reacts{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+#famjournal .reactbtn{border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:2px 6px;font-size:13px;line-height:1.35;cursor:pointer;display:inline-flex;align-items:center;gap:2px}
+#famjournal .reactbtn.on{background:#ffe9c9;border-color:var(--sun)}
+body.night #famjournal .reactbtn.on{background:#3a2c10;border-color:#6a531f}
+#famjournal .reactbtn .rc{font-size:10px;font-weight:800;color:var(--ink)}
 #votewinner .vw{background:linear-gradient(135deg,#ffc233,#ff6b2c);color:#5a3d00;border-radius:14px;padding:10px 14px;margin:10px 0;font-weight:800;text-align:center}
 #votewinner .vw img{width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin-top:8px;display:block}
 </style>
@@ -544,7 +550,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
 <body>
 
 <div id="intro" style="display:none">
-  <h1>Slovenië<span>2026</span></h1>
+  <h1>S<i class="lv">love</i>nië<span>2026</span></h1>
   <p>18 dagen · 3 campings · 1 setter<br>Wie ben jij?</p>
   <button class="namebtn" data-name="Loes">Loes</button>
   <button class="namebtn" data-name="Willem">Willem</button>
@@ -559,7 +565,7 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
 <header>
   <div class="wrap hrow">
     <div>
-      <div class="logo">Slove<em>nië</em> 2026</div>
+      <div class="logo">S<i class="lv">love</i><em>nië</em> 2026</div>
       <div class="hsub" id="phase">Kids editie</div>
     </div>
     <div class="who" id="whopills">
@@ -1487,6 +1493,7 @@ function setWho(n){
   if(typeof renderBillieCare === "function") renderBillieCare();
   if(typeof renderBillieTricks === "function") renderBillieTricks();
   if(typeof renderBilliePass === "function") renderBilliePass();
+  if(typeof renderFamJournal === "function") renderFamJournal();   // reactie-markering volgt de gekozen naam
 }
 var VALID = ["Loes","Willem","Charlotte","Mama","Papa","Iedereen"];
 document.querySelectorAll("[data-name]").forEach(function(b){
@@ -3186,7 +3193,8 @@ refreshExtras();
 setInterval(renderKlus, 60000);   // rond middernacht rolt de klus door
 
 /* ================= FAMILIE-SYNC (Supabase, online) ================= */
-var famJournal = [], famPhotos = [], famVotes = [];
+var famJournal = [], famPhotos = [], famVotes = [], famReactions = [];
+var REACTS = ["❤️","😂","😮","🔥","👍","🐾"];
 function sbCfg(){ try{ var c = JSON.parse(get("sl26:fam:sb") || "null"); if(c && c.url && c.key && c.fam) return c; }catch(e){} return null; }
 function sbHead(c){ return { "apikey": c.key, "Authorization": "Bearer " + c.key, "content-type": "application/json" }; }
 function syncMsg(t, warn){ var el = document.getElementById("syncmsg"); if(el){ el.textContent = t || ""; el.style.color = warn ? "var(--flare)" : "var(--soca)"; } }
@@ -3277,6 +3285,8 @@ function syncNow(){
   });
   var mv = get("sl26:fam:myvote");
   if(mv){ var pv = mv.split("|"); if(pv.length === 2) pushes.push(_fetchJSON(base + "/rest/v1/votes", { method:"POST", headers:Hm, body:JSON.stringify({ family:c.fam, voter:who, owner:pv[0], day:pv[1] }) }).catch(function(){})); }
+  var myrx = []; try{ myrx = JSON.parse(get(myReactsKey()) || "[]"); }catch(e){}
+  myrx.forEach(function(x){ pushes.push(_fetchJSON(base + "/rest/v1/reactions", { method:"POST", headers:Hm, body:JSON.stringify({ family:c.fam, reactor:who, owner:x.o, day:x.d, emoji:x.e }) }).catch(function(){})); });
   var photoPushes = tripDates().map(function(d){
     return new Promise(function(res){
       photoGet(who + ":" + d, function(blob){
@@ -3294,7 +3304,8 @@ function syncNow(){
       _fetchJSON(base + "/rest/v1/scores?family=eq." + f + "&select=name,missions,badges,rank,streak,updated", { headers:H }),
       _fetchJSON(base + "/rest/v1/journal?family=eq." + f + "&select=name,day,note", { headers:H }),
       _fetchJSON(base + "/rest/v1/photos?family=eq." + f + "&select=name,day,data", { headers:H }),
-      _fetchJSON(base + "/rest/v1/votes?family=eq." + f + "&select=voter,owner,day", { headers:H }).catch(function(){ return []; })
+      _fetchJSON(base + "/rest/v1/votes?family=eq." + f + "&select=voter,owner,day", { headers:H }).catch(function(){ return []; }),
+      _fetchJSON(base + "/rest/v1/reactions?family=eq." + f + "&select=reactor,owner,day,emoji", { headers:H }).catch(function(){ return []; })
     ]);
   }).then(function(r){
     var scores = r[0] || [];
@@ -3305,7 +3316,7 @@ function syncNow(){
     });
     put("sl26:fam:lastsyncname", who); put("sl26:fam:syncedat", String(Date.now()));
     var stEl = document.getElementById("synctime"); if(stEl) stEl.textContent = "laatst gesynct net";
-    famJournal = r[1] || []; famPhotos = r[2] || []; famVotes = r[3] || [];
+    famJournal = r[1] || []; famPhotos = r[2] || []; famVotes = r[3] || []; famReactions = r[4] || []; reconcileMyReacts(); loadMyReacts();
     var firstSync = !done(who, "synced");
     if(firstSync) put(key("synced"), ymd(new Date()));    // trofee: eerste keer verbonden
     updateRank(firstSync); updateScoreboard(); renderFamJournal();
@@ -3338,8 +3349,56 @@ function renderVoteWinner(){
   box.innerHTML = '<div class="vw">🏆 Foto van de reis — ' + esc(p[0]) + ' · ' + bn + ' stem' + (bn > 1 ? "men" : "") + '</div>';
   if(ph){ var im = document.createElement("img"); im.src = ph.data; im.alt = "winnende foto"; box.querySelector(".vw").appendChild(im); }
 }
+/* ---------- emoji-reacties op foto's (familie-breed, gesynct) ---------- */
+function reactTally(){ var t = {}; famReactions.forEach(function(r){ var k = r.owner + "|" + r.day + "|" + r.emoji; t[k] = (t[k] || 0) + 1; }); return t; }
+function iReacted(owner, day, emoji){ return famReactions.some(function(r){ return r.reactor === who && r.owner === owner && r.day === day && r.emoji === emoji; }); }
+function myReactsKey(){ return "sl26:fam:myreacts:" + (who || "gast"); }   // per naam, zodat spelers op één toestel elkaar niet 'overnemen'
+function saveMyReacts(){
+  if(!(who && NAMES.indexOf(who) >= 0)) return;
+  var mine = famReactions.filter(function(r){ return r.reactor === who; }).map(function(r){ return { o:r.owner, d:r.day, e:r.emoji }; });
+  put(myReactsKey(), JSON.stringify(mine));
+}
+function loadMyReacts(){                                   // mijn eigen reacties terugzetten (offline / vóór de eerste sync)
+  if(!(who && NAMES.indexOf(who) >= 0)) return;
+  var mine = []; try{ mine = JSON.parse(get(myReactsKey()) || "[]"); }catch(e){}
+  mine.forEach(function(x){
+    if(!famReactions.some(function(r){ return r.reactor === who && r.owner === x.o && r.day === x.d && r.emoji === x.e; })){
+      famReactions.push({ reactor:who, owner:x.o, day:x.d, emoji:x.e });
+    }
+  });
+}
+function reconcileMyReacts(){   // mijn lokale lijst is de baas: reacties die ik weghaalde maar nog in de cloud staan, alsnog verwijderen
+  if(!(who && NAMES.indexOf(who) >= 0)) return;
+  var mine = []; try{ mine = JSON.parse(get(myReactsKey()) || "[]"); }catch(e){}
+  var have = {}; mine.forEach(function(x){ have[x.o + "|" + x.d + "|" + x.e] = 1; });
+  var stale = famReactions.filter(function(r){ return r.reactor === who && !have[r.owner + "|" + r.day + "|" + r.emoji]; });
+  stale.forEach(function(r){ cloudReact(r.owner, r.day, r.emoji, false); });
+  if(stale.length){ famReactions = famReactions.filter(function(r){ return !(r.reactor === who && !have[r.owner + "|" + r.day + "|" + r.emoji]); }); }
+}
+function cloudReact(owner, day, emoji, add){               // 1 reactie meteen naar de cloud; faalt stil als de tabel er (nog) niet is
+  var c = sbCfg(); if(!c) return;
+  var base = c.url, H = sbHead(c);
+  if(add){
+    var Hm = Object.assign({ Prefer:"resolution=merge-duplicates" }, H);
+    _fetchJSON(base + "/rest/v1/reactions", { method:"POST", headers:Hm, body:JSON.stringify({ family:c.fam, reactor:who, owner:owner, day:day, emoji:emoji }) }).catch(function(){});
+  } else {
+    var q = "family=eq." + encodeURIComponent(c.fam) + "&reactor=eq." + encodeURIComponent(who) +
+            "&owner=eq." + encodeURIComponent(owner) + "&day=eq." + encodeURIComponent(day) + "&emoji=eq." + encodeURIComponent(emoji);
+    fetch(base + "/rest/v1/reactions?" + q, { method:"DELETE", headers:H }).catch(function(){});
+  }
+}
+function reactPhoto(owner, day, emoji){
+  if(!(who && NAMES.indexOf(who) >= 0)){ syncMsg("Kies eerst je naam bovenaan. 🙂", true); return; }
+  var on = iReacted(owner, day, emoji);
+  if(on){ famReactions = famReactions.filter(function(r){ return !(r.reactor === who && r.owner === owner && r.day === day && r.emoji === emoji); }); }
+  else { famReactions.push({ reactor:who, owner:owner, day:day, emoji:emoji }); beep([660, 880], 0.09); }
+  saveMyReacts();
+  renderFamJournal();
+  cloudReact(owner, day, emoji, !on);
+}
 function renderFamJournal(){
   var box = document.getElementById("famjournal"); if(!box) return;
+  loadMyReacts();
   renderVoteWinner();
   if(!sbCfg()){ box.innerHTML = '<p class="note">Nog niet verbonden met de familie-cloud. Tik hierboven op <b>☁️ Haal het logboek op</b> om te verbinden — dan verschijnt hier ieders dagboek en foto\'s.</p>'; return; }
   if(!famJournal.length && !famPhotos.length){ box.innerHTML = '<p class="note">Nog niks opgehaald. Tik hierboven op <b>☁️ Haal het logboek op</b> — dan verschijnt hier het logboek van de hele familie, dag per dag.</p>'; return; }
@@ -3348,6 +3407,7 @@ function renderFamJournal(){
   famPhotos.forEach(function(p){ (byDay[p.day] = byDay[p.day] || { notes:[], photos:[] }).photos.push(p); });
   var t = voteTally(), mv = get("sl26:fam:myvote") || "", maxV = 0;
   Object.keys(t).forEach(function(k){ if(t[k] > maxV) maxV = t[k]; });
+  var rt = reactTally();
   var days = Object.keys(byDay).sort();
   box.innerHTML = "";
   days.forEach(function(day){
@@ -3365,7 +3425,17 @@ function renderFamJournal(){
         var wl = document.createElement("div"); wl.className = "who"; wl.textContent = p.name;
         var vb = document.createElement("button"); vb.className = "votebtn" + (mine ? " mine" : ""); vb.type = "button"; vb.innerHTML = (mine ? "★" : "☆") + " " + cnt;
         vb.addEventListener("click", function(){ castVote(p.name, p.day); });
-        lp.appendChild(im); lp.appendChild(wl); lp.appendChild(vb); grid.appendChild(lp);
+        lp.appendChild(im); lp.appendChild(wl); lp.appendChild(vb);
+        var rr = document.createElement("div"); rr.className = "reacts";
+        REACTS.forEach(function(em){
+          var rcnt = rt[p.name + "|" + p.day + "|" + em] || 0, rmine = iReacted(p.name, p.day, em);
+          var rb = document.createElement("button"); rb.type = "button"; rb.className = "reactbtn" + (rmine ? " on" : "");
+          rb.innerHTML = em + (rcnt ? '<span class="rc">' + rcnt + '</span>' : "");
+          rb.addEventListener("click", function(){ reactPhoto(p.name, p.day, em); });
+          rr.appendChild(rb);
+        });
+        lp.appendChild(rr);
+        grid.appendChild(lp);
       });
       body.appendChild(grid);
     }
