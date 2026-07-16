@@ -1,5 +1,5 @@
 /* Slovenie 2026 - kids editie: alles offline beschikbaar na 1x laden */
-var CACHE = "sl26-v24";
+var CACHE = "sl26-v25";
 var FILES = ["./", "./index.html", "./manifest.webmanifest",
              "./icon-192.png", "./icon-512.png", "./icon-maskable.png"];
 
@@ -16,6 +16,9 @@ self.addEventListener("activate", function(e){
 self.addEventListener("fetch", function(e){
   if(e.request.method !== "GET") return;
   var req = e.request;
+  /* cross-origin (familie-cloud, weerbericht): NIET cachen — altijd vers van het net,
+     en de app zorgt zelf voor een offline-kopie in localStorage. */
+  try{ if(new URL(req.url).origin !== self.location.origin) return; }catch(_){ return; }
   var isPage = req.mode === "navigate" || (req.headers.get("accept") || "").indexOf("text/html") >= 0;
 
   if(isPage){

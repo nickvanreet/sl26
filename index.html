@@ -220,6 +220,28 @@ body.night .sbtn{background:#2c2116;color:#dcc9b0}
 #family .fam.bilrow{background:linear-gradient(135deg,#fff2d8,#fff);border:1.5px solid var(--sun);border-radius:12px;padding:10px;margin-bottom:8px;color:var(--ink)}
 body.night #family .fam.bilrow{background:#2a2313;border-color:#6a531f;color:var(--ink)}
 #family .fam.bilrow .fbar i{background:linear-gradient(90deg,#ff9f43,#ffd36b)}
+/* ---------- weerbericht ---------- */
+.weercard{background:linear-gradient(135deg,#eaf4ff,#fff)}
+body.night .weercard{background:linear-gradient(135deg,#122436,#161a22)}
+.weerhead{display:flex;justify-content:space-between;align-items:center}
+.weerhead b{font-size:15px}
+.wref{border:0;background:var(--ice);border-radius:9px;font-size:15px;line-height:1;padding:6px 11px;cursor:pointer;color:#3c5c66}
+body.night .wref{background:#2c2116;color:#dcc9b0}
+.weerchips{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0}
+.weerchip{border:1px solid var(--line);background:transparent;border-radius:20px;padding:5px 11px;font:700 12px var(--dsp);cursor:pointer;color:var(--ink)}
+.weerchip.on{background:var(--soca);border-color:var(--soca);color:#03211c}
+.weertoday{display:flex;align-items:center;gap:12px;margin:6px 0 10px}
+.weertoday .wbig{font-size:42px;line-height:1}
+.weertoday b{font-size:14.5px}
+.weertip{font-weight:800;color:var(--flare);font-size:13px;margin-top:2px}
+.weerdays{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.weerday{flex:0 0 auto;min-width:56px;text-align:center;background:var(--paper);border-radius:10px;padding:8px 4px;box-shadow:0 1px 3px rgba(8,34,44,.07)}
+.weerday .wd{font-size:11px;font-weight:800;color:var(--mist)}
+.weerday .we{font-size:25px;line-height:1.3}
+.weerday .wt{font-weight:800;font-size:15px}
+.weerday .wt small{color:var(--mist);font-weight:600;font-size:11.5px;margin-left:2px}
+.weerday .wr{font-size:11px;color:var(--sea)}
+.weerfoot{font-size:11px;color:var(--mist);margin-top:8px}
 
 /* ---------- checklists ---------- */
 .check{display:flex;gap:11px;align-items:flex-start;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}
@@ -592,6 +614,8 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
   </div>
 
   <div class="klus" id="dagklus"></div>
+
+  <div id="weerbox"></div>
 
   <h2 class="sec">Onze route</h2>
   <div class="card">
@@ -1478,6 +1502,7 @@ document.querySelectorAll("nav.tabs button").forEach(function(b){
     b.setAttribute("aria-selected","true");
     document.querySelectorAll(".tabpane").forEach(function(p){ p.classList.remove("active"); });
     document.getElementById("t"+"-"+b.dataset.tab).classList.add("active");
+    if(b.dataset.tab === "dagen" && typeof renderWeer === "function") renderWeer();
     if(b.dataset.tab === "logboek" && typeof renderFamJournal === "function") renderFamJournal();
     if(b.dataset.tab === "familie"){ if(typeof renderSync === "function") renderSync(); if(typeof updateScoreboard === "function") updateScoreboard(); }
     if(b.dataset.tab === "billie"){ if(typeof renderBillie === "function") renderBillie(); if(typeof renderBillieCare === "function") renderBillieCare(); if(typeof renderBillieTricks === "function") renderBillieTricks(); if(typeof renderBilliePass === "function") renderBilliePass(); }
@@ -1547,6 +1572,96 @@ function updateMap(node){
 }
 tick();
 setInterval(tick, 30000);
+
+/* ================= WEERBERICHT (Open-Meteo, gratis & zonder sleutel) ================= */
+var WLOCS = [
+  {id:"soca",  name:"Soča-vallei", lat:46.338, lon:13.552, em:"💚"},
+  {id:"bled",  name:"Bled",        lat:46.369, lon:14.114, em:"🏰"},
+  {id:"piran", name:"Piran (zee)", lat:45.528, lon:13.568, em:"🌊"},
+  {id:"pula",  name:"Pula",        lat:44.867, lon:13.850, em:"🏛"}
+];
+var _weerLoc = 0, _weerOffline = false;
+function weerDefaultLoc(){
+  var n = Math.floor((new Date() - DEP) / 86400000) + 1;   // reisdag (1 = vertrekdag)
+  if(n >= 7 && n <= 12) return 1;    // Bled & Bohinj
+  if(n >= 13) return 2;              // Piran (kust) en verder
+  return 0;                          // Soča-vallei (vóór de reis + eerste dagen)
+}
+function wmo(code){
+  code = +code;
+  if(code === 0) return { em:"☀️", t:"Zonnig" };
+  if(code === 1 || code === 2) return { em:"🌤️", t:"Half bewolkt" };
+  if(code === 3) return { em:"☁️", t:"Bewolkt" };
+  if(code === 45 || code === 48) return { em:"🌫️", t:"Mistig" };
+  if(code >= 51 && code <= 57) return { em:"🌦️", t:"Motregen" };
+  if(code >= 61 && code <= 67) return { em:"🌧️", t:"Regen" };
+  if(code >= 71 && code <= 77) return { em:"❄️", t:"Sneeuw" };
+  if(code >= 80 && code <= 82) return { em:"🌦️", t:"Buien" };
+  if(code >= 85 && code <= 86) return { em:"🌨️", t:"Sneeuwbuien" };
+  if(code >= 95) return { em:"⛈️", t:"Onweer" };
+  return { em:"🌡️", t:"Wisselend" };
+}
+function weekdayShort(dateStr){ var days = ["Zo","Ma","Di","Wo","Do","Vr","Za"]; var dt = new Date(dateStr + "T12:00:00"); return isNaN(dt.getTime()) ? "" : days[dt.getDay()]; }
+function weerTip(code, tmax, rain){
+  code = +code; rain = +rain || 0; tmax = +tmax;
+  if(rain >= 60 || (code >= 61 && code <= 82) || code >= 95) return "🧥 Regenjas mee!";
+  if(tmax >= 24 && rain < 45) return "🏊 Zwemweer!";
+  if(tmax < 14) return "🧣 Warme trui aan!";
+  return "👟 Prima weer om op pad te gaan!";
+}
+function weerValid(d){   // ALLE dagreeksen moeten er zijn én lang genoeg (anders crasht renderWeer)
+  if(!d || !Array.isArray(d.time) || !d.time.length) return false;
+  var n = d.time.length, keys = ["weather_code","temperature_2m_max","temperature_2m_min","precipitation_probability_max"];
+  for(var i=0;i<keys.length;i++){ if(!Array.isArray(d[keys[i]]) || d[keys[i]].length < n) return false; }
+  return true;
+}
+function weerCache(id){ try{ var c = JSON.parse(get("sl26:weer:"+id) || "null"); return (c && weerValid(c.d)) ? c : null; }catch(e){ return null; } }
+function fetchWeer(loc, cb){
+  var url = "https://api.open-meteo.com/v1/forecast?latitude=" + loc.lat + "&longitude=" + loc.lon +
+            "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FLjubljana&forecast_days=6";
+  var done = false, timer = null, opts = {};
+  function fin(ok){ if(done) return; done = true; if(timer) clearTimeout(timer); cb(ok); }
+  if(typeof AbortController !== "undefined"){ var ctrl = new AbortController(); opts.signal = ctrl.signal; timer = setTimeout(function(){ try{ ctrl.abort(); }catch(e){} fin(false); }, 12000); }
+  fetch(url, opts).then(function(r){ return (r && r.ok) ? r.json() : null; }).then(function(j){
+    if(j && j.daily && weerValid(j.daily)){ put("sl26:weer:" + loc.id, JSON.stringify({ t: Date.now(), d: j.daily })); fin(true); }
+    else fin(false);
+  }).catch(function(){ fin(false); });
+}
+function renderWeer(){
+  var box = document.getElementById("weerbox"); if(!box) return;
+  var loc = WLOCS[_weerLoc], cache = weerCache(loc.id);
+  var h = '<div class="card weercard">';
+  h += '<div class="weerhead"><b>⛅ Weerbericht</b><button class="wref" id="weerref" type="button" aria-label="Ververs">↻</button></div>';
+  h += '<div class="weerchips">';
+  WLOCS.forEach(function(l, i){ h += '<button type="button" class="weerchip' + (i === _weerLoc ? " on" : "") + '" data-wi="' + i + '">' + l.em + " " + esc(l.name) + '</button>'; });
+  h += '</div>';
+  if(cache){
+    var d = cache.d, n = d.time.length, w0 = wmo(d.weather_code[0]);
+    h += '<div class="weertoday"><span class="wbig">' + w0.em + '</span><div><b>Vandaag in ' + esc(loc.name) + ': ' + esc(w0.t) + ', ' + Math.round(d.temperature_2m_max[0]) + '°</b>' +
+         '<div class="weertip">' + esc(weerTip(d.weather_code[0], d.temperature_2m_max[0], d.precipitation_probability_max[0])) + '</div></div></div>';
+    h += '<div class="weerdays">';
+    for(var i=0;i<n;i++){
+      var w = wmo(d.weather_code[i]);
+      var lbl = i === 0 ? "Vandaag" : weekdayShort(d.time[i]);
+      h += '<div class="weerday"><div class="wd">' + esc(lbl) + '</div><div class="we">' + w.em + '</div>' +
+           '<div class="wt">' + Math.round(d.temperature_2m_max[i]) + '°<small>' + Math.round(d.temperature_2m_min[i]) + '°</small></div>' +
+           '<div class="wr">💧' + (Math.round(+d.precipitation_probability_max[i]) || 0) + '%</div></div>';
+    }
+    h += '</div>';
+    h += '<div class="weerfoot">Laatst opgehaald ' + relTime(cache.t) + (_weerOffline ? " · geen internet" : "") + '</div>';
+  } else {
+    h += '<div class="weertip" style="padding:8px 0;color:var(--mist);font-weight:600">' + (_weerOffline ? "Geen internet — nog geen weerbericht opgehaald." : "Weerbericht ophalen…") + '</div>';
+  }
+  h += '</div>';
+  box.innerHTML = h;
+  box.querySelectorAll(".weerchip").forEach(function(b){ b.addEventListener("click", function(){ _weerLoc = +b.dataset.wi; renderWeer(); refreshWeer(); }); });
+  var rf = document.getElementById("weerref"); if(rf) rf.addEventListener("click", refreshWeer);
+}
+function refreshWeer(){
+  var rf = document.getElementById("weerref"); if(rf){ rf.textContent = "…"; rf.disabled = true; }
+  fetchWeer(WLOCS[_weerLoc], function(ok){ _weerOffline = !ok; renderWeer(); });
+}
+(function(){ _weerLoc = weerDefaultLoc(); renderWeer(); refreshWeer(); })();
 
 /* ---------- vinkjes (missies, rugzak, taken) ---------- */
 function key(id){ return "sl26:"+(who||"gast")+":"+id; }

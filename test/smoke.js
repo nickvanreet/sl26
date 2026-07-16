@@ -51,6 +51,8 @@ function scenario(label, seed, when, storageWorks = true){
   ok(switched === 8, `alle 8 tabbladen wisselen (${switched}/8)`);
 
   ok(doc.querySelectorAll("details.day").length === 18, "18 dagkaarten");
+  ok(!!doc.querySelector("#weerbox .weercard") && !!doc.getElementById("weerref"), "weerbericht-kaart + ververs-knop in de Dagen-tab");
+  ok(doc.querySelectorAll("#weerbox .weerchip").length === 4, `weer: 4 plaats-chips (${doc.querySelectorAll("#weerbox .weerchip").length})`);
   ok(doc.querySelectorAll("input[data-m]").length === 46, `46 missies (36 + 10 foto) (${doc.querySelectorAll("input[data-m]").length})`);
   ok(!!doc.getElementById("t-dagboek"), "dagboek-tab aanwezig");
   ok(doc.querySelectorAll("#dagboek .dbentry").length === 18, `dagboek heeft 18 dag-entries (${doc.querySelectorAll("#dagboek .dbentry").length})`);
@@ -524,6 +526,36 @@ console.log("\n25. Billie's paspoort onthoudt wat je invult");
   const again = load({ "sl26:who":"Willem", "sl26:fam:pass:ras":"Setter" }, "2026-07-20T09:00:00");
   ok([...again.doc.querySelectorAll("#billiepass .passinp")][0].value === "Setter", "paspoort-veld wordt teruggeladen");
   again.dom.window.close();
+}
+
+console.log("\n26. Weerbericht: toont een opgeslagen (offline) voorspelling met kid-tip");
+{
+  const cache = { t: new Date("2026-07-20T09:00:00").getTime(), d: {
+    time: ["2026-07-20","2026-07-21","2026-07-22"],
+    weather_code: [0, 61, 3],
+    temperature_2m_max: [28, 19, 24],
+    temperature_2m_min: [15, 12, 14],
+    precipitation_probability_max: [10, 80, 30]
+  }};
+  const { dom, doc } = load({ "sl26:weer:soca": JSON.stringify(cache) }, "2026-07-20T09:00:00");
+  const days = doc.querySelectorAll("#weerbox .weerday");
+  ok(days.length === 3, `3 voorspelde dagen uit cache (${days.length})`);
+  const wt = doc.getElementById("weerbox").textContent;
+  ok(/28°/.test(wt), "toont de maximumtemperatuur (28°)");
+  ok(/Zwemweer/.test(wt), "zonnige warme dag → Zwemweer-tip");
+  ok(/Laatst opgehaald/.test(wt), "toont wanneer het weer laatst opgehaald is");
+  dom.window.close();
+}
+
+console.log("\n26b. Weerbericht: kapotte/onvolledige cache crasht niet");
+{
+  // 'time' aanwezig maar de andere reeksen ontbreken -> ongeldig, mag NIET crashen
+  const bad = { t: new Date("2026-07-20T09:00:00").getTime(), d: { time: ["2026-07-20","2026-07-21"] } };
+  const { dom, doc, errors } = load({ "sl26:weer:soca": JSON.stringify(bad) }, "2026-07-20T09:00:00");
+  ok(errors.length === 0, `geen JS-fouten bij kapotte weer-cache${errors.length?" -> "+errors.join(" | "):""}`);
+  ok(doc.querySelectorAll("#weerbox .weerday").length === 0, "onvolledige cache → geen voorspelling (leeg), maar geen crash");
+  ok(!!doc.querySelector("#weerbox .weercard"), "weerkaart rendert nog steeds");
+  dom.window.close();
 }
 
 console.log(failed ? `\n${failed} test(s) GEFAALD\n` : "\nAlles in orde.\n");
