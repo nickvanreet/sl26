@@ -502,6 +502,8 @@ body.night .addphoto{background:#122a25;color:#8fe6d3}
 /* verhaal-estafette */
 .vh-last{background:var(--ice);border-left:4px solid var(--dragon);border-radius:10px;padding:10px 12px;font-size:15px;font-style:italic;min-height:20px;margin-bottom:8px}
 .vh-input{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);padding:10px;font:500 14px var(--dsp);resize:vertical;min-height:44px;margin-bottom:8px}
+.vh-voice{margin-top:9px;font-size:12.5px;color:var(--mist);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.vh-voice select{flex:1;min-width:120px;max-width:230px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font:600 12px var(--dsp)}
 .vh-full .s{font-size:14px;padding:5px 0;border-bottom:1px solid var(--line)}
 .vh-full .s:last-child{border-bottom:0}
 /* nummerplaat-zinnen */
@@ -2671,7 +2673,26 @@ var STORY_START = "Er was eens…";
 function storyGet(){ try{ var a = JSON.parse(get("sl26:fam:story") || "[]"); return Array.isArray(a) ? a : []; }catch(e){ return []; } }
 function storySet(a){ put("sl26:fam:story", JSON.stringify(a)); put("sl26:fam:storyt", String(Date.now())); }
 var _ttsOk = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
-if(_ttsOk){ try{ window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = function(){ try{ window.speechSynthesis.getVoices(); }catch(e){} }; }catch(e){} }   // stemmen alvast (async) laden
+function ttsVoices(){ try{ return window.speechSynthesis.getVoices() || []; }catch(e){ return []; } }
+function preferredVoice(){
+  var vs = ttsVoices(), saved = get("sl26:fam:ttsvoice");
+  if(saved){ var m = vs.filter(function(v){ return v.voiceURI === saved || v.name === saved; })[0]; if(m) return m; }
+  return vs.filter(function(v){ return /nl[-_]?BE/i.test(v.lang); })[0]                                   // Vlaams eerst
+      || vs.filter(function(v){ return /nl[-_]?NL/i.test(v.lang); })[0]                                   // dan Nederlands (NL)
+      || vs.filter(function(v){ return /^nl/i.test(v.lang) || /(vlaam|belg|dutch|nederl)/i.test(v.name); })[0]   // dan om het even welke NL/Vlaamse
+      || null;
+}
+function buildVoiceOptions(){
+  var sel = document.getElementById("vhvoice"); if(!sel) return;
+  var vs = ttsVoices();
+  var nl = vs.filter(function(v){ return /^nl/i.test(v.lang) || /(vlaam|belg|dutch|nederl)/i.test(v.name); });
+  var list = nl.length ? nl : vs;                                    // geen NL-stem op dit toestel? toon alle, zodat je tóch kan kiezen
+  var saved = get("sl26:fam:ttsvoice") || "";
+  var opts = '<option value="">Automatisch (Vlaams eerst)</option>';
+  list.forEach(function(v){ opts += '<option value="' + esc(v.voiceURI) + '"' + (v.voiceURI === saved ? ' selected' : '') + '>' + esc(v.name) + ' (' + esc(v.lang) + ')</option>'; });
+  sel.innerHTML = opts;
+}
+if(_ttsOk){ try{ ttsVoices(); window.speechSynthesis.onvoiceschanged = function(){ try{ ttsVoices(); buildVoiceOptions(); }catch(e){} }; }catch(e){} }   // stemmen async laden + keuzemenu bijwerken
 var _ttsU = null, _ttsTimer = null;
 function _vhStopBtn(show){ var b = document.getElementById("vhstop"); if(b) b.style.display = show ? "" : "none"; }
 function speakStory(text){
@@ -2681,10 +2702,9 @@ function speakStory(text){
     try{ synth.cancel(); }catch(e){}
     if(_ttsTimer){ clearTimeout(_ttsTimer); _ttsTimer = null; }
     var u = new SpeechSynthesisUtterance(text);
-    u.lang = "nl-NL"; u.rate = 0.95;
-    var vs = []; try{ vs = synth.getVoices() || []; }catch(e){}
-    var nl = vs.filter(function(v){ return /^nl/i.test(v.lang); })[0];
-    if(nl) u.voice = nl;
+    u.rate = 0.95;
+    var voice = preferredVoice();
+    if(voice){ u.voice = voice; u.lang = voice.lang; } else { u.lang = "nl-BE"; }    // val terug op de Vlaamse taal-hint
     u.onstart = function(){ _vhStopBtn(true); };
     u.onend = function(){ _vhStopBtn(false); if(_ttsU === u) _ttsU = null; };
     u.onerror = function(){ _vhStopBtn(false); if(_ttsU === u) _ttsU = null; };
@@ -2708,7 +2728,11 @@ function renderVerhaal(){
       '<button class="gamebtn ghost" id="vhread">🔊 Lees voor ('+story.length+')</button>' +
       '<button class="gamebtn ghost" id="vhstop" style="display:none">⏹ Stop</button>' +
       (story.length ? '<button class="gamebtn ghost" id="vhnew">Nieuw</button>' : '') +
-    '</div><div class="vh-full" id="vhfull"></div>';
+    '</div>' +
+    (_ttsOk ? '<div class="vh-voice">🔊 Voorleesstem: <select id="vhvoice"></select></div>' : '') +
+    '<div class="vh-full" id="vhfull"></div>';
+  var vv = document.getElementById("vhvoice");
+  if(vv){ buildVoiceOptions(); vv.addEventListener("change", function(){ put("sl26:fam:ttsvoice", vv.value); speakStory("Hallo! Zo klink ik. Ik lees jullie verhaal voor. 🐉"); }); }
   document.getElementById("vhadd").addEventListener("click", function(){
     var v = document.getElementById("vhinput").value.trim(); if(!v) return;
     var s = storyGet(); if(!s.length) s = [STORY_START]; s.push(v); storySet(s); beep([523,784],0.1); renderVerhaal();
