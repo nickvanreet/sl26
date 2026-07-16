@@ -560,5 +560,18 @@ console.log("\n26b. Weerbericht: kapotte/onvolledige cache crasht niet");
   dom.window.close();
 }
 
+console.log("\n27. Verhaal-estafette: begint écht met 'Er was eens…' en houdt 'm als eerste zin");
+{
+  const { dom, doc } = load({ "sl26:who":"Loes" }, "2026-07-20T09:00:00");
+  ok(JSON.parse(dom.window.localStorage.getItem("sl26:fam:story")||"[]")[0] === "Er was eens…", "verhaal is geseed met 'Er was eens…' als echte eerste zin");
+  ok(!dom.window.localStorage.getItem("sl26:fam:storyt"), "de 'Er was eens…'-start krijgt géén tijdstempel (mag de cloud niet overschrijven)");
+  doc.getElementById("vhinput").value = "De draak niesde.";
+  click(dom, doc.getElementById("vhadd"));
+  const st = JSON.parse(dom.window.localStorage.getItem("sl26:fam:story"));
+  ok(st[0] === "Er was eens…" && st[1] === "De draak niesde.", "na toevoegen begint het verhaal nog steeds met 'Er was eens…'");
+  ok(!!dom.window.localStorage.getItem("sl26:fam:storyt"), "een echte toevoeging krijgt wél een tijdstempel (voor de sync)");
+  dom.window.close();
+}
+
 console.log(failed ? `\n${failed} test(s) GEFAALD\n` : "\nAlles in orde.\n");
 process.exit(failed ? 1 : 0);

@@ -2667,32 +2667,39 @@ function startWoordraden(pack){
 renderWoordraden();
 
 /* ---------- Verhaal-estafette ---------- */
-function storyGet(){ try{ return JSON.parse(get("sl26:fam:story") || "[]"); }catch(e){ return []; } }
-function storySet(a){ put("sl26:fam:story", JSON.stringify(a)); }
+var STORY_START = "Er was eens…";
+function storyGet(){ try{ var a = JSON.parse(get("sl26:fam:story") || "[]"); return Array.isArray(a) ? a : []; }catch(e){ return []; } }
+function storySet(a){ put("sl26:fam:story", JSON.stringify(a)); put("sl26:fam:storyt", String(Date.now())); }
 var _ttsOk = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
+if(_ttsOk){ try{ window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = function(){ try{ window.speechSynthesis.getVoices(); }catch(e){} }; }catch(e){} }   // stemmen alvast (async) laden
+var _ttsU = null, _ttsTimer = null;
+function _vhStopBtn(show){ var b = document.getElementById("vhstop"); if(b) b.style.display = show ? "" : "none"; }
 function speakStory(text){
   if(!_ttsOk || !text) return false;
   try{
-    speechSynthesis.cancel();
+    var synth = window.speechSynthesis;
+    try{ synth.cancel(); }catch(e){}
+    if(_ttsTimer){ clearTimeout(_ttsTimer); _ttsTimer = null; }
     var u = new SpeechSynthesisUtterance(text);
     u.lang = "nl-NL"; u.rate = 0.95;
-    var vs = speechSynthesis.getVoices() || [];
+    var vs = []; try{ vs = synth.getVoices() || []; }catch(e){}
     var nl = vs.filter(function(v){ return /^nl/i.test(v.lang); })[0];
     if(nl) u.voice = nl;
-    var stopBtn = document.getElementById("vhstop");
-    u.onstart = function(){ if(stopBtn) stopBtn.style.display = ""; };
-    u.onend = function(){ if(stopBtn) stopBtn.style.display = "none"; };
-    u.onerror = function(){ if(stopBtn) stopBtn.style.display = "none"; };
-    speechSynthesis.speak(u);
+    u.onstart = function(){ _vhStopBtn(true); };
+    u.onend = function(){ _vhStopBtn(false); if(_ttsU === u) _ttsU = null; };
+    u.onerror = function(){ _vhStopBtn(false); if(_ttsU === u) _ttsU = null; };
+    _ttsU = u;   // referentie vasthouden — anders ruimt de browser 'm op en zwijgt hij
+    _ttsTimer = setTimeout(function(){ _ttsTimer = null; try{ synth.speak(u); if(synth.paused) synth.resume(); }catch(e){} }, 60);   // korte pauze na cancel() (Chrome-bug)
     return true;
   }catch(e){ return false; }
 }
-function stopSpeak(){ try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){} var b = document.getElementById("vhstop"); if(b) b.style.display = "none"; }
+function stopSpeak(){ if(_ttsTimer){ clearTimeout(_ttsTimer); _ttsTimer = null; } try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e){} _ttsU = null; _vhStopBtn(false); }
 function renderVerhaal(){
   var box = document.getElementById("verhaal"); if(!box) return;
   stopSpeak();
   var story = storyGet();
-  var last = story.length ? story[story.length-1] : "Er was eens…";
+  if(!story.length){ story = [STORY_START]; put("sl26:fam:story", JSON.stringify(story)); }   // elk verhaal begint met "Er was eens…" (géén tijdstempel: mag de cloud niet overschrijven)
+  var last = story[story.length-1];
   box.innerHTML =
     '<div class="vh-last">'+esc(last)+'</div>' +
     '<textarea class="vh-input" id="vhinput" rows="2" placeholder="…jouw zin erbij"></textarea>' +
@@ -2704,7 +2711,8 @@ function renderVerhaal(){
     '</div><div class="vh-full" id="vhfull"></div>';
   document.getElementById("vhadd").addEventListener("click", function(){
     var v = document.getElementById("vhinput").value.trim(); if(!v) return;
-    var s = storyGet(); s.push(v); storySet(s); beep([523,784],0.1); renderVerhaal();
+    var s = storyGet(); if(!s.length) s = [STORY_START]; s.push(v); storySet(s); beep([523,784],0.1); renderVerhaal();
+    if(sbCfg() && typeof syncNow === "function") syncNow();   // zin doorgeven aan de andere toestellen
   });
   document.getElementById("vhread").addEventListener("click", function(){
     var s = storyGet(), full = document.getElementById("vhfull");
@@ -2714,7 +2722,7 @@ function renderVerhaal(){
   });
   document.getElementById("vhstop").addEventListener("click", stopSpeak);
   var nw = document.getElementById("vhnew");
-  if(nw) nw.addEventListener("click", function(){ if(confirm("Nieuw verhaal beginnen? Het oude wordt gewist.")){ storySet([]); renderVerhaal(); } });
+  if(nw) nw.addEventListener("click", function(){ if(confirm("Nieuw verhaal beginnen? Het oude wordt gewist — ook op de andere toestellen.")){ storySet([STORY_START]); renderVerhaal(); if(sbCfg() && typeof syncNow === "function") syncNow(); } });
 }
 renderVerhaal();
 
@@ -3305,7 +3313,8 @@ function syncNow(){
       _fetchJSON(base + "/rest/v1/journal?family=eq." + f + "&select=name,day,note", { headers:H }),
       _fetchJSON(base + "/rest/v1/photos?family=eq." + f + "&select=name,day,data", { headers:H }),
       _fetchJSON(base + "/rest/v1/votes?family=eq." + f + "&select=voter,owner,day", { headers:H }).catch(function(){ return []; }),
-      _fetchJSON(base + "/rest/v1/reactions?family=eq." + f + "&select=reactor,owner,day,emoji", { headers:H }).catch(function(){ return []; })
+      _fetchJSON(base + "/rest/v1/reactions?family=eq." + f + "&select=reactor,owner,day,emoji", { headers:H }).catch(function(){ return []; }),
+      _fetchJSON(base + "/rest/v1/story?family=eq." + f + "&select=story,updated", { headers:H }).catch(function(){ return []; })
     ]);
   }).then(function(r){
     var scores = r[0] || [];
@@ -3317,6 +3326,15 @@ function syncNow(){
     put("sl26:fam:lastsyncname", who); put("sl26:fam:syncedat", String(Date.now()));
     var stEl = document.getElementById("synctime"); if(stEl) stEl.textContent = "laatst gesynct net";
     famJournal = r[1] || []; famPhotos = r[2] || []; famVotes = r[3] || []; famReactions = r[4] || []; reconcileMyReacts(); loadMyReacts();
+    var srow = (r[5] && r[5][0]) ? r[5][0] : null;   // gedeeld verhaal: nieuwste tijdstempel wint (push NA de pull)
+    var cloudST = (srow && srow.story) ? (parseInt(srow.updated, 10) || 0) : 0;
+    var localST = parseInt(get("sl26:fam:storyt") || "0", 10);
+    if(cloudST > localST && srow && srow.story){                      // cloud is nieuwer -> overnemen (getypte zin bewaren)
+      put("sl26:fam:story", srow.story); put("sl26:fam:storyt", String(cloudST));
+      if(typeof renderVerhaal === "function"){ var _typed = (document.getElementById("vhinput") || {}).value || ""; renderVerhaal(); var _ni = document.getElementById("vhinput"); if(_ni && _typed) _ni.value = _typed; }
+    } else if(localST > cloudST){                                     // ik ben nieuwer -> nu pas pushen, zodat ik niets nieuwers overschrijf
+      _fetchJSON(base + "/rest/v1/story", { method:"POST", headers:Hm, body:JSON.stringify({ family:c.fam, story:(get("sl26:fam:story") || "[]"), updated:localST }) }).catch(function(){});
+    }
     var firstSync = !done(who, "synced");
     if(firstSync) put(key("synced"), ymd(new Date()));    // trofee: eerste keer verbonden
     updateRank(firstSync); updateScoreboard(); renderFamJournal();
