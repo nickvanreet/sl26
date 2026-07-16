@@ -84,6 +84,7 @@ function scenario(label, seed, when, storageWorks = true){
   ok(/dagboekje/i.test((doc.getElementById("billiediary")||{}).textContent||""), "Billie's dagboekje rendert");
   ok(/droomt Billie van/.test((doc.getElementById("billiediary")||{}).textContent||""), "Billie's wens van de dag verschijnt");
   ok(!doc.querySelector('input[data-p="b01"]'), "oude vaste zorg-checkboxes (b01) zijn weg");
+  ok(!!doc.querySelector("#t-billie #dagklus") && !doc.querySelector("#t-dagen #dagklus"), "de Billie-klus staat nu op de Billie-tab (weg uit Dagen)");
   ok(!!doc.getElementById("lbsync"), "logboek heeft een eigen 'Haal het logboek op'-knop");
   ok(!!doc.getElementById("resetscores") && !doc.getElementById("resetme"), "spel-reset knop bestaat (oude alles-wisknop is weg)");
   ok(/Papa/.test((doc.getElementById("wipemem")||{}).textContent||""), "aparte foto's&dagboek-wisknop is voorbehouden aan Papa");
